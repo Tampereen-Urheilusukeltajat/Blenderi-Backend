@@ -1,24 +1,28 @@
 module.exports = {
   env: {
-    es2021: true
+    es2021: true,
   },
-  extends: ['standard-with-typescript', 'eslint:recommended', 'plugin:@typescript-eslint/recommended'],
-  overrides: [
+  extends: [
+    "standard-with-typescript",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier",
   ],
-  ignorePatterns: ['.eslintrc.js'],
+  overrides: [],
+  ignorePatterns: [".eslintrc.js"],
   parserOptions: {
-    project: './tsconfig.json',
-    ecmaVersion: 'latest',
-    sourceType: 'module'
+    project: "./tsconfig.json",
+    ecmaVersion: "latest",
+    sourceType: "module",
   },
-  plugins: ['@typescript-eslint'],
-  parser: '@typescript-eslint/parser',
+  plugins: ["@typescript-eslint"],
+  parser: "@typescript-eslint/parser",
   root: true,
   rules: {
-    'no-console': 'warn',
-    "semi": ["error", "always"],
+    "no-console": "warn",
+    semi: ["error", "always"],
     "@typescript-eslint/semi": ["error", "always"],
     "return-await": "off",
-    "@typescript-eslint/return-await": ["error", "never"]
-  }
-}
+    "@typescript-eslint/return-await": ["error", "never"],
+  },
+};
