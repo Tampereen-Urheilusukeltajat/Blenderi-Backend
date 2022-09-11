@@ -1,0 +1,43 @@
+{
+  "dependencies": {
+    "@fastify/autoload": "^5.4.0",
+    "@fastify/cors": "^8.1.0",
+    "@fastify/helmet": "^10.0.0",
+    "@fastify/swagger": "^7.5.1",
+    "@fastify/type-provider-typebox": "^2.3.0",
+    "dotenv": "^16.0.2",
+    "fastify": "^4.5.3",
+    "winston": "^3.8.2"
+  },
+  "name": "blenderi-backend",
+  "description": "",
+  "version": "0.0.1",
+  "main": "src/app.ts",
+  "devDependencies": {
+    "@types/node": "^18.7.16",
+    "@typescript-eslint/eslint-plugin": "^5.36.2",
+    "@typescript-eslint/parser": "^5.36.2",
+    "eslint": "^8.23.0",
+    "eslint-config-standard-with-typescript": "^22.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^15.2.5",
+    "eslint-plugin-promise": "^6.0.1",
+    "nodemon": "^2.0.19",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.8.3"
+  },
+  "scripts": {
+    "start-dev": "nodemon",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tampereen-Urheilusukeltajat/Blenderi-Backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Tampereen-Urheilusukeltajat/Blenderi-Backend/issues"
+  },
+  "homepage": "https://github.com/Tampereen-Urheilusukeltajat/Blenderi-Backend#readme"
+}
