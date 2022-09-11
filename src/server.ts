@@ -3,17 +3,14 @@ import { fastifySwagger } from '@fastify/swagger';
 import { fastifyHelmet } from '@fastify/helmet';
 import fastifyCors from '@fastify/cors';
 import { fastifyAutoload } from '@fastify/autoload';
+import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
 
 import { log } from './lib/log';
 import path from 'path';
 
-const APPLICATION_HOST: string = process.env.APPLICATION_HOST as string;
-const APPLICATION_PORT = Number(process.env.APPLICATION_PORT);
-const ROUTE_PREFIX: string = process.env.ROUTE_PREFIX as string;
-
-export const initServer = async (): Promise<{
-  start: () => Promise<FastifyInstance>
-}> => {
+export const buildServer = async (opts: {
+  routePrefix: string
+}): Promise<FastifyInstance> => {
   const server = fastify({
     logger: false,
     ignoreTrailingSlash: true,
@@ -36,7 +33,7 @@ export const initServer = async (): Promise<{
       }
     })
     .register(fastifySwagger, {
-      routePrefix: `${ROUTE_PREFIX}/documentation`,
+      routePrefix: `${opts.routePrefix}/documentation`,
       swagger: {
         info: {
           title: 'Blenderi REST API',
@@ -53,8 +50,8 @@ export const initServer = async (): Promise<{
         security: [{
           bearerAuth: []
         }],
-        consumes: ['application/json'],
-        produces: ['application/json'],
+        consumes: ['serverlication/json'],
+        produces: ['serverlication/json'],
         tags: [{
           name: 'Utility',
           description: 'Utility endpoints'
@@ -81,7 +78,7 @@ export const initServer = async (): Promise<{
     })
     .register(fastifyAutoload, {
       dir: path.join(__dirname, 'routes'),
-      dirNameRoutePrefix: (_folderParent, folderName) => `${ROUTE_PREFIX}/${folderName}`
+      dirNameRoutePrefix: (_folderParent, folderName) => `${opts.routePrefix}/${folderName}`
     })
     .setErrorHandler(async (error, request, reply) => {
       log.error({
@@ -98,15 +95,8 @@ export const initServer = async (): Promise<{
         error: 'Internal Server Error',
         message: 'Internal Server Error'
       });
-    });
+    })
+    .withTypeProvider<TypeBoxTypeProvider>();
 
-  return {
-    start: async () => {
-      await server.listen({
-        host: APPLICATION_HOST,
-        port: APPLICATION_PORT
-      });
-      return await server;
-    }
-  };
+  return server;
 };

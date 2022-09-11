@@ -17,6 +17,8 @@ module.exports = {
   rules: {
     'no-console': 'warn',
     "semi": ["error", "always"],
-    "@typescript-eslint/semi": ["error", "always"]
+    "@typescript-eslint/semi": ["error", "always"],
+    "return-await": "off",
+    "@typescript-eslint/return-await": ["error", "never"]
   }
 }
