@@ -3,7 +3,7 @@ import { fastifySwagger } from '@fastify/swagger';
 import { fastifyHelmet } from '@fastify/helmet';
 import fastifyCors from '@fastify/cors';
 import { fastifyAutoload } from '@fastify/autoload';
-import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
+import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 
 import { log } from './lib/log';
 import path from 'path';
