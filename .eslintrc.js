@@ -24,5 +24,6 @@ module.exports = {
     "@typescript-eslint/semi": ["error", "always"],
     "return-await": "off",
     "@typescript-eslint/return-await": ["error", "never"],
+    "eol-last": ["error", "always"],
   },
 };
