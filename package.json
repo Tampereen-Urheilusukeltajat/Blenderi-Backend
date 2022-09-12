@@ -46,7 +46,7 @@
     "url": "git+https://github.com/Tampereen-Urheilusukeltajat/Blenderi-Backend.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Tampereen-Urheilusukeltajat/Blenderi-Backend/issues"
   },
