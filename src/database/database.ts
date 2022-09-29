@@ -1,7 +1,11 @@
-import { createPool } from 'mariadb';
+import config from '../../knexfile';
+import knex from 'knex';
 
-export const databasePool = createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD
-});
+export enum Env {
+  development = 'development',
+  production = 'production',
+}
+
+const ENV = (process.env.ENVIRONMENT as Env) ?? Env.development;
+
+export const knexController = knex(config[ENV]);

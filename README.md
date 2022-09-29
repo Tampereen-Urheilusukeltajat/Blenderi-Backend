@@ -21,6 +21,18 @@ npm install
 npm run start-dev
 ```
 
+## Database
+
+[Knex](https://knexjs.org/) is used to for accessing the MariaDB database. Knex also handles running migrations, which are located in `src/database/migrations` folder.
+
+Migrations are ran automatically when the service starts.
+
+To create a new migration, run the following command in the project root folder.
+
+```
+npx knex migrate:make MIGRATION_NAME_HERE
+```
+
 ## Project team
 
 - Akseli Kolari
