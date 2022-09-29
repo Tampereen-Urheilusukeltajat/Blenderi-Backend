@@ -18,7 +18,7 @@ export default {
       user: MYSQL_USER,
       password: MYSQL_PASSWORD,
       database: DB,
-      charset: 'utf8',
+      charset: 'utf8mb4',
       port: Number(MYSQL_PORT),
     },
     migrations: {
@@ -44,9 +44,11 @@ export default {
     client: 'mysql',
     connection: {
       host: MYSQL_HOST,
+      port: Number(MYSQL_PORT),
       user: MYSQL_USER,
       password: MYSQL_PASSWORD,
       database: DB,
+      charset: 'utf8mb4',
     },
     pool: {
       min: 2,
