@@ -4,7 +4,7 @@ import { log } from './src/lib/log';
 
 const DB = process.env.MYSQL_DATABASE ?? 'db';
 
-// MariaDB uses MySQL in the background
+// MySQL client library is used to connect MariaDB
 const MYSQL_USER = process.env.MYSQL_USER;
 const MYSQL_PASSWORD = process.env.MYSQL_PASSWORD;
 const MYSQL_HOST = process.env.MYSQL_HOST;
