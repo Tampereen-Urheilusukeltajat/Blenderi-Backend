@@ -5,6 +5,12 @@ import fastify, {
 } from 'fastify';
 import { Type, Static } from '@sinclair/typebox';
 
+const typeboxParam = Type.Object({
+  userId: Type.Optional(Type.String()),
+});
+
+export type TypeboxParam = Static<typeof typeboxParam>;
+
 // TODO: Make another response type with more user information for admin view
 const userSearchResponse = Type.Object({
   email: Type.String(),
@@ -18,37 +24,44 @@ const searchSchema = {
   description: 'Search for an user with given id',
   summary: 'Search user',
   tags: ['User'],
-  params: {
-    type: 'object',
-    required: ['userId'],
-    properties: {
-      userId: { type: 'string' },
-    },
-  },
+  params: typeboxParam,
   response: {
     200: userSearchResponse,
     401: { $ref: 'error' },
+    403: { $ref: 'error' },
     404: { $ref: 'error' },
   },
 };
 
-const handler = async (
-  request: FastifyRequest,
+const searchUserHandler = async (
+  req: FastifyRequest<{ Params: TypeboxParam }>,
   reply: FastifyReply
 ): Promise<void> => {
   // TODO: Authorization check
+  // TODO: DB query
+
+  const userId = req.params.userId;
+  if (userId !== undefined) {
+    await reply.send({
+      email: `${userId}@hello.fi`,
+      firstName: userId,
+      lastName: 'Esimerkki',
+    });
+  }
   await reply.send({
-    email: 'hi@world.fi',
-    firstName: 'Erkki',
-    lastName: 'Esimerkki',
+    email: `toimiiko`,
+    firstName: 'parametriton',
+    lastName: 'path vihdoinkin??',
   });
 };
 
 export default async (fastify: FastifyInstance): Promise<void> => {
-  fastify.route({
-    method: 'GET',
-    url: '/user',
-    handler,
-    schema: searchSchema,
-  });
+  ['/user', '/user/:userId'].forEach((path) =>
+    fastify.route({
+      method: 'GET',
+      url: path,
+      handler: searchUserHandler,
+      schema: searchSchema,
+    })
+  );
 };
