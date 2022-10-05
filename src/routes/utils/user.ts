@@ -1,20 +1,21 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { Type, Static } from '@sinclair/typebox';
+import { knexController } from '../../database/database';
 
-const editUserResponse = Type.Object({
+const user = Type.Object({
   email: Type.String(),
-  firstName: Type.String(),
-  lastName: Type.String(),
+  forename: Type.String(),
+  surname: Type.String(),
   password: Type.String(),
 });
 
-export type EditUserResponse = Static<typeof editUserResponse>;
+export type User = Static<typeof user>;
 
 // Expected request type
 interface IQuerystring {
   email: string;
-  firstName: string;
-  lastName: string;
+  forename: string;
+  surname: string;
   password: string;
 }
 
@@ -24,15 +25,15 @@ const schema = {
   tags: ['User'],
   body: {
     type: 'object',
-    required: ['email', 'firstName', 'lastName', 'password'],
+    required: ['email', 'password', 'forename', 'surname'],
     properties: {
       email: {
         type: 'string',
       },
-      firstName: {
+      forename: {
         type: 'string',
       },
-      lastName: {
+      surname: {
         type: 'string',
       },
       password: {
@@ -41,7 +42,13 @@ const schema = {
     },
   },
   response: {
-    200: editUserResponse,
+    200: user,
+  },
+  400: {
+    $ref: 'error',
+  },
+  500: {
+    $ref: 'error',
   },
 };
 
@@ -49,22 +56,27 @@ const handler = async (
   req: FastifyRequest<{ Body: IQuerystring }>,
   reply: FastifyReply
 ): Promise<void> => {
-  try {
-    // TODO validate request
+  const { email, password, forename, surname } = req.body;
 
-    const { email, password, firstName, lastName } = req.body;
+  // TODO password hash
 
-    // TODO edit user
+  // edit user (TODO edit email?)
+  const editResponse = await knexController('user')
+    .where({ email })
+    .update({ password_hash: password, forename, surname });
 
-    await reply.send({
-      email,
-      firstName,
-      lastName,
-      password,
-    });
-  } catch (error) {
-    console.log('TODO error');
+  if (editResponse === 0) {
+    // TODO
+    throw new Error('No user found with given email.');
   }
+
+  // get edited user
+  const editedUser = await knexController
+    .select('email', 'password_hash as password', 'forename', 'surname')
+    .from<User>('user')
+    .where({ email });
+
+  await reply.send(...editedUser);
 };
 
 export default async (fastify: FastifyInstance): Promise<void> => {
