@@ -8,6 +8,8 @@ export async function up(knex: Knex): Promise<void> {
       .notNullable();
     table.string('forename', 255).notNullable();
     table.string('surname', 255).notNullable();
+    table.boolean('admin').notNullable();
+    table.boolean('blender').notNullable();
     table.string('salt', 128).notNullable();
     table.string('password_hash', 255).notNullable();
     table.timestamps(true, true);
