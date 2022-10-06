@@ -29,8 +29,8 @@ const userSearchResponse = Type.Object({
   email: Type.String(),
   forename: Type.String(),
   surname: Type.String(),
-  isAdmin: Type.Boolean(),
-  isBlender: Type.Boolean(),
+  admin: Type.Boolean(),
+  blender: Type.Boolean(),
 });
 export type UserSearchResponse = Static<typeof userSearchResponse>;
 
@@ -56,7 +56,7 @@ const fetchAllSchema = {
   summary: 'Fetch all users',
   tags: ['User'],
   response: {
-    200: userSearchResponse,
+    200: fetchAllResponse,
     401: { $ref: 'error' },
     403: { $ref: 'error' },
   },
@@ -106,7 +106,6 @@ const searchUserHandler = async (
   }>,
   reply: FastifyReply
 ): Promise<void> => {
-  // Search by id and/or email?
   // TODO: Authorization check
   // TODO: Don't return if user is archived
   const userId = req.params.userId;
@@ -119,8 +118,8 @@ const searchUserHandler = async (
       email: result?.email,
       forename: result?.forename,
       surname: result?.surname,
-      isAdmin: result?.admin,
-      isBlender: result?.blender,
+      admin: result?.admin,
+      blender: result?.blender,
     });
   }
 };
@@ -131,13 +130,8 @@ const fetchAllHandler = async (
 ): Promise<void> => {
   // TODO: Authorization
   const result = await knexController<User>('user').select();
-  console.log(result);
-
-  await reply.send({
-    email: `TODO:`,
-    forename: 'adminin kaikki',
-    surname: 'käyttäjät-haku',
-  });
+  // Fastify validation removes id, hash and salt
+  await reply.send(result);
 };
 
 const createHandler = async (
