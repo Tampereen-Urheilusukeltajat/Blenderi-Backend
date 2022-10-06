@@ -2,6 +2,8 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { Type, Static } from '@sinclair/typebox';
 import { knexController } from '../../database/database';
 
+import bcrypt from 'bcrypt';
+
 const editUserResponse = Type.Object({
   email: Type.String(),
   forename: Type.String(),
@@ -46,22 +48,38 @@ const editUserSchema = {
   },
 };
 
+const hashPassword = async (
+  password: string
+): Promise<{ hash: string; salt: string }> => {
+  const saltRounds = 10;
+
+  const salt = bcrypt.genSaltSync(saltRounds);
+  const hash = bcrypt.hashSync(password, salt);
+
+  return { hash, salt };
+};
+
 const editUserHandler = async (
   req: FastifyRequest<{ Body: User }>,
   reply: FastifyReply
 ): Promise<void> => {
   const { email, password, forename, surname } = req.body;
 
-  // TODO password hash
+  // hash password.
+  const hashObj = await hashPassword(password);
+
+  // TODO check if passwords match before editing.
 
   // edit user (TODO edit email?)
-  const editResponse = await knexController('user')
-    .where({ email })
-    .update({ password_hash: password, forename, surname });
+  const editResponse = await knexController('user').where({ email }).update({
+    password_hash: hashObj.hash,
+    forename,
+    surname,
+    salt: hashObj.salt,
+  });
 
   // If no user found with given email.
   if (editResponse === 0) {
-    // TODO
     throw new Error('No user found with given email.');
   }
 
