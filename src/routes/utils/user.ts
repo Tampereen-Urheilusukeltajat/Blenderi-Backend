@@ -2,24 +2,24 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { Type, Static } from '@sinclair/typebox';
 import { knexController } from '../../database/database';
 
-const user = Type.Object({
+const editUserResponse = Type.Object({
   email: Type.String(),
   forename: Type.String(),
   surname: Type.String(),
   password: Type.String(),
 });
 
-export type User = Static<typeof user>;
+export type EditUserResponse = Static<typeof editUserResponse>;
 
 // Expected request type
-interface IQuerystring {
+interface User {
   email: string;
   forename: string;
   surname: string;
   password: string;
 }
 
-const schema = {
+const editUserSchema = {
   description: 'Edit data of already existing user.',
   summary: 'Edit user',
   tags: ['User'],
@@ -42,18 +42,12 @@ const schema = {
     },
   },
   response: {
-    200: user,
-  },
-  400: {
-    $ref: 'error',
-  },
-  500: {
-    $ref: 'error',
+    200: editUserResponse,
   },
 };
 
-const handler = async (
-  req: FastifyRequest<{ Body: IQuerystring }>,
+const editUserHandler = async (
+  req: FastifyRequest<{ Body: User }>,
   reply: FastifyReply
 ): Promise<void> => {
   const { email, password, forename, surname } = req.body;
@@ -65,6 +59,7 @@ const handler = async (
     .where({ email })
     .update({ password_hash: password, forename, surname });
 
+  // If no user found with given email.
   if (editResponse === 0) {
     // TODO
     throw new Error('No user found with given email.');
@@ -82,8 +77,8 @@ const handler = async (
 export default async (fastify: FastifyInstance): Promise<void> => {
   fastify.route({
     method: 'PUT',
-    url: '/user',
-    handler,
-    schema,
+    url: '/user/',
+    handler: editUserHandler,
+    schema: editUserSchema,
   });
 };
