@@ -1,38 +1,68 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { Type, Static } from '@sinclair/typebox';
-import { knexController } from '../database/database';
+import { knexController } from '../../database/database';
 
-const typeboxParam = Type.Object({
+const user = Type.Object({
+  id: Type.Number(),
+  email: Type.String(),
+  forename: Type.String(),
+  surname: Type.String(),
+  admin: Type.Boolean(),
+  blender: Type.Boolean(),
+  salt: Type.String(),
+  password_hash: Type.String(),
+});
+export type User = Static<typeof user>;
+
+const searchParamsPayload = Type.Object({
   userId: Type.Optional(Type.String()),
 });
+export type SearchParamsPayload = Static<typeof searchParamsPayload>;
 
-export type TypeboxParam = Static<typeof typeboxParam>;
+const searchQuerystringPayload = Type.Object({
+  email: Type.Optional(Type.String()),
+});
+export type SearchQuerystringPayload = Static<typeof searchQuerystringPayload>;
 
 const userAddedResponse = Type.Object({
   status: Type.String(),
 });
-
 export type UserAddedResponse = Static<typeof userAddedResponse>;
 
 // TODO: Make another response type with more user information for admin view
 const userSearchResponse = Type.Object({
   email: Type.String(),
-  firstName: Type.String(),
-  lastName: Type.String(),
+  forename: Type.String(),
+  surname: Type.String(),
 });
-
 export type UserSearchResponse = Static<typeof userSearchResponse>;
+
+const fetchAllResponse = Type.Array(userSearchResponse);
+export type FetchAllResponse = Static<typeof fetchAllResponse>;
 
 const searchSchema = {
   description: 'Search for an user with given id',
   summary: 'Search user',
   tags: ['User'],
-  params: typeboxParam,
+  params: searchParamsPayload,
+  querystring: searchQuerystringPayload, // doesnt do anything atm
+  response: {
+    200: userSearchResponse,
+    400: { $ref: 'error' },
+    401: { $ref: 'error' },
+    403: { $ref: 'error' },
+    404: { $ref: 'error' },
+  },
+};
+
+const fetchAllSchema = {
+  description: 'Fetch all users',
+  summary: 'Fetch all users',
+  tags: ['User'],
   response: {
     200: userSearchResponse,
     401: { $ref: 'error' },
     403: { $ref: 'error' },
-    404: { $ref: 'error' },
   },
 };
 
@@ -75,23 +105,53 @@ const createSchema = {
 };
 
 const searchUserHandler = async (
-  req: FastifyRequest<{ Params: TypeboxParam }>,
+  req: FastifyRequest<{
+    Params: SearchParamsPayload;
+    Querystring: SearchQuerystringPayload;
+  }>,
   reply: FastifyReply
 ): Promise<void> => {
+  // Search by id and/or email?
   // TODO: Authorization check
-  // TODO: DB query
+  // TODO: Don't return if user is archived
   const userId = req.params.userId;
+  const email = req.query.email;
+
   if (userId !== undefined) {
+    const result = await knexController<User>('user')
+      .where('id', userId)
+      .first();
     await reply.send({
-      email: `${userId}@hello.fi`,
-      firstName: userId,
-      lastName: 'Esimerkki',
+      email: result?.email,
+      forename: result?.forename,
+      surname: result?.surname,
     });
   }
+  if (email !== undefined) {
+    // turha atm
+    const result = await knexController<User>('user')
+      .where('email', email)
+      .first();
+    await reply.send({
+      email: result?.email,
+      forename: result?.forename,
+      surname: result?.surname,
+    });
+  }
+};
+
+const fetchAllHandler = async (
+  req: FastifyRequest,
+  reply: FastifyReply
+): Promise<void> => {
+  // TODO: Authorization
+  const result = await knexController<User>('user').select();
+  console.log(result);
+
   await reply.send({
-    email: `toimiiko`,
-    firstName: 'parametriton',
-    lastName: 'path vihdoinkin??',
+    email: `TODO:`,
+    forename: 'adminin kaikki',
+    surname: 'käyttäjät-haku',
   });
 };
 
@@ -128,14 +188,18 @@ const createHandler = async (
 };
 
 export default async (fastify: FastifyInstance): Promise<void> => {
-  ['/user', '/user/:userId'].forEach((path) =>
-    fastify.route({
-      method: 'GET',
-      url: path,
-      handler: searchUserHandler,
-      schema: searchSchema,
-    })
-  );
+  fastify.route({
+    method: 'GET',
+    url: '/user',
+    handler: fetchAllHandler,
+    schema: fetchAllSchema,
+  });
+  fastify.route({
+    method: 'GET',
+    url: '/user/:userId',
+    handler: searchUserHandler,
+    schema: searchSchema,
+  });
   fastify.route({
     method: 'POST',
     url: '/user',
