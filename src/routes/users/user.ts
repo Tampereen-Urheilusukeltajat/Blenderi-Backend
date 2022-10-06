@@ -15,14 +15,9 @@ const user = Type.Object({
 export type User = Static<typeof user>;
 
 const searchParamsPayload = Type.Object({
-  userId: Type.Optional(Type.String()),
+  userId: Type.String(),
 });
 export type SearchParamsPayload = Static<typeof searchParamsPayload>;
-
-const searchQuerystringPayload = Type.Object({
-  email: Type.Optional(Type.String()),
-});
-export type SearchQuerystringPayload = Static<typeof searchQuerystringPayload>;
 
 const userAddedResponse = Type.Object({
   status: Type.String(),
@@ -34,6 +29,8 @@ const userSearchResponse = Type.Object({
   email: Type.String(),
   forename: Type.String(),
   surname: Type.String(),
+  isAdmin: Type.Boolean(),
+  isBlender: Type.Boolean(),
 });
 export type UserSearchResponse = Static<typeof userSearchResponse>;
 
@@ -45,7 +42,6 @@ const searchSchema = {
   summary: 'Search user',
   tags: ['User'],
   params: searchParamsPayload,
-  querystring: searchQuerystringPayload, // doesnt do anything atm
   response: {
     200: userSearchResponse,
     400: { $ref: 'error' },
@@ -107,7 +103,6 @@ const createSchema = {
 const searchUserHandler = async (
   req: FastifyRequest<{
     Params: SearchParamsPayload;
-    Querystring: SearchQuerystringPayload;
   }>,
   reply: FastifyReply
 ): Promise<void> => {
@@ -115,7 +110,6 @@ const searchUserHandler = async (
   // TODO: Authorization check
   // TODO: Don't return if user is archived
   const userId = req.params.userId;
-  const email = req.query.email;
 
   if (userId !== undefined) {
     const result = await knexController<User>('user')
@@ -125,17 +119,8 @@ const searchUserHandler = async (
       email: result?.email,
       forename: result?.forename,
       surname: result?.surname,
-    });
-  }
-  if (email !== undefined) {
-    // turha atm
-    const result = await knexController<User>('user')
-      .where('email', email)
-      .first();
-    await reply.send({
-      email: result?.email,
-      forename: result?.forename,
-      surname: result?.surname,
+      isAdmin: result?.admin,
+      isBlender: result?.blender,
     });
   }
 };
