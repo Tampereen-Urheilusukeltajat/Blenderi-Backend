@@ -23,6 +23,9 @@ const editUserSchema = {
       'admin',
     ],
     properties: {
+      id: {
+        type: 'number',
+      },
       email: {
         type: 'string',
       },
@@ -66,17 +69,20 @@ const editUserHandler = async (
   req: FastifyRequest<{ Body: User }>,
   reply: FastifyReply
 ): Promise<void> => {
-  const { email, password, forename, surname } = req.body;
+  const { id, email, password, forename, surname, admin, blender } = req.body;
 
   // hash password.
   const hashObj = await hashPassword(password);
 
   // edit user (TODO edit email?)
-  const editResponse = await knexController('user').where({ email }).update({
-    password_hash: hashObj.hash,
+  const editResponse = await knexController('user').where({ id }).update({
+    email,
     forename,
     surname,
+    password_hash: hashObj.hash,
     salt: hashObj.salt,
+    admin,
+    blender,
   });
 
   // If no user found with given email.
@@ -88,7 +94,7 @@ const editUserHandler = async (
   const editedUser = await knexController
     .select('id', 'email', 'forename', 'surname', 'admin', 'blender')
     .from<User>('user')
-    .where({ email });
+    .where({ id });
 
   await reply.send(...editedUser);
 };

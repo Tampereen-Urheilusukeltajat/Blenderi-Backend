@@ -5,8 +5,8 @@ const user = Type.Object({
   email: Type.String(),
   forename: Type.String(),
   surname: Type.String(),
-  isAdmin: Type.Boolean(),
-  isBlender: Type.Boolean(),
+  admin: Type.Boolean(),
+  blender: Type.Boolean(),
   salt: Type.String(),
   password: Type.String(),
 });
