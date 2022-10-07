@@ -10,16 +10,8 @@ const editUserSchema = {
   tags: ['User'],
   body: {
     type: 'object',
-    required: [
-      'id',
-      'email',
-      'password',
-      'salt',
-      'forename',
-      'surname',
-      'isBlender',
-      'isAdmin',
-    ],
+    // TODO omit password?
+    required: ['id', 'email', 'password'],
     properties: user.static,
   },
   response: {
