@@ -48,7 +48,7 @@ const searchUserHandler = async (
   const userId = req.params.userId;
   const user: UserResponse = await knexController<User>('user')
     .where('id', userId)
-    .first('email', 'forename', 'surname', 'admin', 'blender');
+    .first('email', 'forename', 'surname', 'is_admin', 'is_blender');
   if (user === undefined) {
     throw new Error('User was not found');
   }
