@@ -44,7 +44,7 @@ const searchUserHandler = async (
   reply: FastifyReply
 ): Promise<void> => {
   // TODO: Authorization check
-  // TODO: Don't return if user is archived
+  // TODO: Don't return if user is archived or deleted
   const userId = req.params.userId;
   const user: UserResponse = await knexController<User>('user')
     .where('id', userId)
