@@ -17,8 +17,8 @@ const editUserSchema = {
       'salt',
       'forename',
       'surname',
-      'blender',
-      'admin',
+      'isBlender',
+      'isAdmin',
     ],
     properties: user.static,
   },
@@ -42,7 +42,8 @@ const editUserHandler = async (
   req: FastifyRequest<{ Body: User }>,
   reply: FastifyReply
 ): Promise<void> => {
-  const { id, email, password, forename, surname, admin, blender } = req.body;
+  const { id, email, password, forename, surname, isAdmin, isBlender } =
+    req.body;
 
   const hashObj = await hashPassword(password);
 
@@ -53,8 +54,8 @@ const editUserHandler = async (
     surname,
     password_hash: hashObj.hash,
     salt: hashObj.salt,
-    admin,
-    blender,
+    is_admin: isAdmin,
+    is_blender: isBlender,
   });
 
   // If no user found with given id.
@@ -64,7 +65,14 @@ const editUserHandler = async (
 
   // get edited user
   const editedUser = await knexController
-    .select('id', 'email', 'forename', 'surname', 'admin', 'blender')
+    .select(
+      'id',
+      'email',
+      'forename',
+      'surname',
+      'is_admin as isAdmin',
+      'is_blender as isBlender'
+    )
     .from<User>('user')
     .where({ id });
 

@@ -5,8 +5,8 @@ export const user = Type.Object({
   email: Type.String(),
   forename: Type.String(),
   surname: Type.String(),
-  admin: Type.Boolean(),
-  blender: Type.Boolean(),
+  isAdmin: Type.Boolean(),
+  isBlender: Type.Boolean(),
   salt: Type.String(),
   password: Type.String(),
 });
@@ -17,8 +17,8 @@ export const editUserResponse = Type.Object({
   email: Type.String(),
   forename: Type.String(),
   surname: Type.String(),
-  admin: Type.Boolean(),
-  blender: Type.Boolean(),
+  isAdmin: Type.Boolean(),
+  isBlender: Type.Boolean(),
 });
 
 export type EditUserResponse = Static<typeof editUserResponse>;
