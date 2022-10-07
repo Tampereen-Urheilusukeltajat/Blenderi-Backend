@@ -1,25 +1,10 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { Type, Static } from '@sinclair/typebox';
 import { knexController } from '../../database/database';
+import { User, editUserResponse } from '../../types/user.types';
 
 import bcrypt from 'bcrypt';
 
-const editUserResponse = Type.Object({
-  email: Type.String(),
-  forename: Type.String(),
-  surname: Type.String(),
-  password: Type.String(),
-});
-
-export type EditUserResponse = Static<typeof editUserResponse>;
-
 // Expected request type
-interface User {
-  email: string;
-  forename: string;
-  surname: string;
-  password: string;
-}
 
 const editUserSchema = {
   description: 'Edit data of already existing user.',
@@ -27,7 +12,16 @@ const editUserSchema = {
   tags: ['User'],
   body: {
     type: 'object',
-    required: ['email', 'password', 'forename', 'surname'],
+    required: [
+      'id',
+      'email',
+      'password',
+      'salt',
+      'forename',
+      'surname',
+      'blender',
+      'admin',
+    ],
     properties: {
       email: {
         type: 'string',
@@ -36,6 +30,15 @@ const editUserSchema = {
         type: 'string',
       },
       surname: {
+        type: 'string',
+      },
+      admin: {
+        type: 'boolean',
+      },
+      blender: {
+        type: 'boolean',
+      },
+      salt: {
         type: 'string',
       },
       password: {
@@ -68,8 +71,6 @@ const editUserHandler = async (
   // hash password.
   const hashObj = await hashPassword(password);
 
-  // TODO check if passwords match before editing.
-
   // edit user (TODO edit email?)
   const editResponse = await knexController('user').where({ email }).update({
     password_hash: hashObj.hash,
@@ -85,7 +86,7 @@ const editUserHandler = async (
 
   // get edited user
   const editedUser = await knexController
-    .select('email', 'password_hash as password', 'forename', 'surname')
+    .select('id', 'email', 'forename', 'surname', 'admin', 'blender')
     .from<User>('user')
     .where({ email });
 
