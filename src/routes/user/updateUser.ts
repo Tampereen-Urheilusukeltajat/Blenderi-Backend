@@ -1,63 +1,68 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { knexController } from '../../database/database';
-import { User, editUserResponse, user } from '../../types/user.types';
-
-import bcrypt from 'bcrypt';
+import { hashPassword } from '../../lib/auth';
+import {
+  User,
+  editUserResponse,
+  user,
+  UserParamsPayload,
+  HashObj,
+} from '../../types/user.types';
 
 const editUserSchema = {
   description: 'Edit data of already existing user.',
   summary: 'Edit user',
-  tags: ['User'],
+  tags: ['User', 'Update'],
   body: {
     type: 'object',
-    required: ['id', 'email'],
+    required: [],
     properties: user.static,
   },
   response: {
     200: editUserResponse,
+    500: { $ref: 'error' },
+    400: { $ref: 'error' },
+    404: { $ref: 'error' },
   },
 };
 
-const hashPassword = async (
-  password: string
-): Promise<{ hash: string; salt: string }> => {
-  const saltRounds = 10;
-
-  const salt = bcrypt.genSaltSync(saltRounds);
-  const hash = bcrypt.hashSync(password, salt);
-
-  return { hash, salt };
-};
-
 const editUserHandler = async (
-  req: FastifyRequest<{ Body: User }>,
+  req: FastifyRequest<{ Body: User; Params: UserParamsPayload }>,
   reply: FastifyReply
 ): Promise<void> => {
-  const { id, email, password, forename, surname, isAdmin, isBlender } =
-    req.body;
+  const { email, password, forename, surname, isAdmin, isBlender } = req.body;
 
+  const userId = req.params.userId;
+
+  let hashObj: HashObj = {
+    hash: undefined,
+    salt: undefined,
+  };
   // If no password given as parameter, no need to hash.
-  let hashObj: { hash: string; salt: string } = { hash: '', salt: '' };
   if (password !== undefined) {
     hashObj = await hashPassword(password);
   }
 
   // edit user
   const editResponse = await knexController('user')
-    .where({ id })
+    .where({ id: userId })
     .update({
       email,
       forename,
       surname,
-      password_hash: hashObj.hash !== '' ? hashObj.hash : undefined,
-      salt: hashObj.hash !== '' ? hashObj.salt : undefined,
+      password_hash: hashObj.hash,
+      salt: hashObj.salt,
       is_admin: isAdmin,
       is_blender: isBlender,
     });
 
   // If no user found with given id.
   if (editResponse === 0) {
-    throw new Error('No user found with given email.');
+    return reply.code(404).send({
+      statusCode: 404,
+      error: 'Bad Request',
+      message: 'User not found.',
+    });
   }
 
   // get edited user
@@ -71,15 +76,15 @@ const editUserHandler = async (
       'is_blender as isBlender'
     )
     .from<User>('user')
-    .where({ id });
+    .where({ id: userId });
 
   await reply.send(...editedUser);
 };
 
 export default async (fastify: FastifyInstance): Promise<void> => {
   fastify.route({
-    method: 'PUT',
-    url: '/user/',
+    method: 'PATCH',
+    url: '/user/:userId',
     handler: editUserHandler,
     schema: editUserSchema,
   });
