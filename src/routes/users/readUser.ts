@@ -19,7 +19,6 @@ const searchSchema = {
   params: searchParamsPayload,
   response: {
     200: userResponse,
-    400: { $ref: 'error' },
     401: { $ref: 'error' },
     403: { $ref: 'error' },
     404: { $ref: 'error' },
