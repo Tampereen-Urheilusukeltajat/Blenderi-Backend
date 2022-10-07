@@ -10,8 +10,7 @@ const editUserSchema = {
   tags: ['User'],
   body: {
     type: 'object',
-    // TODO omit password?
-    required: ['id', 'email', 'password'],
+    required: ['id', 'email'],
     properties: user.static,
   },
   response: {
@@ -37,18 +36,24 @@ const editUserHandler = async (
   const { id, email, password, forename, surname, isAdmin, isBlender } =
     req.body;
 
-  const hashObj = await hashPassword(password);
+  // If no password given as parameter, no need to hash.
+  let hashObj: { hash: string; salt: string } = { hash: '', salt: '' };
+  if (password !== undefined) {
+    hashObj = await hashPassword(password);
+  }
 
   // edit user
-  const editResponse = await knexController('user').where({ id }).update({
-    email,
-    forename,
-    surname,
-    password_hash: hashObj.hash,
-    salt: hashObj.salt,
-    is_admin: isAdmin,
-    is_blender: isBlender,
-  });
+  const editResponse = await knexController('user')
+    .where({ id })
+    .update({
+      email,
+      forename,
+      surname,
+      password_hash: hashObj.hash !== '' ? hashObj.hash : undefined,
+      salt: hashObj.hash !== '' ? hashObj.salt : undefined,
+      is_admin: isAdmin,
+      is_blender: isBlender,
+    });
 
   // If no user found with given id.
   if (editResponse === 0) {
