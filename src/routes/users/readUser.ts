@@ -48,7 +48,13 @@ const searchUserHandler = async (
   const userId = req.params.userId;
   const user: UserResponse = await knexController<User>('user')
     .where('id', userId)
-    .first('email', 'forename', 'surname', 'is_admin', 'is_blender');
+    .first(
+      'email',
+      'forename',
+      'surname',
+      'is_admin as isAdmin',
+      'is_blender as isBlender'
+    );
   if (user === undefined) {
     throw new Error('User was not found');
   }
@@ -64,8 +70,8 @@ const fetchAllHandler = async (
     'email',
     'forename',
     'surname',
-    'admin',
-    'blender'
+    'is_admin as isAdmin',
+    'is_blender as isBlender'
   );
   await reply.send(users);
 };

@@ -5,10 +5,10 @@ const user = Type.Object({
   email: Type.String(),
   forename: Type.String(),
   surname: Type.String(),
-  admin: Type.Boolean(),
-  blender: Type.Boolean(),
+  isAdmin: Type.Boolean(),
+  isBlender: Type.Boolean(),
   salt: Type.String(),
-  password_hash: Type.String(),
+  passwordHash: Type.String(),
 });
 export type User = Static<typeof user>;
 
@@ -16,8 +16,8 @@ const userResponse = Type.Object({
   email: Type.String(),
   forename: Type.String(),
   surname: Type.String(),
-  admin: Type.Boolean(),
-  blender: Type.Boolean(),
+  isAdmin: Type.Boolean(),
+  isBlender: Type.Boolean(),
 });
 export type UserResponse = Static<typeof userResponse>;
 
