@@ -1,10 +1,8 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { knexController } from '../../database/database';
-import { User, editUserResponse } from '../../types/user.types';
+import { User, editUserResponse, user } from '../../types/user.types';
 
 import bcrypt from 'bcrypt';
-
-// Expected request type
 
 const editUserSchema = {
   description: 'Edit data of already existing user.',
@@ -22,32 +20,7 @@ const editUserSchema = {
       'blender',
       'admin',
     ],
-    properties: {
-      id: {
-        type: 'number',
-      },
-      email: {
-        type: 'string',
-      },
-      forename: {
-        type: 'string',
-      },
-      surname: {
-        type: 'string',
-      },
-      admin: {
-        type: 'boolean',
-      },
-      blender: {
-        type: 'boolean',
-      },
-      salt: {
-        type: 'string',
-      },
-      password: {
-        type: 'string',
-      },
-    },
+    properties: user.static,
   },
   response: {
     200: editUserResponse,
@@ -71,10 +44,9 @@ const editUserHandler = async (
 ): Promise<void> => {
   const { id, email, password, forename, surname, admin, blender } = req.body;
 
-  // hash password.
   const hashObj = await hashPassword(password);
 
-  // edit user (TODO edit email?)
+  // edit user
   const editResponse = await knexController('user').where({ id }).update({
     email,
     forename,
@@ -85,7 +57,7 @@ const editUserHandler = async (
     blender,
   });
 
-  // If no user found with given email.
+  // If no user found with given id.
   if (editResponse === 0) {
     throw new Error('No user found with given email.');
   }

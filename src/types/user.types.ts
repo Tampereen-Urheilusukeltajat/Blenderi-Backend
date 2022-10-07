@@ -1,6 +1,6 @@
 import { Type, Static } from '@sinclair/typebox';
 
-const user = Type.Object({
+export const user = Type.Object({
   id: Type.String(),
   email: Type.String(),
   forename: Type.String(),
