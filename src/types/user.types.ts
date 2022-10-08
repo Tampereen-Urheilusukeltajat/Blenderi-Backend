@@ -1,5 +1,4 @@
 import { Type, Static } from '@sinclair/typebox';
-import { hash } from 'bcrypt';
 
 export const user = Type.Object({
   id: Type.String(),
@@ -31,8 +30,8 @@ const userParamsPayload = Type.Object({
 export type UserParamsPayload = Static<typeof userParamsPayload>;
 
 const hashObj = Type.Object({
-  hash: Type.Union([Type.String(), Type.Undefined()]),
-  salt: Type.Union([Type.String(), Type.Undefined()]),
+  hash: Type.String(),
+  salt: Type.String(),
 });
 
 export type HashObj = Static<typeof hashObj>;

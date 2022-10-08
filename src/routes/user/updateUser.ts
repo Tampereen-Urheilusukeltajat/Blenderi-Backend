@@ -1,3 +1,4 @@
+import { hash } from 'bcrypt';
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { knexController } from '../../database/database';
 import { hashPassword } from '../../lib/auth';
@@ -34,10 +35,7 @@ const editUserHandler = async (
 
   const userId = req.params.userId;
 
-  let hashObj: HashObj = {
-    hash: undefined,
-    salt: undefined,
-  };
+  let hashObj: HashObj | undefined;
   // If no password given as parameter, no need to hash.
   if (password !== undefined) {
     hashObj = await hashPassword(password);
@@ -50,8 +48,8 @@ const editUserHandler = async (
       email,
       forename,
       surname,
-      password_hash: hashObj.hash,
-      salt: hashObj.salt,
+      password_hash: hashObj !== undefined ? hashObj.hash : undefined,
+      salt: hashObj !== undefined ? hashObj.salt : undefined,
       is_admin: isAdmin,
       is_blender: isBlender,
     });
@@ -60,7 +58,7 @@ const editUserHandler = async (
   if (editResponse === 0) {
     return reply.code(404).send({
       statusCode: 404,
-      error: 'Bad Request',
+      error: 'Not Found',
       message: 'User not found.',
     });
   }
