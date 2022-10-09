@@ -10,11 +10,9 @@ const searchParamsPayload = Type.Object({
 });
 type SearchParamsPayload = Static<typeof searchParamsPayload>;
 
-const fetchAllResponse = Type.Array(userResponse);
-
-const searchSchema = {
-  description: 'Search for an user with given id',
-  summary: 'Search user',
+const schema = {
+  description: 'Get user with given id',
+  summary: 'Get user',
   tags: ['User'],
   params: searchParamsPayload,
   response: {
@@ -25,18 +23,7 @@ const searchSchema = {
   },
 };
 
-const fetchAllSchema = {
-  description: 'Fetch all users',
-  summary: 'Fetch all users',
-  tags: ['User'],
-  response: {
-    200: fetchAllResponse,
-    401: { $ref: 'error' },
-    403: { $ref: 'error' },
-  },
-};
-
-const searchUserHandler = async (
+const handler = async (
   req: FastifyRequest<{
     Params: SearchParamsPayload;
   }>,
@@ -55,37 +42,20 @@ const searchUserHandler = async (
       'is_blender as isBlender'
     );
   if (user === undefined) {
-    throw new Error('User was not found');
+    await reply.code(404).send({
+      statusCode: 404,
+      error: 'Not Found',
+      message: 'User was not found with given userId',
+    });
   }
   await reply.send(user);
-};
-
-const fetchAllHandler = async (
-  req: FastifyRequest,
-  reply: FastifyReply
-): Promise<void> => {
-  // TODO: Authorization
-  const users = await knexController<User>('user').select(
-    'email',
-    'forename',
-    'surname',
-    'is_admin as isAdmin',
-    'is_blender as isBlender'
-  );
-  await reply.send(users);
 };
 
 export default async (fastify: FastifyInstance): Promise<void> => {
   fastify.route({
     method: 'GET',
-    url: '/user',
-    handler: fetchAllHandler,
-    schema: fetchAllSchema,
-  });
-  fastify.route({
-    method: 'GET',
     url: '/user/:userId',
-    handler: searchUserHandler,
-    schema: searchSchema,
+    handler,
+    schema,
   });
 };
