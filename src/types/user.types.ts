@@ -45,7 +45,7 @@ export const userAdminResponse = Type.Object({
   isBlender: Type.Boolean(),
 });
 
-export type userAdminResponse = Static<typeof userAdminResponse>;
+export type UserAdminResponse = Static<typeof userAdminResponse>;
 
 export const userIdParamsPayload = Type.Object({
   userId: Type.String(),
