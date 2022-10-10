@@ -54,7 +54,7 @@ const handler = async (
 export default async (fastify: FastifyInstance): Promise<void> => {
   fastify.route({
     method: 'DELETE',
-    url: '/user/delete/:userId',
+    url: '/user/:userId',
     handler,
     schema,
   });
