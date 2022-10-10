@@ -1,10 +1,9 @@
-import { hash } from 'bcrypt';
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { knexController } from '../../database/database';
 import { hashPassword } from '../../lib/auth';
 import {
   UpdateUserBody,
-  editUserResponse,
+  userAdminResponse,
   user,
   UserIdParamsPayload,
   HashObj,
@@ -21,7 +20,7 @@ const editUserSchema = {
     properties: user.static,
   },
   response: {
-    200: editUserResponse,
+    200: userAdminResponse,
     500: { $ref: 'error' },
     400: { $ref: 'error' },
     404: { $ref: 'error' },

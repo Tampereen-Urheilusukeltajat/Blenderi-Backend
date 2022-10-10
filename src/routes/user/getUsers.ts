@@ -2,9 +2,9 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { Type } from '@sinclair/typebox';
 import { knexController } from '../../database/database';
 
-import { User, userResponse } from '../../types/user.types';
+import { User, userAdminResponse } from '../../types/user.types';
 
-const fetchAllResponse = Type.Array(userResponse);
+const fetchAllResponse = Type.Array(userAdminResponse);
 
 const schema = {
   description: 'Fetch all users',
@@ -23,6 +23,7 @@ const handler = async (
 ): Promise<void> => {
   // TODO: Authorization
   const users = await knexController<User>('user').select(
+    'id',
     'email',
     'forename',
     'surname',

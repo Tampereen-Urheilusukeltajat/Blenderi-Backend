@@ -1,19 +1,19 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { Type, Static } from '@sinclair/typebox';
 import { knexController } from '../../database/database';
 
-import { User, userResponse, UserResponse } from '../../types/user.types';
-
-const searchParamsPayload = Type.Object({
-  userId: Type.String(),
-});
-type SearchParamsPayload = Static<typeof searchParamsPayload>;
+import {
+  User,
+  userResponse,
+  UserResponse,
+  userIdParamsPayload,
+  UserIdParamsPayload,
+} from '../../types/user.types';
 
 const schema = {
   description: 'Get user with given id',
   summary: 'Get user',
   tags: ['User'],
-  params: searchParamsPayload,
+  params: userIdParamsPayload,
   response: {
     200: userResponse,
     401: { $ref: 'error' },
@@ -24,7 +24,7 @@ const schema = {
 
 const handler = async (
   req: FastifyRequest<{
-    Params: SearchParamsPayload;
+    Params: UserIdParamsPayload;
   }>,
   reply: FastifyReply
 ): Promise<void> => {

@@ -36,7 +36,7 @@ export const userResponse = Type.Object({
 
 export type UserResponse = Static<typeof userResponse>;
 
-export const editUserResponse = Type.Object({
+export const userAdminResponse = Type.Object({
   id: Type.String(),
   email: Type.String(),
   forename: Type.String(),
@@ -45,9 +45,9 @@ export const editUserResponse = Type.Object({
   isBlender: Type.Boolean(),
 });
 
-export type EditUserResponse = Static<typeof editUserResponse>;
+export type userAdminResponse = Static<typeof userAdminResponse>;
 
-const userIdParamsPayload = Type.Object({
+export const userIdParamsPayload = Type.Object({
   userId: Type.String(),
 });
 
