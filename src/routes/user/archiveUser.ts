@@ -28,7 +28,7 @@ const schema = {
 const handler = async (
   req: FastifyRequest<{ Params: UserIdParamsPayload }>,
   reply: FastifyReply
-) => {
+): Promise<void> => {
   // TODO: Authorization
   const userId: string = req.params.userId;
   const result = await knexController('user').where({ id: userId }).update({
@@ -44,7 +44,7 @@ const handler = async (
   const user = await knexController('user')
     .where({ id: userId })
     .select('id as userId', 'archived_at as archivedAt');
-  await reply.code(200).send(...user);
+  return reply.code(200).send(...user);
 };
 
 export default async (fastify: FastifyInstance): Promise<void> => {
