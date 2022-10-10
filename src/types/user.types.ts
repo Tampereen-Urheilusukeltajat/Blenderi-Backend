@@ -9,6 +9,8 @@ export const user = Type.Object({
   isBlender: Type.Boolean(),
   salt: Type.String(),
   passwordHash: Type.String(),
+  archivedAt: Type.String(),
+  deletedAt: Type.String(),
 });
 
 export type User = Static<typeof user>;
@@ -27,11 +29,13 @@ export const updateUserBody = Type.Object({
 export type UpdateUserBody = Static<typeof updateUserBody>;
 
 export const userResponse = Type.Object({
+  userId: Type.String(),
   email: Type.String(),
   forename: Type.String(),
   surname: Type.String(),
   isAdmin: Type.Boolean(),
   isBlender: Type.Boolean(),
+  archivedAt: Type.String(),
 });
 
 export type UserResponse = Static<typeof userResponse>;

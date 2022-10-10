@@ -29,18 +29,24 @@ const handler = async (
   reply: FastifyReply
 ): Promise<void> => {
   // TODO: Authorization check
-  // TODO: Don't return if user is archived or deleted
   const userId = req.params.userId;
-  const user: UserResponse = await knexController<User>('user')
+  const user: User = await knexController<User>('user')
     .where('id', userId)
     .first(
+      'id as userId',
       'email',
       'forename',
       'surname',
       'is_admin as isAdmin',
-      'is_blender as isBlender'
+      'is_blender as isBlender',
+      'archived_at as archivedAt',
+      'deleted_at as deletedAt'
     );
-  if (user === undefined) {
+  if (
+    user === undefined ||
+    user.archivedAt !== null ||
+    user.deletedAt !== null
+  ) {
     await reply.code(404).send({
       statusCode: 404,
       error: 'Not Found',
