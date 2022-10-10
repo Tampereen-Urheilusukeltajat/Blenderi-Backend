@@ -2,8 +2,7 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { Type, Static } from '@sinclair/typebox';
 import { knexController } from '../../database/database';
 
-import userTypes, { User, UserResponse } from '../../types/user.types';
-const { userResponse } = userTypes;
+import { User, userResponse, UserResponse } from '../../types/user.types';
 
 const searchParamsPayload = Type.Object({
   userId: Type.String(),

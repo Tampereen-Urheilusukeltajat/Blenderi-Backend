@@ -2,8 +2,7 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { Type } from '@sinclair/typebox';
 import { knexController } from '../../database/database';
 
-import userTypes, { User } from '../../types/user.types';
-const { userResponse } = userTypes;
+import { User, userResponse } from '../../types/user.types';
 
 const fetchAllResponse = Type.Array(userResponse);
 
