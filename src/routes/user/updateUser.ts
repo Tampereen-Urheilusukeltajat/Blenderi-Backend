@@ -1,13 +1,13 @@
-import { hash } from 'bcrypt';
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { knexController } from '../../database/database';
 import { hashPassword } from '../../lib/auth';
 import {
-  User,
-  editUserResponse,
+  UpdateUserBody,
+  userAdminResponse,
   user,
-  UserParamsPayload,
+  UserIdParamsPayload,
   HashObj,
+  User,
 } from '../../types/user.types';
 
 const editUserSchema = {
@@ -20,7 +20,7 @@ const editUserSchema = {
     properties: user.static,
   },
   response: {
-    200: editUserResponse,
+    200: userAdminResponse,
     500: { $ref: 'error' },
     400: { $ref: 'error' },
     404: { $ref: 'error' },
@@ -28,7 +28,7 @@ const editUserSchema = {
 };
 
 const editUserHandler = async (
-  req: FastifyRequest<{ Body: User; Params: UserParamsPayload }>,
+  req: FastifyRequest<{ Body: UpdateUserBody; Params: UserIdParamsPayload }>,
   reply: FastifyReply
 ): Promise<void> => {
   const { email, password, forename, surname, isAdmin, isBlender } = req.body;
@@ -73,7 +73,7 @@ const editUserHandler = async (
       'is_admin as isAdmin',
       'is_blender as isBlender'
     )
-    .from<User>('user')
+    .from<UpdateUserBody>('user')
     .where({ id: userId });
 
   await reply.send(...editedUser);

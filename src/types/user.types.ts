@@ -8,11 +8,35 @@ export const user = Type.Object({
   isAdmin: Type.Boolean(),
   isBlender: Type.Boolean(),
   salt: Type.String(),
-  password: Type.String(),
+  passwordHash: Type.String(),
 });
+
 export type User = Static<typeof user>;
 
-export const editUserResponse = Type.Object({
+export const updateUserBody = Type.Object({
+  id: Type.String(),
+  email: Type.String(),
+  forename: Type.String(),
+  surname: Type.String(),
+  isAdmin: Type.Boolean(),
+  isBlender: Type.Boolean(),
+  salt: Type.String(),
+  password: Type.String(),
+});
+
+export type UpdateUserBody = Static<typeof updateUserBody>;
+
+export const userResponse = Type.Object({
+  email: Type.String(),
+  forename: Type.String(),
+  surname: Type.String(),
+  isAdmin: Type.Boolean(),
+  isBlender: Type.Boolean(),
+});
+
+export type UserResponse = Static<typeof userResponse>;
+
+export const userAdminResponse = Type.Object({
   id: Type.String(),
   email: Type.String(),
   forename: Type.String(),
@@ -21,13 +45,13 @@ export const editUserResponse = Type.Object({
   isBlender: Type.Boolean(),
 });
 
-export type EditUserResponse = Static<typeof editUserResponse>;
+export type userAdminResponse = Static<typeof userAdminResponse>;
 
-const userParamsPayload = Type.Object({
+export const userIdParamsPayload = Type.Object({
   userId: Type.String(),
 });
 
-export type UserParamsPayload = Static<typeof userParamsPayload>;
+export type UserIdParamsPayload = Static<typeof userIdParamsPayload>;
 
 const hashObj = Type.Object({
   hash: Type.String(),
