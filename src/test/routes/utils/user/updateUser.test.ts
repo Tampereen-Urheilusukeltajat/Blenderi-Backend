@@ -17,7 +17,7 @@ const dbUser = {
 };
 
 describe('update user', () => {
-  const getTestIntance = async (): Promise<FastifyInstance> =>
+  const getTestInstance = async (): Promise<FastifyInstance> =>
     buildServer({
       routePrefix: 'api',
     });
