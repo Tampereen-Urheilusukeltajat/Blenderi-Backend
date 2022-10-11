@@ -1,12 +1,10 @@
-import { FastifyInstance } from 'fastify';
+import { FastifyInstance, FastifyReply } from 'fastify';
 import { knexController } from '../../database/database';
 import {
   User,
   userResponse,
   createUserRequestBody,
   CreateUserRequest,
-  CreateUserReply,
-  DatabaseError,
 } from '../../types/user.types';
 import { hashPassword } from '../../lib/auth';
 import { log } from '../../lib/log';
@@ -31,7 +29,7 @@ const schema = {
 
 const handler = async (
   request: CreateUserRequest,
-  reply: CreateUserReply
+  reply: FastifyReply
 ): Promise<void> => {
   // TODO: Add email unique constraint to user table and remove
   // this duplicate email check
@@ -43,33 +41,24 @@ const handler = async (
 
   if (emailCount > 0) {
     log.info('Tried to create user with duplicate email');
-    await reply.code(409);
-    await reply.send();
-    return;
+    return reply.code(409).send({
+      statusCode: 409,
+      error: 'Conflict',
+      message: 'Tried to create user with duplicate email',
+    });
   }
 
   const hashObj = await hashPassword(request.body.password);
 
-  try {
-    await knexController('user').insert({
-      email: request.body.email,
-      forename: request.body.forename,
-      surname: request.body.surname,
-      is_admin: false,
-      is_blender: false,
-      salt: hashObj.salt,
-      password_hash: hashObj.hash,
-    });
-  } catch (err: unknown) {
-    const dbError = err as DatabaseError;
-    if (dbError.code === 'ER_DUP_ENTRY') {
-      log.info('Tried to create user with duplicate email');
-      await reply.code(409);
-      await reply.send();
-      return;
-    }
-    throw err;
-  }
+  await knexController('user').insert({
+    email: request.body.email,
+    forename: request.body.forename,
+    surname: request.body.surname,
+    is_admin: false,
+    is_blender: false,
+    salt: hashObj.salt,
+    password_hash: hashObj.hash,
+  });
 
   // This is stupid way to get inserted data.
   // Too bad that mysql dialect doesn't have RETURNING clause.
@@ -86,8 +75,7 @@ const handler = async (
     )
     .where({ email: request.body.email });
 
-  await reply.code(201);
-  await reply.send(...createdUser);
+  return reply.code(201).send(...createdUser);
 };
 
 export default async (fastify: FastifyInstance): Promise<void> => {

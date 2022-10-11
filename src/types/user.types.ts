@@ -57,20 +57,8 @@ export const createUserRequestBody = Type.Object({
 export type CreateUserRequestBody = Static<typeof createUserRequestBody>;
 
 export type CreateUserRequest = FastifyRequest<{
-  Reply: UserResponse;
   Body: CreateUserRequestBody;
 }>;
-
-interface IUserResponse extends RouteGenericInterface {
-  Reply: UserResponse;
-}
-
-export type CreateUserReply = FastifyReply<
-  RawServerDefault,
-  RawRequestDefaultExpression,
-  RawReplyDefaultExpression,
-  IUserResponse
->;
 
 export const userAdminResponse = Type.Object({
   id: Type.String(),
