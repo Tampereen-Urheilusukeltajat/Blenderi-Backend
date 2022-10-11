@@ -83,5 +83,3 @@ const hashObj = Type.Object({
 });
 
 export type HashObj = Static<typeof hashObj>;
-
-export type DatabaseError = Error & { code: string };
