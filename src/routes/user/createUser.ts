@@ -12,8 +12,7 @@ import { hashPassword } from '../../lib/auth';
 import { log } from '../../lib/log';
 
 const schema = {
-  description: 'Create new user or return an error if add was not successful',
-  summary: 'Create user',
+  description: 'Creates a user',
   tags: ['User'],
   body: {
     type: 'object',
