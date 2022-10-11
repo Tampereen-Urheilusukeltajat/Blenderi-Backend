@@ -1,4 +1,4 @@
-import fastify, { FastifyInstance, FastifyError } from 'fastify';
+import fastify, { FastifyInstance } from 'fastify';
 import { fastifySwagger } from '@fastify/swagger';
 import { fastifyHelmet } from '@fastify/helmet';
 import fastifyCors from '@fastify/cors';
@@ -84,7 +84,7 @@ export const buildServer = async (opts: {
       dirNameRoutePrefix: (_folderParent, folderName) =>
         `${opts.routePrefix}/${folderName}`,
     })
-    .setErrorHandler(async (error: FastifyError, request, reply) => {
+    .setErrorHandler(async (error, request, reply) => {
       log.error({
         error: error.name,
         message: error.message,
@@ -94,10 +94,10 @@ export const buildServer = async (opts: {
         stack: error.stack,
       });
 
-      await reply.status(error.statusCode ?? 500).send({
-        statusCode: error.statusCode ?? 500,
-        error: error.name ?? 'Internal Server Error',
-        message: error.message ?? 'Internal Server Error',
+      await reply.status(500).send({
+        statusCode: 500,
+        error: 'Internal Server Error',
+        message: 'Internal Server Error',
       });
     })
     .withTypeProvider<TypeBoxTypeProvider>();
