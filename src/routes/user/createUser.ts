@@ -31,8 +31,6 @@ const handler = async (
   request: CreateUserRequest,
   reply: FastifyReply
 ): Promise<void> => {
-  // TODO: Add email unique constraint to user table and remove
-  // this duplicate email check
   const emailCount: number = await knexController<User>('user')
     .count('email')
     .where('email', request.body.email)
