@@ -1,4 +1,14 @@
 import { Type, Static } from '@sinclair/typebox';
+import {
+  FastifyRequest,
+  FastifyReply,
+  RawReplyDefaultExpression,
+  RawRequestDefaultExpression,
+  RawServerDefault,
+  RouteHandler,
+  RouteHandlerMethod,
+} from 'fastify';
+import { RouteGenericInterface } from 'fastify/types/route';
 
 export const user = Type.Object({
   id: Type.String(),
@@ -27,6 +37,7 @@ export const updateUserBody = Type.Object({
 export type UpdateUserBody = Static<typeof updateUserBody>;
 
 export const userResponse = Type.Object({
+  id: Type.String(),
   email: Type.String(),
   forename: Type.String(),
   surname: Type.String(),
@@ -35,6 +46,19 @@ export const userResponse = Type.Object({
 });
 
 export type UserResponse = Static<typeof userResponse>;
+
+export const createUserRequestBody = Type.Object({
+  email: Type.String(),
+  forename: Type.String(),
+  surname: Type.String(),
+  password: Type.String(),
+});
+
+export type CreateUserRequestBody = Static<typeof createUserRequestBody>;
+
+export type CreateUserRequest = FastifyRequest<{
+  Body: CreateUserRequestBody;
+}>;
 
 export const userAdminResponse = Type.Object({
   id: Type.String(),
