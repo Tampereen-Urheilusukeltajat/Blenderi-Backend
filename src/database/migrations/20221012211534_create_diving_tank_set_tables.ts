@@ -14,8 +14,9 @@ export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('tank_set', (table) => {
     table.uuid('id').primary();
     table.uuid('owner').references('id').inTable('user').notNullable();
-    table.string('name', 255).unique().notNullable();
+    table.string('name', 255).notNullable();
     table.timestamps(true, true);
+    table.unique(['owner', 'name']);
   });
 
   await knex.schema.createTable('tank_set_diving_cylinder', (table) => {
