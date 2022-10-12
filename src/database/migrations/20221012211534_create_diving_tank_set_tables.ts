@@ -18,7 +18,7 @@ export async function up(knex: Knex): Promise<void> {
     table.timestamps(true, true);
   });
 
-  await knex.schema.createTable('tank_set_diving_cylider', (table) => {
+  await knex.schema.createTable('tank_set_diving_cylinder', (table) => {
     table
       .uuid('cylinder')
       .references('id')
