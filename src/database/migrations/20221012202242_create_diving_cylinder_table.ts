@@ -4,7 +4,6 @@ export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('diving_cylinder', (table) => {
     table.uuid('id').primary();
     table.uuid('owner').references('id').inTable('user').notNullable();
-    table.string('name', 255).notNullable();
     table.integer('volume').notNullable();
     table.integer('pressure').notNullable();
     table.string('material', 32).notNullable();
