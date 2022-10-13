@@ -1,4 +1,3 @@
-import { hash } from 'bcrypt';
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { knexController } from '../../database/database';
 import { hashPassword } from '../../lib/auth';
