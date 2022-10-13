@@ -11,7 +11,7 @@ export async function up(knex: Knex): Promise<void> {
     table.timestamps(true, true);
   });
 
-  await knex.schema.createTable('tank_set', (table) => {
+  await knex.schema.createTable('diving_cylinder_set', (table) => {
     table.uuid('id').primary();
     table.uuid('owner').references('id').inTable('user').notNullable();
     table.string('name', 255).notNullable();
@@ -19,18 +19,22 @@ export async function up(knex: Knex): Promise<void> {
     table.unique(['owner', 'name']);
   });
 
-  await knex.schema.createTable('tank_set_diving_cylinder', (table) => {
+  await knex.schema.createTable('diving_cylinder_to_set', (table) => {
     table
       .uuid('cylinder')
       .references('id')
       .inTable('diving_cylinder')
       .primary();
-    table.uuid('tank_set').references('id').inTable('tank_set').primary();
+    table
+      .uuid('cylinder_set')
+      .references('id')
+      .inTable('diving_cylinder_set')
+      .primary();
   });
 }
 
 export async function down(knex: Knex): Promise<void> {
-  await knex.schema.dropTableIfExists('tank_set_diving_cylinder');
-  await knex.schema.dropTableIfExists('tank_set');
+  await knex.schema.dropTableIfExists('diving_cylinder_to_set');
+  await knex.schema.dropTableIfExists('diving_cylinder_set');
   await knex.schema.dropTableIfExists('diving_cylinder');
 }
