@@ -30,7 +30,7 @@ export async function up(knex: Knex): Promise<void> {
 }
 
 export async function down(knex: Knex): Promise<void> {
-  await knex.schema.dropTable('tank_set_diving_cylinder');
-  await knex.schema.dropTable('tank_set');
-  await knex.schema.dropTable('diving_cylinder');
+  await knex.schema.dropTableIfExists('tank_set_diving_cylinder');
+  await knex.schema.dropTableIfExists('tank_set');
+  await knex.schema.dropTableIfExists('diving_cylinder');
 }
