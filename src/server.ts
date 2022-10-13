@@ -1,13 +1,19 @@
-import fastify, { FastifyInstance } from 'fastify';
+import fastify, {
+  FastifyInstance,
+  FastifyRequest,
+  FastifyReply,
+} from 'fastify';
 import { fastifySwagger } from '@fastify/swagger';
 import { fastifyHelmet } from '@fastify/helmet';
 import fastifyCors from '@fastify/cors';
+import jwt from '@fastify/jwt';
 import { fastifyAutoload } from '@fastify/autoload';
 import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 
 import { log } from './lib/log';
 import path from 'path';
-import { errorHandler } from './lib/errorHandler';
+
+const secret = 'donthackme';
 
 export const buildServer = async (opts: {
   routePrefix: string;
@@ -53,8 +59,14 @@ export const buildServer = async (opts: {
             bearerAuth: [],
           },
         ],
-        consumes: ['application/json'],
-        produces: ['application/json'],
+        consumes: ['serverlication/json'],
+        produces: ['serverlication/json'],
+        tags: [
+          {
+            name: 'Utility',
+            description: 'Utility endpoints',
+          },
+        ],
       },
       exposeRoute: true,
     })
@@ -74,25 +86,46 @@ export const buildServer = async (opts: {
         cb(null, true);
       },
     })
+    .register(jwt, {
+      secret,
+    })
+    .decorate(
+      'authenticate',
+      async (request: FastifyRequest, reply: FastifyReply) => {
+        try {
+          await request.jwtVerify();
+        } catch (err) {
+          reply
+            .code(401)
+            .send({
+              statusCode: 401,
+              error: 'Unauthorized',
+              message: 'please do authenticate yourself',
+            });
+        }
+      }
+    )
     .register(fastifyAutoload, {
       dir: path.join(__dirname, 'routes'),
       dirNameRoutePrefix: (_folderParent, folderName) =>
         `${opts.routePrefix}/${folderName}`,
     })
     .setErrorHandler(async (error, request, reply) => {
-      if (error.statusCode === undefined) {
-        log.error({
-          error: error.name,
-          message: error.message,
-          url: request.url,
-          method: request.method,
-          body: request.body,
-          stack: error.stack,
-          statusCode: error.statusCode,
-        });
-      }
+      log.error({
+        code: error.code,
+        error: error.name,
+        message: error.message,
+        url: request.url,
+        method: request.method,
+        body: request.body,
+        stack: error.stack,
+      });
 
-      await errorHandler(reply, error.statusCode, error.message);
+      await reply.status(500).send({
+        statusCode: 500,
+        error: 'Internal Server Error',
+        message: 'Internal Server Error',
+      });
     })
     .withTypeProvider<TypeBoxTypeProvider>();
 
