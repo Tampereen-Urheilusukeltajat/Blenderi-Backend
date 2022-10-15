@@ -14,11 +14,7 @@ const editUserSchema = {
   description: 'Edit data of already existing user.',
   summary: 'Edit user',
   tags: ['User', 'Update'],
-  body: {
-    type: 'object',
-    required: [],
-    properties: user.static,
-  },
+  body: user,
   response: {
     200: userAdminResponse,
     500: { $ref: 'error' },
