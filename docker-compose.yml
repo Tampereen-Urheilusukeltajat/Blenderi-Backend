@@ -1,14 +1,11 @@
-version: "3.9"
+version: '3.9'
 
 services:
   mariadb:
-    image: mariadb:latest
+    image: mariadb:10.9.3
     ports:
       - 33900:3306
     volumes:
-      - ~/apps/mariadb:/var/lib/mysql
-    environment:
-      - MYSQL_ROOT_PASSWORD=V3rySecretR00tPasswor4
-      - MYSQL_PASSWORD=V3rySecretPasswor4
-      - MYSQL_USER=blenderi
-      - MYSQL_DATABASE=blenderi
+      - ~/apps/blenderi:/var/lib/mysql
+    env_file:
+      - .env

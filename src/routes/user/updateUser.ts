@@ -3,11 +3,10 @@ import { knexController } from '../../database/database';
 import { hashPassword } from '../../lib/auth';
 import {
   UpdateUserBody,
-  userAdminResponse,
   user,
   UserIdParamsPayload,
   HashObj,
-  User,
+  userAdminResponse,
 } from '../../types/user.types';
 
 const editUserSchema = {

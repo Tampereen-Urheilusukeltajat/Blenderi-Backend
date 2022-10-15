@@ -1,14 +1,5 @@
 import { Type, Static } from '@sinclair/typebox';
-import {
-  FastifyRequest,
-  FastifyReply,
-  RawReplyDefaultExpression,
-  RawRequestDefaultExpression,
-  RawServerDefault,
-  RouteHandler,
-  RouteHandlerMethod,
-} from 'fastify';
-import { RouteGenericInterface } from 'fastify/types/route';
+import { FastifyRequest } from 'fastify';
 
 export const user = Type.Object({
   id: Type.String(),
@@ -69,7 +60,7 @@ export const userAdminResponse = Type.Object({
   isBlender: Type.Boolean(),
 });
 
-export type userAdminResponse = Static<typeof userAdminResponse>;
+export type UserAdminResponse = Static<typeof userAdminResponse>;
 
 export const userIdParamsPayload = Type.Object({
   userId: Type.String(),
