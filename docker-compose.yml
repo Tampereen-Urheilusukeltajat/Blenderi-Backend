@@ -9,3 +9,10 @@ services:
       - ~/apps/blenderi:/var/lib/mysql
     env_file:
       - .env
+    environment:
+      - MYSQL_HOST
+      - MYSQL_PORT
+      - MYSQL_DATABASE
+      - MYSQL_USER
+      - MYSQL_PASSWORD
+      - MYSQL_ROOT_PASSWORD
