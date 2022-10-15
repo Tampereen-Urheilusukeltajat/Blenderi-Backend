@@ -13,7 +13,7 @@ describe('update user', () => {
     });
 
   beforeAll(async () => {
-    await createTestDatabase('create_user');
+    await createTestDatabase('update_user');
   });
 
   afterAll(async () => {
@@ -75,7 +75,7 @@ describe('update user', () => {
       headers: { 'content-type': 'application/json' },
     });
 
-    expect(res.statusCode).toEqual(404);
+    expect(res.statusCode).toEqual(500);
 
     const resBody = JSON.parse(res.body) as EditUserResponse;
 
