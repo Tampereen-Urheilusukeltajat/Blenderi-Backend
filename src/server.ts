@@ -9,16 +9,16 @@ import { log } from './lib/log';
 import path from 'path';
 
 export const buildServer = async (opts: {
-  routePrefix: string
+  routePrefix: string;
 }): Promise<FastifyInstance> => {
   const server = fastify({
     logger: false,
     ignoreTrailingSlash: true,
     ajv: {
       customOptions: {
-        removeAdditional: 'all' // Remove additional params from the body etc
-      }
-    }
+        removeAdditional: 'all', // Remove additional params from the body etc
+      },
+    },
   });
 
   // Register plugins and routes
@@ -29,8 +29,8 @@ export const buildServer = async (opts: {
       properties: {
         statusCode: { type: 'number' },
         error: { type: 'string' },
-        message: { type: 'string' }
-      }
+        message: { type: 'string' },
+      },
     })
     .register(fastifySwagger, {
       routePrefix: `${opts.routePrefix}/documentation`,
@@ -38,47 +38,45 @@ export const buildServer = async (opts: {
         info: {
           title: 'Blenderi REST API',
           description: 'Documentation for Blenderi REST API',
-          version: '0.0.1'
+          version: '0.0.1',
         },
         securityDefinitions: {
           bearerAuth: {
             type: 'apiKey',
             name: 'Authorization',
-            in: 'header'
-          }
+            in: 'header',
+          },
         },
-        security: [{
-          bearerAuth: []
-        }],
-        consumes: ['serverlication/json'],
-        produces: ['serverlication/json'],
-        tags: [{
-          name: 'Utility',
-          description: 'Utility endpoints'
-        }
-        ]
+        security: [
+          {
+            bearerAuth: [],
+          },
+        ],
+        consumes: ['application/json'],
+        produces: ['application/json'],
       },
-      exposeRoute: true
+      exposeRoute: true,
     })
     .register(fastifyHelmet, {
       contentSecurityPolicy: {
         directives: {
-          defaultSrc: ['\'self\''],
-          styleSrc: ['\'self\'', '\'unsafe-inline\''],
-          imgSrc: ['\'self\'', 'data:', 'validator.swagger.io'],
-          scriptSrc: ['\'self\'', 'https: \'unsafe-inline\'']
-        }
-      }
+          defaultSrc: ["'self'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          imgSrc: ["'self'", 'data:', 'validator.swagger.io'],
+          scriptSrc: ["'self'", "https: 'unsafe-inline'"],
+        },
+      },
     })
     .register(fastifyCors, {
       origin: (origin, cb) => {
         // TODO: Configure CORS
         cb(null, true);
-      }
+      },
     })
     .register(fastifyAutoload, {
       dir: path.join(__dirname, 'routes'),
-      dirNameRoutePrefix: (_folderParent, folderName) => `${opts.routePrefix}/${folderName}`
+      dirNameRoutePrefix: (_folderParent, folderName) =>
+        `${opts.routePrefix}/${folderName}`,
     })
     .setErrorHandler(async (error, request, reply) => {
       log.error({
@@ -87,13 +85,13 @@ export const buildServer = async (opts: {
         url: request.url,
         method: request.method,
         body: request.body,
-        stack: error.stack
+        stack: error.stack,
       });
 
       await reply.status(500).send({
         statusCode: 500,
         error: 'Internal Server Error',
-        message: 'Internal Server Error'
+        message: 'Internal Server Error',
       });
     })
     .withTypeProvider<TypeBoxTypeProvider>();
