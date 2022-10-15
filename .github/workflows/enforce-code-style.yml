@@ -21,4 +21,4 @@ jobs:
       - name: Install packages
         run: npm install
       - name: Run linters
-        run: npx lint-staged
+        run: npm run enforce-style
