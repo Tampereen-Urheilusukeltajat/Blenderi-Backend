@@ -1,15 +1,5 @@
 import { Type, Static } from '@sinclair/typebox';
-import {
-  FastifyRequest,
-  FastifyReply,
-  RawReplyDefaultExpression,
-  RawRequestDefaultExpression,
-  RawServerDefault,
-  RouteHandler,
-  RouteHandlerMethod,
-} from 'fastify';
-import { RouteGenericInterface } from 'fastify/types/route';
-
+import { FastifyRequest } from 'fastify';
 export const user = Type.Object({
   id: Type.String(),
   email: Type.String(),

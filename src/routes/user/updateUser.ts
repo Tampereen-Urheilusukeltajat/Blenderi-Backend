@@ -7,7 +7,6 @@ import {
   user,
   UserIdParamsPayload,
   HashObj,
-  User,
 } from '../../types/user.types';
 
 const editUserSchema = {
