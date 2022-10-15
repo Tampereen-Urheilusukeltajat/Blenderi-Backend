@@ -78,7 +78,7 @@ const editUserHandler = async (
   // get edited user
   const editedUser = await knexController
     .select(
-      'id as userId',
+      'id',
       'email',
       'forename',
       'surname',

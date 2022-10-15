@@ -33,7 +33,7 @@ const handler = async (
   const result = await knexController<User>('user')
     .where('deleted_at', null)
     .select(
-      'id as userId',
+      'id',
       'email',
       'forename',
       'surname',
@@ -49,7 +49,7 @@ const handler = async (
 export default async (fastify: FastifyInstance): Promise<void> => {
   fastify.route({
     method: 'GET',
-    url: '/user',
+    url: '/',
     handler,
     schema,
   });
