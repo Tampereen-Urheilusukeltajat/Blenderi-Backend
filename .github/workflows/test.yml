@@ -5,16 +5,16 @@ on:
   pull_request:
     branches: [main]
 
-env:
-  MYSQL_HOST: ${{ env.MYSQL_HOST }}
-  MYSQL_PORT: ${{ env.MYSQL_PORT }}
-  MYSQL_DATABASE: ${{ env.MYSQL_DATABASE }}
-  MYSQL_USER: ${{ env.MYSQL_USER }}
-  MYSQL_PASSWORD: ${{ env.MYSQL_PASSWORD }}
-  MYSQL_ROOT_PASSWORD: ${{ env.MYSQL_ROOT_PASSWORD }}
-
 jobs:
   test:
+    environment: 'test'
+    env:
+      MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
+      MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
+      MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+      MYSQL_USER: ${{ secrets.MYSQL_USER }}
+      MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+      MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
     timeout-minutes: 60
     runs-on: ubuntu-latest
     strategy:
