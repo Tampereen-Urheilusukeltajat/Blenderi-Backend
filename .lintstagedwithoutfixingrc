@@ -1,3 +1,0 @@
-{
-  "**/*": ["eslint", "prettier --ignore-unknown"]
-}

@@ -43,7 +43,7 @@
     "start-dev": "nodemon",
     "test": "jest",
     "prepare": "husky install",
-    "enforce-style": "npx lint-staged --config .lintstagedwithoutfixingrc"
+    "enforce-style": "npx eslint . && npx prettier -c ."
   },
   "repository": {
     "type": "git",
