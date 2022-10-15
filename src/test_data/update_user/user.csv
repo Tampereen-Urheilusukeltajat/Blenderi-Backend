@@ -1,0 +1,2 @@
+id;email;forename;surname;is_admin;is_blender;salt;password_hash;archived_at;deleted_at;created_at;updated_at;
+2;test@email.fi;Tester;Blender;false;true;hash_#€&1!;suolaa;

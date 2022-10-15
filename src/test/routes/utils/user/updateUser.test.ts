@@ -4,17 +4,7 @@ import { FastifyInstance } from 'fastify';
 import { knexController } from '../../../../database/database';
 import { EditUserResponse } from '../../../../types/user.types';
 import { buildServer } from '../../../../server';
-
-const dbUser = {
-  id: 2,
-  email: 'test@email.fi',
-  forename: 'Tester',
-  surname: 'Blender',
-  is_admin: false,
-  is_blender: true,
-  password_hash: 'hash_#€&1!',
-  salt: 'suolaa',
-};
+import { createTestDatabase, dropTestDabase } from '../../../lib/testUtils';
 
 describe('update user', () => {
   const getTestInstance = async (): Promise<FastifyInstance> =>
@@ -23,12 +13,11 @@ describe('update user', () => {
     });
 
   beforeAll(async () => {
-    await knexController.migrate.down();
-    await knexController.migrate.up();
-    await knexController('user').insert(dbUser);
+    await createTestDatabase('create_user');
   });
 
   afterAll(async () => {
+    await dropTestDabase();
     await knexController.destroy();
   });
 
@@ -41,7 +30,7 @@ describe('update user', () => {
   };
 
   test('it returns obj with updated values', async () => {
-    const server = await getTestIntance();
+    const server = await getTestInstance();
 
     const res = await server.inject({
       url: 'api/user/user/2/',
@@ -58,7 +47,7 @@ describe('update user', () => {
   });
 
   test('it returns 404', async () => {
-    const server = await getTestIntance();
+    const server = await getTestInstance();
 
     const res = await server.inject({
       url: 'api/user/user/9999/',
@@ -76,7 +65,7 @@ describe('update user', () => {
   });
 
   test('it returns 500', async () => {
-    const server = await getTestIntance();
+    const server = await getTestInstance();
 
     const res = await server.inject({
       url: 'api/user/user/2',
