@@ -82,7 +82,7 @@ const editUserHandler = async (
 export default async (fastify: FastifyInstance): Promise<void> => {
   fastify.route({
     method: 'PATCH',
-    url: '/user/:userId',
+    url: '/:userId',
     handler: editUserHandler,
     schema: editUserSchema,
   });
