@@ -1,4 +1,4 @@
-name: Run tests
+name: enforce-code-style
 on:
   push:
     branches: [main]
@@ -6,7 +6,7 @@ on:
     branches: [main]
 
 jobs:
-  test:
+  enforce-style:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     strategy:
