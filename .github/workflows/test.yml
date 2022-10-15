@@ -19,7 +19,9 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Install packages
         run: npm install
+      - name: Create empty .env file
+        run: touch .env
       - name: Start the database
-        run: docker-compose up mariadb
+        run: docker-compose up -d mariadb
       - name: Run tests
         run: npm test
