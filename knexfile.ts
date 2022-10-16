@@ -6,7 +6,7 @@ export const TEST_DATABASE = 'test_db';
 const DB = process.env.MYSQL_DATABASE ?? 'db';
 if (DB === TEST_DATABASE)
   throw new Error(
-    `TEST_DATABASE and MYSQL_DATABASE can not have the same value! Used value was '${TEST_DATABASE}'`
+    `TEST_DATABASE and MYSQL_DATABASE can not have the same value!`
   );
 
 // MySQL client library is used to connect MariaDB

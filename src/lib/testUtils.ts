@@ -125,7 +125,7 @@ export const createTestDatabase = async (
     testDatabase: TEST_DATABASE,
   });
   await adminKnex.raw(
-    `GRANT ALL PRIVILEGES ON :testDatabase:.* TO ':testUser:'@'%' IDENTIFIED BY ':testUserPassword:'`,
+    `GRANT ALL PRIVILEGES ON :testDatabase:.* TO ':testUser:'@'172.18.0.1' IDENTIFIED BY ':testUserPassword:'`,
     {
       testDatabase: TEST_DATABASE,
       testUser: TEST_USER,
