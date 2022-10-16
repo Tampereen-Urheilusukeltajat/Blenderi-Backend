@@ -2,7 +2,6 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { knexController } from '../../database/database';
 
 import {
-  User,
   userResponse,
   UserResponse,
   userIdParamsPayload,
@@ -31,9 +30,10 @@ const handler = async (
   // TODO: Authorization check
   // TODO: Don't return if user is archived or deleted
   const userId = req.params.userId;
-  const user: UserResponse = await knexController<User>('user')
+  const user: UserResponse = await knexController<UserResponse>('user')
     .where('id', userId)
     .first(
+      'id',
       'email',
       'forename',
       'surname',
@@ -53,7 +53,7 @@ const handler = async (
 export default async (fastify: FastifyInstance): Promise<void> => {
   fastify.route({
     method: 'GET',
-    url: '/user/:userId',
+    url: '/:userId',
     handler,
     schema,
   });

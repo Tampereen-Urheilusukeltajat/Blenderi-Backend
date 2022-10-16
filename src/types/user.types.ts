@@ -15,7 +15,6 @@ export const user = Type.Object({
 export type User = Static<typeof user>;
 
 export const updateUserBody = Type.Object({
-  id: Type.String(),
   email: Type.String(),
   forename: Type.String(),
   surname: Type.String(),

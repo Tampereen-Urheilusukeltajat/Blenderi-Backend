@@ -52,14 +52,8 @@ export const buildServer = async (opts: {
             bearerAuth: [],
           },
         ],
-        consumes: ['serverlication/json'],
-        produces: ['serverlication/json'],
-        tags: [
-          {
-            name: 'Utility',
-            description: 'Utility endpoints',
-          },
-        ],
+        consumes: ['application/json'],
+        produces: ['application/json'],
       },
       exposeRoute: true,
     })

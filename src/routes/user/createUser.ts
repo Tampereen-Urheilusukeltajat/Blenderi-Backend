@@ -12,11 +12,7 @@ import { log } from '../../lib/log';
 const schema = {
   description: 'Creates a user',
   tags: ['User'],
-  body: {
-    type: 'object',
-    required: createUserRequestBody.required,
-    properties: createUserRequestBody.static,
-  },
+  body: createUserRequestBody,
   response: {
     201: userResponse,
     400: { $ref: 'error' },

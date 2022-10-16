@@ -34,7 +34,7 @@ const handler = async (
 export default async (fastify: FastifyInstance): Promise<void> => {
   fastify.route({
     method: 'GET',
-    url: '/user',
+    url: '/',
     handler,
     schema,
   });
