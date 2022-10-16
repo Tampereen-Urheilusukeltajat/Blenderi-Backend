@@ -115,17 +115,11 @@ export const createTestDatabase = async (
     },
   });
 
-  log.info({
-    testDatabase: TEST_DATABASE,
-    testUser: TEST_USER,
-    testUserPassword: TEST_USER_PASSWORD,
-  });
-
   await adminKnex.raw(`CREATE DATABASE IF NOT EXISTS :testDatabase:;`, {
     testDatabase: TEST_DATABASE,
   });
   await adminKnex.raw(
-    `GRANT ALL PRIVILEGES ON :testDatabase:.* TO ':testUser:'@'172.18.0.1' IDENTIFIED BY ':testUserPassword:'`,
+    `GRANT ALL PRIVILEGES ON :testDatabase:.* TO ':testUser:'@'%' IDENTIFIED BY ':testUserPassword:'`,
     {
       testDatabase: TEST_DATABASE,
       testUser: TEST_USER,
