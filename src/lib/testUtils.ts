@@ -12,6 +12,7 @@ import {
 } from '../../knexfile';
 import { readdir, readFile } from 'fs/promises';
 import { knexController } from '../database/database';
+import { log } from './log';
 
 const MYSQL_ROOT_PASSWORD = process.env.MYSQL_ROOT_PASSWORD;
 
@@ -113,6 +114,13 @@ export const createTestDatabase = async (
       password: MYSQL_ROOT_PASSWORD,
     },
   });
+
+  log.info({
+    testDatabase: TEST_DATABASE,
+    testUser: TEST_USER,
+    testUserPassword: TEST_USER_PASSWORD,
+  });
+
   await adminKnex.raw(`CREATE DATABASE IF NOT EXISTS :testDatabase:;`, {
     testDatabase: TEST_DATABASE,
   });
