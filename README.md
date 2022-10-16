@@ -40,6 +40,8 @@ When running the tests, a test database named `test_db` is created. It will run 
 To create a test data, create a new folder with a relevant name to the `test_data` folder and populate it with table csvs. The file must have exactly same name as the table that it is targeting.
 The `tableNameHere.csv` MUST USE ; as the delimeter between the columns!
 
+When new tables are added, they must be added to the `TABLE_READ_ORDER` constant!
+
 ## Project team
 
 - Akseli Kolari
