@@ -33,6 +33,13 @@ To create a new migration, run the following command in the project root folder.
 npx knex migrate:make MIGRATION_NAME_HERE
 ```
 
+### Test database
+
+When running the tests, a test database named `test_db` is created. It will run all the available migrations and it will also import test data relevant to the tests from `src/test_data` folder.
+
+To create a test data, create a new folder with a relevant name to the `test_data` folder and populate it with table csvs. The file must have exactly same name as the table that it is targeting.
+The `tableNameHere.csv` MUST USE ; as the delimeter between the columns!
+
 ## Project team
 
 - Akseli Kolari

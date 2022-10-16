@@ -57,9 +57,16 @@ export const createTestDatabase = async (
       password: MYSQL_ROOT_PASSWORD,
     },
   });
-  await adminKnex.raw(`CREATE DATABASE IF NOT EXISTS ${TEST_DATABASE};`);
+  await adminKnex.raw(`CREATE DATABASE IF NOT EXISTS :testDatabase;`, {
+    testDatabase: TEST_DATABASE,
+  });
   await adminKnex.raw(
-    `GRANT ALL PRIVILEGES ON ${TEST_DATABASE}.* TO '${TEST_USER}'@'%' IDENTIFIED BY '${TEST_USER_PASSWORD}'`
+    `GRANT ALL PRIVILEGES ON :testDatabase.* TO ':testUser'@'%' IDENTIFIED BY ':testUserPassword'`,
+    {
+      testDatabase: TEST_DATABASE,
+      testUser: TEST_USER,
+      testUserPassword: TEST_USER_PASSWORD,
+    }
   );
   await adminKnex.destroy();
 
@@ -77,6 +84,8 @@ export const dropTestDabase = async (): Promise<void> => {
       password: MYSQL_ROOT_PASSWORD,
     },
   });
-  await adminKnex.raw(`DROP DATABASE IF EXISTS ${TEST_DATABASE}`);
+  await adminKnex.raw(`DROP DATABASE IF EXISTS :testDatabase`, {
+    testDatabase: TEST_DATABASE,
+  });
   await adminKnex.destroy();
 };
