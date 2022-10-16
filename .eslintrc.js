@@ -9,14 +9,7 @@ module.exports = {
     'prettier',
   ],
   overrides: [],
-  ignorePatterns: [
-    '.eslintrc.js',
-    'package.json',
-    '*.md',
-    '*.yml',
-    '*.example',
-    '*.env',
-  ],
+  ignorePatterns: ['.eslintrc.js'],
   parserOptions: {
     project: './tsconfig.json',
     ecmaVersion: 'latest',

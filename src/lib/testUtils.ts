@@ -12,7 +12,6 @@ import {
 } from '../../knexfile';
 import { readdir, readFile } from 'fs/promises';
 import { knexController } from '../database/database';
-import { log } from './log';
 
 const MYSQL_ROOT_PASSWORD = process.env.MYSQL_ROOT_PASSWORD;
 
