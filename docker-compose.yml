@@ -6,7 +6,7 @@ services:
     ports:
       - 33900:3306
     volumes:
-      - ~/apps/blenderi:/var/lib/mysql
+      - ~/apps/blenderiApp:/var/lib/mysql
     env_file:
       - .env
     environment:

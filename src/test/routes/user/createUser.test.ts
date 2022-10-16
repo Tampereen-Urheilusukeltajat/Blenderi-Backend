@@ -1,7 +1,7 @@
 import { describe, test, expect, beforeAll, afterAll } from '@jest/globals';
 import { FastifyInstance } from 'fastify';
-import { knexController } from '../../../database/database';
 import { createTestDatabase, dropTestDabase } from '../../../lib/testUtils';
+import { knexController } from '../../../database/database';
 import { buildServer } from '../../../server';
 
 const USER_PAYLOAD = {
