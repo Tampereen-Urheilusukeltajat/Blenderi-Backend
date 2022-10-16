@@ -6,7 +6,7 @@ import {
   user,
   UserIdParamsPayload,
   HashObj,
-  userAdminResponse,
+  userResponse,
 } from '../../types/user.types';
 
 const editUserSchema = {
@@ -19,7 +19,7 @@ const editUserSchema = {
     properties: user.static,
   },
   response: {
-    200: userAdminResponse,
+    200: userResponse,
     500: { $ref: 'error' },
     400: { $ref: 'error' },
     404: { $ref: 'error' },

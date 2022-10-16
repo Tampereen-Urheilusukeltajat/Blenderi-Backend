@@ -51,17 +51,6 @@ export type CreateUserRequest = FastifyRequest<{
   Body: CreateUserRequestBody;
 }>;
 
-export const userAdminResponse = Type.Object({
-  id: Type.String(),
-  email: Type.String(),
-  forename: Type.String(),
-  surname: Type.String(),
-  isAdmin: Type.Boolean(),
-  isBlender: Type.Boolean(),
-});
-
-export type UserAdminResponse = Static<typeof userAdminResponse>;
-
 export const userIdParamsPayload = Type.Object({
   userId: Type.String(),
 });

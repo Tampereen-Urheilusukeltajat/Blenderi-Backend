@@ -2,14 +2,14 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { Type } from '@sinclair/typebox';
 import { knexController } from '../../database/database';
 
-import { User, userAdminResponse } from '../../types/user.types';
+import { User, userResponse } from '../../types/user.types';
 
 const schema = {
   description: 'Fetch all users',
   summary: 'Fetch all users',
   tags: ['User'],
   response: {
-    200: Type.Array(userAdminResponse),
+    200: Type.Array(userResponse),
     401: { $ref: 'error' },
     403: { $ref: 'error' },
   },
