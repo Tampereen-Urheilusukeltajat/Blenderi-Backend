@@ -2,23 +2,21 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { knexController } from '../../database/database';
 import { hashPassword } from '../../lib/auth';
 import {
+  updateUserBody,
   UpdateUserBody,
   userAdminResponse,
-  user,
+  userIdParamsPayload,
   UserIdParamsPayload,
   HashObj,
-  User,
+  UserResponse,
 } from '../../types/user.types';
 
 const editUserSchema = {
   description: 'Edit data of already existing user.',
   summary: 'Edit user',
   tags: ['User', 'Update'],
-  body: {
-    type: 'object',
-    required: [],
-    properties: user.static,
-  },
+  params: userIdParamsPayload,
+  body: updateUserBody,
   response: {
     200: userAdminResponse,
     500: { $ref: 'error' },
@@ -73,7 +71,7 @@ const editUserHandler = async (
       'is_admin as isAdmin',
       'is_blender as isBlender'
     )
-    .from<UpdateUserBody>('user')
+    .from<UserResponse>('user')
     .where({ id: userId });
 
   await reply.send(...editedUser);
@@ -82,7 +80,7 @@ const editUserHandler = async (
 export default async (fastify: FastifyInstance): Promise<void> => {
   fastify.route({
     method: 'PATCH',
-    url: '/user/:userId',
+    url: '/:userId',
     handler: editUserHandler,
     schema: editUserSchema,
   });
