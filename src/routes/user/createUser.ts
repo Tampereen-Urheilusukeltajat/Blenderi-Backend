@@ -8,6 +8,7 @@ import {
 } from '../../types/user.types';
 import { hashPassword } from '../../lib/auth';
 import { log } from '../../lib/log';
+import { errorHandler } from '../../lib/errorHandler';
 
 const schema = {
   description: 'Creates a user',
@@ -35,11 +36,11 @@ const handler = async (
 
   if (emailCount > 0) {
     log.debug('Tried to create user with duplicate email');
-    return reply.code(409).send({
-      statusCode: 409,
-      error: 'Conflict',
-      message: 'Tried to create user with duplicate email',
-    });
+    return errorHandler(
+      reply,
+      409,
+      'Tried to create user with duplicate email'
+    );
   }
 
   const hashObj = await hashPassword(request.body.password);

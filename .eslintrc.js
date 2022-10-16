@@ -25,5 +25,6 @@ module.exports = {
     'return-await': 'off',
     '@typescript-eslint/return-await': ['error', 'never'],
     'eol-last': ['error', 'always'],
+    '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
   },
 };
