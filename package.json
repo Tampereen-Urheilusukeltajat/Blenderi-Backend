@@ -42,7 +42,8 @@
   "scripts": {
     "start-dev": "nodemon",
     "test": "jest",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "enforce-style": "npx eslint src --max-warnings 0 && npx prettier -c ."
   },
   "repository": {
     "type": "git",
@@ -53,8 +54,5 @@
   "bugs": {
     "url": "https://github.com/Tampereen-Urheilusukeltajat/Blenderi-Backend/issues"
   },
-  "homepage": "https://github.com/Tampereen-Urheilusukeltajat/Blenderi-Backend#readme",
-  "lint-staged": {
-    "**/*": "prettier --write --ignore-unknown"
-  }
+  "homepage": "https://github.com/Tampereen-Urheilusukeltajat/Blenderi-Backend#readme"
 }

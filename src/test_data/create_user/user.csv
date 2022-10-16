@@ -1,0 +1,2 @@
+id;email;forename;surname;is_admin;is_blender;salt;password_hash;archived_at;deleted_at;created_at;updated_at;
+1;admin@admin.com;Admin;Admin;1;1;salt;password_hash;;;2020-01-19 03:14:07;2020-01-19 03:14:07;

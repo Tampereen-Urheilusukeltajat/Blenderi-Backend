@@ -34,7 +34,7 @@ const handler = async (
     .then((row: { 'count(`email`)': number }) => Number(row['count(`email`)']));
 
   if (emailCount > 0) {
-    log.info('Tried to create user with duplicate email');
+    log.debug('Tried to create user with duplicate email');
     return reply.code(409).send({
       statusCode: 409,
       error: 'Conflict',

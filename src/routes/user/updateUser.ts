@@ -4,10 +4,10 @@ import { hashPassword } from '../../lib/auth';
 import {
   updateUserBody,
   UpdateUserBody,
-  userAdminResponse,
-  userIdParamsPayload,
   UserIdParamsPayload,
   HashObj,
+  userResponse,
+  userIdParamsPayload,
   UserResponse,
 } from '../../types/user.types';
 
@@ -18,7 +18,7 @@ const editUserSchema = {
   params: userIdParamsPayload,
   body: updateUserBody,
   response: {
-    200: userAdminResponse,
+    200: userResponse,
     500: { $ref: 'error' },
     400: { $ref: 'error' },
     404: { $ref: 'error' },

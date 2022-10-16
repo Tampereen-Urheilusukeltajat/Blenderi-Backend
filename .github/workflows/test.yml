@@ -4,6 +4,15 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+
+env:
+  MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
+  MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
+  MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+  MYSQL_USER: ${{ secrets.MYSQL_USER }}
+  MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+  MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+
 jobs:
   test:
     timeout-minutes: 60
@@ -12,12 +21,16 @@ jobs:
       matrix:
         node-version: [18.x]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
       - name: Install packages
         run: npm install
+      - name: Create empty .env file
+        run: touch .env
+      - name: Start the database
+        run: docker-compose up -d mariadb
       - name: Run tests
         run: npm test
