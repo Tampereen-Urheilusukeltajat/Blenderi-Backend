@@ -1,6 +1,7 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { knexController } from '../../database/database';
 import { hashPassword } from '../../lib/auth';
+import { errorHandler } from '../../lib/errorHandler';
 import {
   updateUserBody,
   UpdateUserBody,
@@ -54,11 +55,7 @@ const editUserHandler = async (
 
   // If no user found with given id.
   if (editResponse === 0) {
-    return reply.code(404).send({
-      statusCode: 404,
-      error: 'Not Found',
-      message: 'User not found.',
-    });
+    return errorHandler(reply, 404, 'User not found.');
   }
 
   // get edited user
