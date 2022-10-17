@@ -6,6 +6,7 @@ import { errorHandler } from '../../lib/errorHandler';
 import {
   Cylinder,
   cylinderSet,
+  CylinderSet,
   createCylinderSet,
   CreateCylinderSet,
 } from '../../types/cylinderSet.types';
@@ -62,28 +63,40 @@ const handler = async (
           cylinder_set: setId,
         });
       }
+
+      const resultBody: CylinderSet | undefined = await trx(
+        'diving_cylinder_set'
+      )
+        .select<CylinderSet>('id', 'owner', 'name')
+        .where('id', setId)
+        .first();
+
+      if (resultBody === undefined)
+        return errorHandler(reply, 500, 'Database error');
+
+      resultBody.cylinders = await trx('diving_cylinder')
+        .innerJoin(
+          'diving_cylinder_to_set',
+          'diving_cylinder.id',
+          '=',
+          'diving_cylinder_to_set.cylinder'
+        )
+        .select<Cylinder[]>(
+          'id',
+          'volume',
+          'pressure',
+          'material',
+          'serial_number as serialNumber',
+          'inspection'
+        )
+        .where('diving_cylinder_to_set.cylinder_set', setId);
+
+      await reply.code(201).send(resultBody);
     })
     .catch(async (error) => {
       log.error(error);
       return errorHandler(reply, 500, '🖕');
     });
-
-  const NEW_CYLINDER_SET_PAYLOAD = {
-    id: '2345234',
-    owner: '1',
-    name: 'bottle',
-    cylinders: [
-      {
-        id: 'meetöihi',
-        volume: 15,
-        pressure: 200,
-        material: 'steel',
-        serialNumber: 'fakeittillyoumakeit',
-        inspection: '2020-01-01',
-      },
-    ],
-  };
-  await reply.code(201).send(NEW_CYLINDER_SET_PAYLOAD);
 };
 
 export default async (fastify: FastifyInstance): Promise<void> => {
