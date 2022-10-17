@@ -33,7 +33,7 @@ describe('update user', () => {
     const server = await getTestInstance();
 
     const res = await server.inject({
-      url: 'api/user/user/2/',
+      url: 'api/user/2/',
       payload: updatedUser,
       method: 'PATCH',
       headers: { 'content-type': 'application/json' },
@@ -50,7 +50,7 @@ describe('update user', () => {
     const server = await getTestInstance();
 
     const res = await server.inject({
-      url: 'api/user/user/9999/',
+      url: 'api/user/9999/',
       payload: updatedUser,
       method: 'PATCH',
       headers: { 'content-type': 'application/json' },
@@ -68,7 +68,7 @@ describe('update user', () => {
     const server = await getTestInstance();
 
     const res = await server.inject({
-      url: 'api/user/user/2',
+      url: 'api/user/2/',
       // incorrect payload
       payload: { kakka: '1234' },
       method: 'PATCH',
