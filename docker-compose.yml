@@ -5,7 +5,8 @@ services:
     image: mariadb:10.9.3
     ports:
       - 33900:3306
-    volumes: ~/apps/blenderiApp:/var/lib/mysql
+    volumes:
+      - ~/apps/blenderiApp:/var/lib/mysql
     env_file:
       - .env
     environment:
