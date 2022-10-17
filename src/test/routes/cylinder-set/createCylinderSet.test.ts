@@ -48,7 +48,15 @@ describe('create cylinder set', () => {
     delete responseBody.id;
     delete responseBody.cylinders[0].id;
 
-    expect(responseBody).toEqual(NEW_CYLINDER_SET_PAYLOAD);
+    expect(responseBody.cylinders[0].inspection).toContain(
+      NEW_CYLINDER_SET_PAYLOAD.cylinders[0].inspection
+    );
+    delete responseBody.cylinders[0].inspection;
+
+    const strippedPayload = NEW_CYLINDER_SET_PAYLOAD;
+    strippedPayload.cylinders[0].inspection =
+      responseBody.cylinders[0].inspection;
+    expect(responseBody).toEqual(strippedPayload);
   });
 
   // TODO: Test with missing user
