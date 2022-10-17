@@ -94,6 +94,13 @@ const handler = async (
       await reply.code(201).send(resultBody);
     })
     .catch(async (error) => {
+      if (error?.code === 'ER_DUP_ENTRY') {
+        return errorHandler(
+          reply,
+          409,
+          'Tried to create duplicate diving cylinder set'
+        );
+      }
       log.error(error);
       return errorHandler(reply, 500, '🖕');
     });
