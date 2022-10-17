@@ -68,7 +68,22 @@ const handler = async (
       return errorHandler(reply, 500, '🖕');
     });
 
-  await reply.code(201).send(cylinderSet.static);
+  const NEW_CYLINDER_SET_PAYLOAD = {
+    id: '2345234',
+    owner: '1',
+    name: 'bottle',
+    cylinders: [
+      {
+        id: 'meetöihi',
+        volume: 15,
+        pressure: 200,
+        material: 'steel',
+        serialNumber: 'fakeittillyoumakeit',
+        inspection: '2020-01-01',
+      },
+    ],
+  };
+  await reply.code(201).send(NEW_CYLINDER_SET_PAYLOAD);
 };
 
 export default async (fastify: FastifyInstance): Promise<void> => {

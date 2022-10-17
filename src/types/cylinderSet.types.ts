@@ -1,5 +1,4 @@
 import { Type, Static } from '@sinclair/typebox';
-import { create } from 'domain';
 
 export const createCylinderBody = Type.Object({
   volume: Type.Integer(),
