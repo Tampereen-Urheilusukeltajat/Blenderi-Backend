@@ -2,7 +2,7 @@
 import { describe, test, expect, beforeAll, afterAll } from '@jest/globals';
 import { FastifyInstance } from 'fastify';
 import { knexController } from '../../../../database/database';
-import { EditUserResponse } from '../../../../types/user.types';
+import { UserResponse } from '../../../../types/user.types';
 import { buildServer } from '../../../../server';
 import { createTestDatabase, dropTestDabase } from '../../../lib/testUtils';
 
@@ -39,7 +39,7 @@ describe('update user', () => {
       headers: { 'content-type': 'application/json' },
     });
 
-    const resBody = JSON.parse(res.body) as EditUserResponse;
+    const resBody = JSON.parse(res.body) as UserResponse;
     expect(resBody).toEqual({
       ...updatedUser,
       id: '2',
@@ -58,7 +58,7 @@ describe('update user', () => {
 
     expect(res.statusCode).toEqual(400);
 
-    const resBody = JSON.parse(res.body) as EditUserResponse;
+    const resBody = JSON.parse(res.body) as UserResponse;
 
     expect(resBody).toHaveProperty('error');
     expect(resBody).toHaveProperty('message');
@@ -77,7 +77,7 @@ describe('update user', () => {
 
     expect(res.statusCode).toEqual(400);
 
-    const resBody = JSON.parse(res.body) as EditUserResponse;
+    const resBody = JSON.parse(res.body) as UserResponse;
 
     expect(resBody).toHaveProperty('error');
     expect(resBody).toHaveProperty('message');
