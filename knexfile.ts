@@ -2,7 +2,12 @@ import 'dotenv/config';
 import path from 'path';
 import { log } from './src/lib/log';
 
+export const TEST_DATABASE = 'test_db';
 const DB = process.env.MYSQL_DATABASE ?? 'db';
+if (DB === TEST_DATABASE)
+  throw new Error(
+    `TEST_DATABASE and MYSQL_DATABASE can not have the same value!`
+  );
 
 // MySQL client library is used to connect MariaDB
 const MYSQL_USER = process.env.MYSQL_USER;
@@ -10,7 +15,6 @@ const MYSQL_PASSWORD = process.env.MYSQL_PASSWORD;
 const MYSQL_HOST = process.env.MYSQL_HOST;
 const MYSQL_PORT = Number(process.env.MYSQL_PORT);
 
-export const TEST_DATABASE = process.env.TEST_DATABASE ?? 'test_db';
 export const TEST_USER = process.env.TEST_USER ?? 'test_user';
 export const TEST_USER_PASSWORD =
   process.env.TEST_USER_PASSWORD ?? 'test_user_password';
