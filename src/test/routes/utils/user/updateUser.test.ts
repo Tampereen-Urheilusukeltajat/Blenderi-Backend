@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import { describe, test, expect, beforeAll, afterAll } from '@jest/globals';
 import { FastifyInstance } from 'fastify';
 import { knexController } from '../../../../database/database';
 import { UserResponse } from '../../../../types/user.types';
 import { buildServer } from '../../../../server';
-import { createTestDatabase, dropTestDabase } from '../../../lib/testUtils';
+import { createTestDatabase, dropTestDabase } from '../../../../lib/testUtils';
 
 describe('update user', () => {
   const getTestInstance = async (): Promise<FastifyInstance> =>
@@ -46,7 +45,7 @@ describe('update user', () => {
     });
   });
 
-  test('it returns 404', async () => {
+  test('it returns 404 when no user with given id.', async () => {
     const server = await getTestInstance();
 
     const res = await server.inject({
@@ -64,7 +63,7 @@ describe('update user', () => {
     expect(resBody).toHaveProperty('message');
   });
 
-  test('it returns 500', async () => {
+  test('it returns 500 when invalid body parameter.', async () => {
     const server = await getTestInstance();
 
     const res = await server.inject({
