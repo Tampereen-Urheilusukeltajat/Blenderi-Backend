@@ -23,7 +23,7 @@ export const updateUserBody = Type.Object({
   password: Type.Optional(Type.String()),
 });
 
-export type UpdateUserBody = Partial<Static<typeof updateUserBody>>;
+export type UpdateUserBody = Static<typeof updateUserBody>;
 
 export const userResponse = Type.Object({
   id: Type.String(),
