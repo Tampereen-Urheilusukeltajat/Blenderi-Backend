@@ -15,13 +15,12 @@ export const user = Type.Object({
 export type User = Static<typeof user>;
 
 export const updateUserBody = Type.Object({
-  email: Type.String(),
-  forename: Type.String(),
-  surname: Type.String(),
-  isAdmin: Type.Boolean(),
-  isBlender: Type.Boolean(),
-  salt: Type.String(),
-  password: Type.String(),
+  email: Type.Optional(Type.String()),
+  forename: Type.Optional(Type.String()),
+  surname: Type.Optional(Type.String()),
+  isAdmin: Type.Optional(Type.Boolean()),
+  isBlender: Type.Optional(Type.Boolean()),
+  password: Type.Optional(Type.String()),
 });
 
 export type UpdateUserBody = Partial<Static<typeof updateUserBody>>;

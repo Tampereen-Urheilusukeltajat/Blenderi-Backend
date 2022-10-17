@@ -46,7 +46,7 @@ describe('update user', () => {
     });
   });
 
-  test('it returns 400', async () => {
+  test('it returns 404', async () => {
     const server = await getTestInstance();
 
     const res = await server.inject({
@@ -56,7 +56,7 @@ describe('update user', () => {
       headers: { 'content-type': 'application/json' },
     });
 
-    expect(res.statusCode).toEqual(400);
+    expect(res.statusCode).toEqual(404);
 
     const resBody = JSON.parse(res.body) as UserResponse;
 
@@ -64,7 +64,7 @@ describe('update user', () => {
     expect(resBody).toHaveProperty('message');
   });
 
-  test('it returns 400', async () => {
+  test('it returns 500', async () => {
     const server = await getTestInstance();
 
     const res = await server.inject({
@@ -75,7 +75,7 @@ describe('update user', () => {
       headers: { 'content-type': 'application/json' },
     });
 
-    expect(res.statusCode).toEqual(400);
+    expect(res.statusCode).toEqual(500);
 
     const resBody = JSON.parse(res.body) as UserResponse;
 
