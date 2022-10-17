@@ -1,6 +1,8 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { knexController } from '../../database/database';
 import { v4 as uuid } from 'uuid';
+
+import { knexController } from '../../database/database';
+import { errorHandler } from '../../lib/errorHandler';
 import {
   Cylinder,
   cylinderSet,
@@ -61,16 +63,12 @@ const handler = async (
         });
       }
     })
-    .catch((error) => {
+    .catch(async (error) => {
       log.error(error);
-      return reply.code(500).send({
-        statusCode: 500,
-        error: 'Internal Server Error',
-        message: '🖕',
-      });
+      return errorHandler(reply, 500, '🖕');
     });
 
-  return reply.code(201).send(cylinderSet.static);
+  await reply.code(201).send(cylinderSet.static);
 };
 
 export default async (fastify: FastifyInstance): Promise<void> => {
