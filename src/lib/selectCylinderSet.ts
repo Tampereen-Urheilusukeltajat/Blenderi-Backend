@@ -12,7 +12,7 @@ export default async function selectCylinderSet(
     .first();
 
   if (set === undefined) {
-    log.info('Cylinder set seems to be missing: ' + id);
+    log.debug('Cylinder set seems to be missing: ' + id);
     return undefined;
   }
 
