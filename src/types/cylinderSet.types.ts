@@ -17,6 +17,17 @@ export const cylinder = Type.Intersect([
 
 export type Cylinder = Static<typeof cylinder>;
 
+export const updateCylinderBody = Type.Object({
+  id: Type.String({ format: 'uuid' }),
+  volume: Type.Optional(Type.Integer({ exclusiveMinimum: 0, maximum: 100 })),
+  pressure: Type.Optional(Type.Integer({ exclusiveMinimum: 0, maximum: 500 })),
+  material: Type.Optional(Type.String()),
+  serialNumber: Type.Optional(Type.String()),
+  inspection: Type.Optional(Type.String()),
+});
+
+export type UpdateCylinderBody = Static<typeof updateCylinderBody>;
+
 export const createCylinderSet = Type.Object({
   owner: Type.String(),
   name: Type.String({ minLength: 1, maxLength: 255 }),
@@ -33,3 +44,19 @@ export const cylinderSet = Type.Object({
 });
 
 export type CylinderSet = Static<typeof cylinderSet>;
+
+export const updateCylinderSet = Type.Object({
+  owner: Type.Optional(Type.String()),
+  name: Type.Optional(Type.String({ minLength: 1, maxLength: 255 })),
+  cylinders: Type.Optional(Type.Array(updateCylinderBody)),
+});
+
+export type UpdateCylinderSet = Static<typeof updateCylinderSet>;
+
+export const cylinderSetIdParamsPayload = Type.Object({
+  cylinderSetId: Type.String(),
+});
+
+export type CylinderSetIdParamsPayload = Static<
+  typeof cylinderSetIdParamsPayload
+>;
