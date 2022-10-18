@@ -86,7 +86,7 @@ describe('create cylinder set', () => {
     );
   });
 
-  test('it responds with 409 if user tries to create 2 cylinders with the same name', async () => {
+  test('it responds with 409 if same user tries to create 2 cylinder sets with the same name', async () => {
     const payload1 = {
       owner: '1',
       name: 'bottle3',
