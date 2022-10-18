@@ -1,8 +1,8 @@
 import { Type, Static } from '@sinclair/typebox';
 
 export const createCylinderBody = Type.Object({
-  volume: Type.Integer(),
-  pressure: Type.Integer(),
+  volume: Type.Integer({ exclusiveMinimum: 0, maximum: 100 }),
+  pressure: Type.Integer({ exclusiveMinimum: 0, maximum: 500 }),
   material: Type.String(),
   serialNumber: Type.String(),
   inspection: Type.String(),
@@ -19,7 +19,7 @@ export type Cylinder = Static<typeof cylinder>;
 
 export const createCylinderSet = Type.Object({
   owner: Type.String(),
-  name: Type.String(),
+  name: Type.String({ minLength: 1 }),
   cylinders: Type.Array(createCylinderBody),
 });
 
