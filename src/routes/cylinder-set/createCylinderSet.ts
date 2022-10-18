@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid';
 
 import { knexController } from '../../database/database';
 import { errorHandler } from '../../lib/errorHandler';
+import selectCylinderSet from '../../lib/selectCylinderSet';
 import {
   Cylinder,
   cylinderSet,
@@ -72,32 +73,13 @@ const handler = async (
         });
       }
 
-      const resultBody: CylinderSet | undefined = await trx(
-        'diving_cylinder_set'
-      )
-        .select<CylinderSet>('id', 'owner', 'name')
-        .where('id', setId)
-        .first();
-
-      if (resultBody === undefined)
-        return errorHandler(reply, 500, 'Database error');
-
-      resultBody.cylinders = await trx('diving_cylinder')
-        .innerJoin(
-          'diving_cylinder_to_set',
-          'diving_cylinder.id',
-          '=',
-          'diving_cylinder_to_set.cylinder'
-        )
-        .select<Cylinder[]>(
-          'id',
-          'volume',
-          'pressure',
-          'material',
-          'serial_number as serialNumber',
-          'inspection'
-        )
-        .where('diving_cylinder_to_set.cylinder_set', setId);
+      const resultBody: CylinderSet | undefined = await selectCylinderSet(
+        trx,
+        setId
+      );
+      if (resultBody === undefined) {
+        throw new Error('Database insertion failed: new cylinder set');
+      }
 
       await reply.code(201).send(resultBody);
     })
