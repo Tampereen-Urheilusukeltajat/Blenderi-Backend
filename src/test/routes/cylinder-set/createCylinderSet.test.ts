@@ -57,6 +57,48 @@ describe('create cylinder set', () => {
     expect(responseBody).toEqual(payload);
   });
 
+  test('it responds with 201 and proper body if creation of multiple cylinder set was successful', async () => {
+    const payload = {
+      owner: '1',
+      name: 'bottle0.1',
+      cylinders: [
+        {
+          volume: 15,
+          pressure: 200,
+          material: 'steel',
+          serialNumber: '3540965436löj564',
+          inspection: '2020-01-01',
+        },
+        {
+          volume: 15,
+          pressure: 200,
+          material: 'steel',
+          serialNumber: 'ihanerokoodi',
+          inspection: '2020-01-03',
+        },
+      ],
+    };
+
+    const server = await getTestInstance();
+    const res = await server.inject({
+      url: 'api/cylinder-set',
+      method: 'POST',
+      payload,
+    });
+
+    expect(res.statusCode).toEqual(201);
+    const responseBody = JSON.parse(res.body);
+
+    // remove ids and dates to enable comparison.
+    delete responseBody.id;
+    delete responseBody.cylinders[0].id;
+    delete responseBody.cylinders[1].id;
+    payload.cylinders[0].inspection = responseBody.cylinders[0].inspection;
+    payload.cylinders[1].inspection = responseBody.cylinders[1].inspection;
+
+    expect(responseBody).toEqual(payload);
+  });
+
   test('it responds with 400 if one of those cylinder inspection date are in the future', async () => {
     const date = new Date();
     date.setUTCFullYear(date.getUTCFullYear() + 2);
