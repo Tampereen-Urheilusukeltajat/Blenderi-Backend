@@ -34,11 +34,20 @@ const handler = async (
 ): Promise<void> => {
   // TODO: Authorization
 
-  const setId = uuid();
-  const cylinderIds: string[] = [];
+  // validate cylinder data
+  for (const cylinder of request.body.cylinders) {
+    // inspection date
+    const inspection = new Date(cylinder.inspection);
+    const thisYear = new Date().getUTCFullYear();
+    if (inspection.getUTCFullYear() > thisYear) {
+      return errorHandler(reply, 400, 'Inspection date from the future');
+    }
+  }
 
   await knexController
     .transaction(async (trx) => {
+      const setId = uuid();
+
       await trx('diving_cylinder_set').insert({
         id: setId,
         name: request.body.name,
@@ -47,6 +56,7 @@ const handler = async (
 
       for (const cylinder of request.body.cylinders) {
         const cylinderId = uuid();
+        const inspection = new Date(cylinder.inspection);
 
         await trx('diving_cylinder').insert<Cylinder>({
           id: cylinderId,
@@ -54,9 +64,8 @@ const handler = async (
           pressure: cylinder.pressure,
           material: cylinder.material,
           serial_number: cylinder.serialNumber,
-          inspection: cylinder.inspection,
+          inspection: inspection.toISOString().slice(0, 23),
         });
-        cylinderIds.push(cylinderId);
 
         await trx('diving_cylinder_to_set').insert({
           cylinder: cylinderId,
@@ -101,8 +110,13 @@ const handler = async (
           'Tried to create duplicate diving cylinder set'
         );
       }
+
+      if (error?.code === 'ER_NO_REFERENCED_ROW_2') {
+        return errorHandler(reply, 400, 'User not found');
+      }
+
       log.error(error);
-      return errorHandler(reply, 500, '🖕');
+      return errorHandler(reply, 500);
     });
 };
 
