@@ -10,7 +10,6 @@ import {
   createCylinderSet,
   CreateCylinderSet,
 } from '../../types/cylinderSet.types';
-import { log } from '../../lib/log';
 
 const schema = {
   description: 'Creates a diving cylinder set',
@@ -115,8 +114,7 @@ const handler = async (
         return errorHandler(reply, 400, 'User not found');
       }
 
-      log.error(error);
-      return errorHandler(reply, 500);
+      throw error;
     });
 };
 
