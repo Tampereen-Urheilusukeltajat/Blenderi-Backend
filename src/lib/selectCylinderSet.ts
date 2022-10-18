@@ -1,7 +1,5 @@
 import { Knex } from 'knex';
-
 import { Cylinder, CylinderSet } from '../types/cylinderSet.types';
-
 import { log } from './log';
 
 export default async function selectCylinderSet(
