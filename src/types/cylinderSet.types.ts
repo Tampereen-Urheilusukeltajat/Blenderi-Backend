@@ -20,7 +20,7 @@ export type Cylinder = Static<typeof cylinder>;
 export const createCylinderSet = Type.Object({
   owner: Type.String(),
   name: Type.String({ minLength: 1 }),
-  cylinders: Type.Array(createCylinderBody),
+  cylinders: Type.Array(createCylinderBody, { minItems: 1 }),
 });
 
 export type CreateCylinderSet = Static<typeof createCylinderSet>;

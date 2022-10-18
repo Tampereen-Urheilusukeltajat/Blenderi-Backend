@@ -33,5 +33,9 @@ export default async function selectCylinderSet(
     )
     .where('diving_cylinder_to_set.cylinder_set', id);
 
+  if (set.cylinders.length === 0) {
+    log.error('set without cylinders', set);
+    return undefined;
+  }
   return set;
 }

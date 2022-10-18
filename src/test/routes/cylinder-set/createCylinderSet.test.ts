@@ -205,4 +205,20 @@ describe('create cylinder set', () => {
 
     expect(res.statusCode).toEqual(400);
   });
+
+  test('it responds with 400 if set does not have cylinders', async () => {
+    const payload = {
+      owner: '1',
+      name: 'bottle7',
+      cylinders: [],
+    };
+    const server = await getTestInstance();
+    const res = await server.inject({
+      url: 'api/cylinder-set',
+      method: 'POST',
+      payload,
+    });
+
+    expect(res.statusCode).toEqual(400);
+  });
 });
