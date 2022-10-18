@@ -4,20 +4,6 @@ import { createTestDatabase, dropTestDatabase } from '../../../lib/testUtils';
 import { knexController } from '../../../database/database';
 import { buildServer } from '../../../server';
 
-const NEW_CYLINDER_SET_PAYLOAD = {
-  owner: '1',
-  name: 'bottle',
-  cylinders: [
-    {
-      volume: 15,
-      pressure: 200,
-      material: 'steel',
-      serialNumber: '3540965436löj564',
-      inspection: '2020-01-01',
-    },
-  ],
-};
-
 describe('create cylinder set', () => {
   const getTestInstance = async (): Promise<FastifyInstance> =>
     buildServer({
@@ -34,11 +20,25 @@ describe('create cylinder set', () => {
   });
 
   test('it responds with 201 and proper body if creation was successful', async () => {
+    const payload = {
+      owner: '1',
+      name: 'bottle',
+      cylinders: [
+        {
+          volume: 15,
+          pressure: 200,
+          material: 'steel',
+          serialNumber: '3540965436löj564',
+          inspection: '2020-01-01',
+        },
+      ],
+    };
+
     const server = await getTestInstance();
     const res = await server.inject({
       url: 'api/cylinder-set',
       method: 'POST',
-      payload: NEW_CYLINDER_SET_PAYLOAD,
+      payload,
     });
 
     expect(res.statusCode).toEqual(201);
@@ -49,16 +49,160 @@ describe('create cylinder set', () => {
     delete responseBody.cylinders[0].id;
 
     expect(responseBody.cylinders[0].inspection).toContain(
-      NEW_CYLINDER_SET_PAYLOAD.cylinders[0].inspection
+      payload.cylinders[0].inspection
     );
     delete responseBody.cylinders[0].inspection;
 
-    const strippedPayload = NEW_CYLINDER_SET_PAYLOAD;
-    strippedPayload.cylinders[0].inspection =
-      responseBody.cylinders[0].inspection;
-    expect(responseBody).toEqual(strippedPayload);
+    payload.cylinders[0].inspection = responseBody.cylinders[0].inspection;
+    expect(responseBody).toEqual(payload);
   });
 
-  // TODO: Test with missing user
-  // TODO: Test with invalid data volume = 0 etc
+  test('it responds with 400 if one of those cylinder inspection date are in the future', async () => {
+    const date = new Date();
+    date.setUTCFullYear(date.getUTCFullYear() + 2);
+    const payload = {
+      owner: '1',
+      name: 'bottle2',
+      cylinders: [
+        {
+          volume: 15,
+          pressure: 200,
+          material: 'aluminium',
+          serialNumber: '3540965436löj564',
+          inspection: date.toISOString(),
+        },
+      ],
+    };
+    const server = await getTestInstance();
+    const res = await server.inject({
+      url: 'api/cylinder-set',
+      method: 'POST',
+      payload,
+    });
+
+    expect(res.statusCode).toEqual(400);
+    expect(JSON.parse(res.body).message).toEqual(
+      'Inspection date from the future'
+    );
+  });
+
+  test('it responds with 409 if user tries to create 2 cylinders with the same name', async () => {
+    const payload1 = {
+      owner: '1',
+      name: 'bottle3',
+      cylinders: [
+        {
+          volume: 15,
+          pressure: 200,
+          material: 'steel',
+          serialNumber: '3540965436löj564',
+          inspection: '2020-01-01',
+        },
+      ],
+    };
+
+    const payload2 = {
+      owner: '1',
+      name: 'bottle3',
+      cylinders: [
+        {
+          volume: 10,
+          pressure: 300,
+          material: 'carbon fiber',
+          serialNumber: '35',
+          inspection: '2020-01-01',
+        },
+      ],
+    };
+
+    const server = await getTestInstance();
+    const res = await server.inject({
+      url: 'api/cylinder-set',
+      method: 'POST',
+      payload: payload1,
+    });
+
+    expect(res.statusCode).toEqual(201);
+
+    const res2 = await server.inject({
+      url: 'api/cylinder-set',
+      method: 'POST',
+      payload: payload2,
+    });
+
+    expect(res2.statusCode).toEqual(409);
+  });
+
+  test('it responds with 400 if user does not exists', async () => {
+    const payload = {
+      owner: '0', // not in user.csv
+      name: 'bottle4',
+      cylinders: [
+        {
+          volume: 15,
+          pressure: 200,
+          material: 'aluminium',
+          serialNumber: '3540965436löj564',
+          inspection: '2022-10-18T07:30:10.184Z',
+        },
+      ],
+    };
+    const server = await getTestInstance();
+    const res = await server.inject({
+      url: 'api/cylinder-set',
+      method: 'POST',
+      payload,
+    });
+
+    expect(res.statusCode).toEqual(400);
+    expect(JSON.parse(res.body).message).toEqual('User not found');
+  });
+
+  test('it responds with 400 if some cylinder has invalid value for volume', async () => {
+    const payload = {
+      owner: '1',
+      name: 'bottle5',
+      cylinders: [
+        {
+          volume: -1,
+          pressure: 200,
+          material: 'aluminium',
+          serialNumber: '3540965436löj564',
+          inspection: '2022-10-18T07:30:10.184Z',
+        },
+      ],
+    };
+    const server = await getTestInstance();
+    const res = await server.inject({
+      url: 'api/cylinder-set',
+      method: 'POST',
+      payload,
+    });
+
+    expect(res.statusCode).toEqual(400);
+  });
+
+  test('it responds with 400 if some cylinder has invalid value for pressure', async () => {
+    const payload = {
+      owner: '1',
+      name: 'bottle6',
+      cylinders: [
+        {
+          volume: 15,
+          pressure: 0,
+          material: 'aluminium',
+          serialNumber: '3540965436löj564',
+          inspection: '2022-10-18T07:30:10.184Z',
+        },
+      ],
+    };
+    const server = await getTestInstance();
+    const res = await server.inject({
+      url: 'api/cylinder-set',
+      method: 'POST',
+      payload,
+    });
+
+    expect(res.statusCode).toEqual(400);
+  });
 });
