@@ -1,8 +1,9 @@
 // Disable import first to allow dotenv configuration to happen before any imports
 /* eslint-disable import/first */
 import * as dotenv from 'dotenv';
-import { knexController } from './database/database';
 dotenv.config();
+
+import { knexController } from './database/database';
 
 import { log } from './lib/log';
 import { buildServer } from './server';

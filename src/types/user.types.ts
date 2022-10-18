@@ -1,14 +1,5 @@
 import { Type, Static } from '@sinclair/typebox';
-import {
-  FastifyRequest,
-  FastifyReply,
-  RawReplyDefaultExpression,
-  RawRequestDefaultExpression,
-  RawServerDefault,
-  RouteHandler,
-  RouteHandlerMethod,
-} from 'fastify';
-import { RouteGenericInterface } from 'fastify/types/route';
+import { FastifyRequest } from 'fastify';
 
 export const user = Type.Object({
   id: Type.String(),
@@ -26,7 +17,6 @@ export const user = Type.Object({
 export type User = Static<typeof user>;
 
 export const updateUserBody = Type.Object({
-  id: Type.String(),
   email: Type.String(),
   forename: Type.String(),
   surname: Type.String(),
@@ -62,17 +52,6 @@ export type CreateUserRequestBody = Static<typeof createUserRequestBody>;
 export type CreateUserRequest = FastifyRequest<{
   Body: CreateUserRequestBody;
 }>;
-
-export const userAdminResponse = Type.Object({
-  id: Type.String(),
-  email: Type.String(),
-  forename: Type.String(),
-  surname: Type.String(),
-  isAdmin: Type.Boolean(),
-  isBlender: Type.Boolean(),
-});
-
-export type userAdminResponse = Static<typeof userAdminResponse>;
 
 export const userIdParamsPayload = Type.Object({
   userId: Type.String(),

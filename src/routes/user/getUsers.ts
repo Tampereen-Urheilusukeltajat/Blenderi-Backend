@@ -4,8 +4,6 @@ import { knexController } from '../../database/database';
 
 import { User, userResponse } from '../../types/user.types';
 
-const fetchAllResponse = Type.Array(userResponse);
-
 const includeArchived = Type.Object({
   includeArchived: Type.Boolean({ default: false }),
 });
@@ -17,7 +15,7 @@ const schema = {
   query: includeArchived,
   tags: ['User'],
   response: {
-    200: fetchAllResponse,
+    200: Type.Array(userResponse),
     401: { $ref: 'error' },
     403: { $ref: 'error' },
   },

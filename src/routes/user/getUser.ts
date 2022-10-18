@@ -1,10 +1,10 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { knexController } from '../../database/database';
+import { errorHandler } from '../../lib/errorHandler';
 
 import {
-  User,
   userResponse,
-  UserResponse,
+  User,
   userIdParamsPayload,
   UserIdParamsPayload,
 } from '../../types/user.types';
@@ -47,11 +47,7 @@ const handler = async (
     user.archivedAt !== null ||
     user.deletedAt !== null
   ) {
-    await reply.code(404).send({
-      statusCode: 404,
-      error: 'Not Found',
-      message: 'User was not found with given userId',
-    });
+    return errorHandler(reply, 404, 'User not found.');
   }
   await reply.send(user);
 };

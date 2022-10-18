@@ -2,13 +2,15 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { Type, Static } from '@sinclair/typebox';
 import { knexController } from '../../database/database';
 import { hashPassword } from '../../lib/auth';
+import { errorHandler } from '../../lib/errorHandler';
 import {
+  updateUserBody,
   UpdateUserBody,
-  user,
   UserIdParamsPayload,
   HashObj,
-  User,
   userResponse,
+  userIdParamsPayload,
+  UserResponse,
 } from '../../types/user.types';
 
 const archiveUserQuery = Type.Object({
@@ -21,11 +23,8 @@ const editUserSchema = {
   summary: 'Edit user',
   tags: ['User', 'Update'],
   query: archiveUserQuery,
-  body: {
-    type: 'object',
-    required: [],
-    properties: user.static,
-  },
+  params: userIdParamsPayload,
+  body: updateUserBody,
   response: {
     200: userResponse,
     500: { $ref: 'error' },
@@ -68,11 +67,7 @@ const editUserHandler = async (
 
   // If no user found with given id.
   if (editResponse === 0) {
-    return reply.code(404).send({
-      statusCode: 404,
-      error: 'Not Found',
-      message: 'User not found.',
-    });
+    return errorHandler(reply, 404, 'User not found.');
   }
 
   // get edited user
@@ -86,7 +81,7 @@ const editUserHandler = async (
       'is_blender as isBlender',
       'archived_at as archivedAt'
     )
-    .from<User>('user')
+    .from<UserResponse>('user')
     .where({ id: userId });
 
   await reply.send(...editedUser);
@@ -95,7 +90,7 @@ const editUserHandler = async (
 export default async (fastify: FastifyInstance): Promise<void> => {
   fastify.route({
     method: 'PATCH',
-    url: '/user/:userId',
+    url: '/:userId',
     handler: editUserHandler,
     schema: editUserSchema,
   });
