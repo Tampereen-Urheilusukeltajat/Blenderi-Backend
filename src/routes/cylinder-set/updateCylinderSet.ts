@@ -46,7 +46,8 @@ const handler = async (
         const inspection = new Date(cylinder.inspection);
         const thisYear = new Date().getUTCFullYear();
         if (inspection.getUTCFullYear() > thisYear) {
-          return errorHandler(reply, 400, 'Inspection date from the future');
+          await errorHandler(reply, 400, 'Inspection date from the future');
+          return;
         }
       }
     }
