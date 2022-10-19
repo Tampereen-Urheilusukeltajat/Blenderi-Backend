@@ -46,7 +46,6 @@ export const cylinderSet = Type.Object({
 export type CylinderSet = Static<typeof cylinderSet>;
 
 export const updateCylinderSet = Type.Object({
-  owner: Type.Optional(Type.String()),
   name: Type.Optional(Type.String({ minLength: 1, maxLength: 255 })),
   cylinders: Type.Optional(Type.Array(updateCylinderBody)),
 });
@@ -54,7 +53,7 @@ export const updateCylinderSet = Type.Object({
 export type UpdateCylinderSet = Static<typeof updateCylinderSet>;
 
 export const cylinderSetIdParamsPayload = Type.Object({
-  cylinderSetId: Type.String(),
+  cylinderSetId: Type.String({ format: 'uuid' }),
 });
 
 export type CylinderSetIdParamsPayload = Static<

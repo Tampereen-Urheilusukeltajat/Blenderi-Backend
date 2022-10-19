@@ -13,7 +13,7 @@ import {
 } from '../../types/cylinderSet.types';
 
 const schema = {
-  description: 'Creates a diving cylinder set',
+  description: 'Updates a diving cylinder set',
   tags: ['Cylinder set'],
   body: updateCylinderSet,
   params: cylinderSetIdParamsPayload,
@@ -22,6 +22,7 @@ const schema = {
     400: { $ref: 'error' },
     401: { $ref: 'error' },
     403: { $ref: 'error' },
+    404: { $ref: 'error' },
     409: { $ref: 'error' },
     500: { $ref: 'error' },
   },
@@ -55,12 +56,16 @@ const handler = async (
 
   await knexController
     .transaction(async (trx) => {
-      await trx('diving_cylinder_set')
+      const updateResult = await trx('diving_cylinder_set')
         .where('id', setId)
         .update<UpdateCylinderSet>({
           name: request.body.name,
-          owner: request.body.owner,
+          updated_at: trx.fn.now(),
         });
+      if (updateResult === 0) {
+        await errorHandler(reply, 404, 'Cylinder set not found');
+        return;
+      }
 
       if (request.body.cylinders !== undefined) {
         for (const cylinder of request.body.cylinders) {
