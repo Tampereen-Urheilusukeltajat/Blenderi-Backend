@@ -44,6 +44,53 @@ describe('create user', () => {
       expect(responseBody).not.toHaveProperty('password');
       expect(responseBody).not.toHaveProperty('salt');
     });
+
+    test('it accepts utf-8 characters (🦴)', async () => {
+      const server = await getTestInstance();
+      const res = await server.inject({
+        url: 'api/user',
+        method: 'POST',
+        payload: {
+          email: 'pertti@sukeltaja.fi',
+          forename: '🦴',
+          surname: '🦴',
+          password: '🦴🦴🦴🦴🦴🦴🦴🦴',
+        },
+      });
+      const responseBody = JSON.parse(res.body);
+
+      expect(res.statusCode).toEqual(201);
+      expect(responseBody.forename).toEqual('🦴');
+      expect(responseBody.surname).toEqual('🦴');
+    });
+
+    describe('complex emails', () => {
+      test('weird', async () => {
+        const server = await getTestInstance();
+        const res = await server.inject({
+          url: 'api/user',
+          method: 'POST',
+          payload: {
+            ...USER_PAYLOAD,
+            email: 'email@[123.123.123.123]',
+          },
+        });
+        expect(res.statusCode).toEqual(201);
+      });
+
+      test('+', async () => {
+        const server = await getTestInstance();
+        const res = await server.inject({
+          url: 'api/user',
+          method: 'POST',
+          payload: {
+            ...USER_PAYLOAD,
+            email: 'ile+harrastussahkoposti@ilesoft.fi',
+          },
+        });
+        expect(res.statusCode).toEqual(201);
+      });
+    });
   });
 
   describe('unhappy paths', () => {
@@ -71,14 +118,14 @@ describe('create user', () => {
       expect(res.statusCode).toEqual(400);
     });
 
-    test('it responds with 400 if password is empty', async () => {
+    test('it responds with 400 if password is too short', async () => {
       const server = await getTestInstance();
       const res = await server.inject({
         url: 'api/user',
         method: 'POST',
         payload: {
           ...USER_PAYLOAD,
-          password: '',
+          password: '1234567',
         },
       });
 
