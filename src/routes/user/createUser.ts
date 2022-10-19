@@ -3,6 +3,7 @@ import { knexController } from '../../database/database';
 import {
   User,
   userResponse,
+  UserResponse,
   createUserRequestBody,
   CreateUserRequest,
 } from '../../types/user.types';
@@ -43,10 +44,30 @@ const handler = async (
     );
   }
 
+  if (request.body.phone !== undefined) {
+    const phoneCount: number = await knexController('user')
+      .count('phone')
+      .where('phone', request.body.phone)
+      .first()
+      .then((row: { 'count(`phone`)': number }) =>
+        Number(row['count(`phone`)'])
+      );
+
+    if (phoneCount > 0) {
+      log.debug('Tried to create user with duplicate phone number');
+      return errorHandler(
+        reply,
+        409,
+        'Tried to create user with duplicate phone number'
+      );
+    }
+  }
+
   const hashObj = await hashPassword(request.body.password);
 
   await knexController('user').insert({
     email: request.body.email,
+    phone: request.body.phone,
     forename: request.body.forename,
     surname: request.body.surname,
     is_admin: false,
@@ -60,18 +81,20 @@ const handler = async (
   // Ultimate race condition stuff
   // TODO: fix
   const createdUser = await knexController('user')
-    .select(
+    .select<UserResponse[]>(
       'id',
       'email',
+      'phone',
       'forename',
       'surname',
       'is_admin as isAdmin',
       'is_blender as isBlender',
       'archived_at as archivedAt'
     )
-    .where({ email: request.body.email });
+    .where({ email: request.body.email })
+    .first();
 
-  return reply.code(201).send(...createdUser);
+  return reply.code(201).send(createdUser);
 };
 
 export default async (fastify: FastifyInstance): Promise<void> => {
