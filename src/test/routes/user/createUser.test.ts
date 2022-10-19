@@ -98,5 +98,20 @@ describe('create user', () => {
 
       expect(res.statusCode).toEqual(400);
     });
+
+    test('it responds with 400 if forename is missing', async () => {
+      const server = await getTestInstance();
+      const res = await server.inject({
+        url: 'api/user',
+        method: 'POST',
+        payload: {
+          email: 'erkki@sukeltaja.fi',
+          surname: 'Nitikka',
+          password: 'superhyväsalasana',
+        },
+      });
+
+      expect(res.statusCode).toEqual(400);
+    });
   });
 });
