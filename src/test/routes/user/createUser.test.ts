@@ -26,20 +26,77 @@ describe('create user', () => {
     await knexController.destroy();
   });
 
-  // test('it responds with 400 if payload is missing', async () => {});
-  test('it responds with 409 if email already exists with another user', async () => {
-    const server = await getTestInstance();
-    const res = await server.inject({
-      url: 'api/user',
-      method: 'POST',
-      payload: {
-        ...USER_PAYLOAD,
-        email: 'admin@admin.com',
-      },
+  describe('happy paths', () => {
+    test('it responds with 201 if user is created', async () => {
+      const server = await getTestInstance();
+      const res = await server.inject({
+        url: 'api/user',
+        method: 'POST',
+        payload: USER_PAYLOAD,
+      });
+      const responseBody = JSON.parse(res.body);
+
+      expect(res.statusCode).toEqual(201);
+      expect(responseBody.email).toEqual(USER_PAYLOAD.email);
+      expect(responseBody.forename).toEqual(USER_PAYLOAD.forename);
+      expect(responseBody.surname).toEqual(USER_PAYLOAD.surname);
+      expect(responseBody).toHaveProperty('id');
+      expect(responseBody).not.toHaveProperty('password');
+      expect(responseBody).not.toHaveProperty('salt');
+    });
+  });
+
+  describe('unhappy paths', () => {
+    test('it responds with 409 if email already exists with another user', async () => {
+      const server = await getTestInstance();
+      const res = await server.inject({
+        url: 'api/user',
+        method: 'POST',
+        payload: {
+          ...USER_PAYLOAD,
+          email: 'admin@admin.com', // already exists
+        },
+      });
+
+      expect(res.statusCode).toEqual(409);
     });
 
-    expect(res.statusCode).toEqual(409);
+    test('it responds with 400 if payload is missing', async () => {
+      const server = await getTestInstance();
+      const res = await server.inject({
+        url: 'api/user',
+        method: 'POST',
+      });
+
+      expect(res.statusCode).toEqual(400);
+    });
+
+    test('it responds with 400 if password is empty', async () => {
+      const server = await getTestInstance();
+      const res = await server.inject({
+        url: 'api/user',
+        method: 'POST',
+        payload: {
+          ...USER_PAYLOAD,
+          password: '',
+        },
+      });
+
+      expect(res.statusCode).toEqual(400);
+    });
+
+    test('it responds with 400 if forename is empty', async () => {
+      const server = await getTestInstance();
+      const res = await server.inject({
+        url: 'api/user',
+        method: 'POST',
+        payload: {
+          ...USER_PAYLOAD,
+          forename: '',
+        },
+      });
+
+      expect(res.statusCode).toEqual(400);
+    });
   });
-  // test('it responds with 409 if phone number already exists with another user', async () => {});
-  // test('it responds with 201 if user is created', async () => {});
 });
