@@ -23,7 +23,7 @@ export const updateCylinderBody = Type.Object({
   pressure: Type.Optional(Type.Integer({ exclusiveMinimum: 0, maximum: 500 })),
   material: Type.Optional(Type.String()),
   serialNumber: Type.Optional(Type.String()),
-  inspection: Type.Optional(Type.String()),
+  inspection: Type.Optional(Type.String({ format: 'date' })),
 });
 
 export type UpdateCylinderBody = Static<typeof updateCylinderBody>;

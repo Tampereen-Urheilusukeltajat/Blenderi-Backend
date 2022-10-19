@@ -89,50 +89,38 @@ describe('update cylinder set', () => {
     expect(res.statusCode).toEqual(404);
   });
 
-  test('it responds with 409 if same user tries to update cylinder set to have confilicting name', async () => {
-    const payload1 = {
-      owner: '1',
-      name: 'bottle3',
-      cylinders: [
-        {
-          volume: 15,
-          pressure: 200,
-          material: 'steel',
-          serialNumber: '3540965436löj564',
-          inspection: '2020-01-01',
-        },
-      ],
-    };
-
-    const payload2 = {
-      owner: '1',
-      name: 'bottle3',
-      cylinders: [
-        {
-          volume: 10,
-          pressure: 300,
-          material: 'carbon fiber',
-          serialNumber: '35',
-          inspection: '2020-01-01',
-        },
-      ],
+  test('it responds with 409 if same user tries to update cylinder set to have conflicting name', async () => {
+    const payload = {
+      name: 'bb',
     };
 
     const server = await getTestInstance();
     const res = await server.inject({
-      url: 'api/cylinder-set',
-      method: 'POST',
-      payload: payload1,
+      url: 'api/cylinder-set/a4e1035e-f36e-4056-9a1b-5925a3c5793e',
+      method: 'PATCH',
+      payload,
     });
 
-    expect(res.statusCode).toEqual(201);
+    expect(res.statusCode).toEqual(409);
+  });
 
-    const res2 = await server.inject({
-      url: 'api/cylinder-set',
-      method: 'POST',
-      payload: payload2,
+  test('it responds with 400 for invalid body', async () => {
+    const payload = {
+      name: 'bottle5',
+      cylinders: [
+        {
+          id: '1e54c95c-c2fe-4d86-9406-c88f45c0bde9',
+          inspection: '🦀',
+        },
+      ],
+    };
+    const server = await getTestInstance();
+    const res = await server.inject({
+      url: 'api/cylinder-set/f4e1035e-f36e-4056-9a1b-5925a3c5793e',
+      method: 'PATCH',
+      payload,
     });
 
-    expect(res2.statusCode).toEqual(409);
+    expect(res.statusCode).toEqual(400);
   });
 });
