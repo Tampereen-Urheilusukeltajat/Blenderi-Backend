@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeAll, afterAll } from '@jest/globals';
 import { FastifyInstance } from 'fastify';
-import { createTestDatabase, dropTestDabase } from '../../../lib/testUtils';
+import { createTestDatabase, dropTestDatabase } from '../../../lib/testUtils';
 import { knexController } from '../../../database/database';
 import { buildServer } from '../../../server';
 
@@ -12,7 +12,7 @@ const USER_PAYLOAD = {
 };
 
 describe('create user', () => {
-  const getTestIntance = async (): Promise<FastifyInstance> =>
+  const getTestInstance = async (): Promise<FastifyInstance> =>
     buildServer({
       routePrefix: 'api',
     });
@@ -22,13 +22,13 @@ describe('create user', () => {
   });
 
   afterAll(async () => {
-    await dropTestDabase();
+    await dropTestDatabase();
     await knexController.destroy();
   });
 
   // test('it responds with 400 if payload is missing', async () => {});
   test('it responds with 409 if email already exists with another user', async () => {
-    const server = await getTestIntance();
+    const server = await getTestInstance();
     const res = await server.inject({
       url: 'api/user',
       method: 'POST',
