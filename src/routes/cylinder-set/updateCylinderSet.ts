@@ -18,7 +18,7 @@ const schema = {
   body: updateCylinderSet,
   params: cylinderSetIdParamsPayload,
   response: {
-    201: cylinderSet,
+    200: cylinderSet,
     400: { $ref: 'error' },
     401: { $ref: 'error' },
     403: { $ref: 'error' },

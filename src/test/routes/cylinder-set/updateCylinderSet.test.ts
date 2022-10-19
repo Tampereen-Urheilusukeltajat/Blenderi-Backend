@@ -73,7 +73,7 @@ describe('update cylinder set', () => {
     }
   });
 
-  test('it responds with 400 if cylinder set is not found', async () => {
+  test('it responds with 404 if cylinder set is not found', async () => {
     const payload = {
       name: 'pullonnimi',
       cylinders: [],
