@@ -2,6 +2,7 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { knexController } from '../../database/database';
 import { hashPassword } from '../../lib/auth';
 import { errorHandler } from '../../lib/errorHandler';
+import { log } from '../../lib/log';
 import {
   updateUserBody,
   UpdateUserBody,
@@ -10,6 +11,7 @@ import {
   userResponse,
   userIdParamsPayload,
   UserResponse,
+  User,
 } from '../../types/user.types';
 
 const editUserSchema = {
@@ -23,6 +25,7 @@ const editUserSchema = {
     500: { $ref: 'error' },
     400: { $ref: 'error' },
     404: { $ref: 'error' },
+    409: { $ref: 'error' },
   },
 };
 
@@ -30,27 +33,51 @@ const editUserHandler = async (
   req: FastifyRequest<{ Body: UpdateUserBody; Params: UserIdParamsPayload }>,
   reply: FastifyReply
 ): Promise<void> => {
-  const { email, password, forename, surname, isAdmin, isBlender } = req.body;
+  const updateBody: UpdateUserBody = req.body;
+
+  // if empty request body.
+  if (Object.values(updateBody).every((el) => el === undefined)) {
+    return errorHandler(reply, 400, 'Empty body.');
+  }
 
   const userId = req.params.userId;
 
+  if (updateBody.email !== undefined) {
+    const emailCount: number = await knexController<User>('user')
+      .count('email')
+      .where('email', updateBody.email)
+      .first()
+      .then((row: { 'count(`email`)': number }) =>
+        Number(row['count(`email`)'])
+      );
+
+    if (emailCount > 0) {
+      log.debug('Tried to update user with duplicate email');
+      return errorHandler(
+        reply,
+        409,
+        'Tried to update user with duplicate email'
+      );
+    }
+  }
+
   let hashObj: HashObj | undefined;
   // If no password given as parameter, no need to hash.
-  if (password !== undefined) {
-    hashObj = await hashPassword(password);
+  if (updateBody.password !== undefined) {
+    hashObj = await hashPassword(updateBody.password);
   }
 
   // edit user
   const editResponse = await knexController('user')
     .where({ id: userId })
     .update({
-      email,
-      forename,
-      surname,
+      email: updateBody.email,
+      forename: updateBody.forename,
+      surname: updateBody.surname,
+      is_admin: updateBody.isAdmin,
+      is_blender: updateBody.isBlender,
       password_hash: hashObj !== undefined ? hashObj.hash : undefined,
       salt: hashObj !== undefined ? hashObj.salt : undefined,
-      is_admin: isAdmin,
-      is_blender: isBlender,
     });
 
   // If no user found with given id.
