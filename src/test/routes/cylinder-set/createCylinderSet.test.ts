@@ -57,8 +57,6 @@ describe('create cylinder set', () => {
     expect(responseBody).toEqual(payload);
   });
 
-  /* FIX ME
-  
   test('it responds with 201 and proper body if creation of multiple cylinder set was successful', async () => {
     const payload = {
       owner: '1',
@@ -111,8 +109,6 @@ describe('create cylinder set', () => {
     expect(responseBody.owner).toEqual(payload.owner);
     expect(responseBody.name).toEqual(payload.name);
   });
-
-  */
 
   test('it responds with 400 if one of those cylinder inspection date are in the future', async () => {
     const date = new Date();
