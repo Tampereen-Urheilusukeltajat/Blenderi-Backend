@@ -27,7 +27,7 @@ describe('update user', () => {
     isBlender: false,
   };
 
-  test('it returns obj with updated values', async () => {
+  test('it returns user with updated values', async () => {
     const server = await getTestInstance();
 
     const res = await server.inject({
@@ -89,25 +89,6 @@ describe('update user', () => {
       url: 'api/user/2/',
       // incorrect payload
       payload: {},
-      method: 'PATCH',
-      headers: { 'content-type': 'application/json' },
-    });
-
-    expect(res.statusCode).toEqual(400);
-
-    const resBody = JSON.parse(res.body);
-
-    expect(resBody).toHaveProperty('error');
-    expect(resBody).toHaveProperty('message');
-  });
-
-  test('it returns 400 when invalid type in body param.', async () => {
-    const server = await getTestInstance();
-
-    const res = await server.inject({
-      url: 'api/user/2/',
-      // incorrect payload type
-      payload: { ...updatedUser, isAdmin: 'this is not boolean.' },
       method: 'PATCH',
       headers: { 'content-type': 'application/json' },
     });

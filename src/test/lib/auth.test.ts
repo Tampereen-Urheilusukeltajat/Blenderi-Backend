@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import { describe, test, expect } from '@jest/globals';
 import { hashPassword } from '../../lib/auth';
 
