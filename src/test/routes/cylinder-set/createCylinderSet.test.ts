@@ -90,13 +90,27 @@ describe('create cylinder set', () => {
     const responseBody = JSON.parse(res.body);
 
     // remove ids and dates to enable comparison.
+    expect(responseBody).toHaveProperty('id');
     delete responseBody.id;
+
+    expect(responseBody.cylinders[0]).toHaveProperty('id');
+    expect(responseBody.cylinders[1]).toHaveProperty('id');
     delete responseBody.cylinders[0].id;
     delete responseBody.cylinders[1].id;
+
     payload.cylinders[0].inspection = responseBody.cylinders[0].inspection;
     payload.cylinders[1].inspection = responseBody.cylinders[1].inspection;
 
-    expect(responseBody).toEqual(payload);
+    if (responseBody.cylinders[0].serialNumber === '3540965436löj564') {
+      expect(responseBody.cylinders[0]).toEqual(payload.cylinders[0]);
+      expect(responseBody.cylinders[1]).toEqual(payload.cylinders[1]);
+    } else {
+      expect(responseBody.cylinders[0]).toEqual(payload.cylinders[1]);
+      expect(responseBody.cylinders[1]).toEqual(payload.cylinders[0]);
+    }
+
+    expect(responseBody.owner).toEqual(payload.owner);
+    expect(responseBody.name).toEqual(payload.name);
   });
 
   test('it responds with 400 if one of those cylinder inspection date are in the future', async () => {
