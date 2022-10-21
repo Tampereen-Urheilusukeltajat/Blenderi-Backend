@@ -91,14 +91,25 @@ describe('create cylinder set', () => {
     expect(res.statusCode).toEqual(201);
     const responseBody = JSON.parse(res.body);
 
-    // remove ids and dates to enable comparison.
-    delete responseBody.id;
-    delete responseBody.cylinders[0].id;
-    delete responseBody.cylinders[1].id;
-    payload.cylinders[0].inspection = responseBody.cylinders[0].inspection;
-    payload.cylinders[1].inspection = responseBody.cylinders[1].inspection;
+    expect(responseBody).toHaveProperty('id');
+    expect(responseBody.cylinders[0]).toHaveProperty('id');
+    expect(responseBody.cylinders[1]).toHaveProperty('id');
 
-    expect(responseBody).toEqual(payload);
+    expect(responseBody.cylinders[0]).toHaveProperty('inspection');
+    expect(responseBody.cylinders[1]).toHaveProperty('inspection');
+
+    for (const cylinder of responseBody.cylinders) {
+      const expected =
+        cylinder.serialNumber === '3540965436löj564'
+          ? payload.cylinders[0]
+          : payload.cylinders[0];
+      expect(cylinder.volume).toEqual(expected.volume);
+      expect(cylinder.pressure).toEqual(expected.pressure);
+      expect(cylinder.material).toEqual(expected.material);
+    }
+
+    expect(responseBody.owner).toEqual(payload.owner);
+    expect(responseBody.name).toEqual(payload.name);
   });
 
   */
