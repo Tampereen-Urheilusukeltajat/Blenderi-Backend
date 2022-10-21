@@ -38,10 +38,10 @@ export const userResponse = Type.Object({
 export type UserResponse = Static<typeof userResponse>;
 
 export const createUserRequestBody = Type.Object({
-  email: Type.String(),
-  forename: Type.String(),
-  surname: Type.String(),
-  password: Type.String(),
+  email: Type.String({ minLength: 3, maxLength: 254, pattern: '^.+@....+$' }), // We do not accept hosts without top level domain
+  forename: Type.String({ minLength: 1, maxLength: 255 }),
+  surname: Type.String({ minLength: 1, maxLength: 255 }),
+  password: Type.String({ minLength: 8, maxLength: 1000 }),
 });
 
 export type CreateUserRequestBody = Static<typeof createUserRequestBody>;
