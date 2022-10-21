@@ -2,7 +2,7 @@ import { describe, test, expect, beforeAll, afterAll } from '@jest/globals';
 import { FastifyInstance } from 'fastify';
 import { knexController } from '../../../database/database';
 import { buildServer } from '../../../server';
-import { createTestDatabase, dropTestDabase } from '../../../lib/testUtils';
+import { createTestDatabase, dropTestDatabase } from '../../../lib/testUtils';
 
 describe('update user', () => {
   const getTestInstance = async (): Promise<FastifyInstance> =>
@@ -15,7 +15,7 @@ describe('update user', () => {
   });
 
   afterAll(async () => {
-    await dropTestDabase();
+    await dropTestDatabase();
     await knexController.destroy();
   });
 
@@ -101,8 +101,7 @@ describe('update user', () => {
     expect(resBody).toHaveProperty('message');
   });
 
-  // 500 ok?
-  test('it returns 500 when invalid type in body param.', async () => {
+  test('it returns 400 when invalid type in body param.', async () => {
     const server = await getTestInstance();
 
     const res = await server.inject({
@@ -113,7 +112,7 @@ describe('update user', () => {
       headers: { 'content-type': 'application/json' },
     });
 
-    expect(res.statusCode).toEqual(500);
+    expect(res.statusCode).toEqual(400);
 
     const resBody = JSON.parse(res.body);
 
