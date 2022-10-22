@@ -90,13 +90,11 @@ export const buildServer = async (opts: {
         try {
           await request.jwtVerify();
         } catch (err) {
-          reply
-            .code(401)
-            .send({
-              statusCode: 401,
-              error: 'Unauthorized',
-              message: 'please do authenticate yourself',
-            });
+          await reply.code(401).send({
+            statusCode: 401,
+            error: 'Unauthorized',
+            message: 'please do authenticate yourself',
+          });
         }
       }
     )
