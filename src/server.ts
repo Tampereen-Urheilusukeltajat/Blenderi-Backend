@@ -111,21 +111,19 @@ export const buildServer = async (opts: {
         `${opts.routePrefix}/${folderName}`,
     })
     .setErrorHandler(async (error, request, reply) => {
-      log.error({
-        code: error.code,
-        error: error.name,
-        message: error.message,
-        url: request.url,
-        method: request.method,
-        body: request.body,
-        stack: error.stack,
-      });
+      if (error.statusCode === undefined) {
+        log.error({
+          error: error.name,
+          message: error.message,
+          url: request.url,
+          method: request.method,
+          body: request.body,
+          stack: error.stack,
+          statusCode: error.statusCode,
+        });
+      }
 
-      await reply.status(500).send({
-        statusCode: 500,
-        error: 'Internal Server Error',
-        message: 'Internal Server Error',
-      });
+      await errorHandler(reply, error.statusCode, error.message);
     })
     .withTypeProvider<TypeBoxTypeProvider>();
 
