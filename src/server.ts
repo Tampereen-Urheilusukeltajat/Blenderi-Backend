@@ -12,6 +12,7 @@ import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 
 import { log } from './lib/log';
 import path from 'path';
+import { errorHandler } from './lib/errorHandler';
 
 const secret = 'donthackme';
 
