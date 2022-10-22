@@ -137,7 +137,7 @@ export const createTestDatabase = async (
 /**
  * Drops the test database. Should be ran in the afterAll -clause.
  */
-export const dropTestDabase = async (): Promise<void> => {
+export const dropTestDatabase = async (): Promise<void> => {
   const adminKnex = knex({
     client: 'mysql',
     connection: {

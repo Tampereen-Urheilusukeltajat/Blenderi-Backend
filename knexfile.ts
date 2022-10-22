@@ -26,6 +26,7 @@ export const DB_CONNECTION = {
   password: MYSQL_PASSWORD,
   charset: 'utf8mb4',
   port: MYSQL_PORT,
+  timezone: 'Z',
 };
 
 export default {
