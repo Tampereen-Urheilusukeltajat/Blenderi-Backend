@@ -9,7 +9,7 @@ import {
 
 const deleteSetReply = Type.Object({
   setId: Type.String(),
-  deletedAt: Type.String(),
+  message: Type.String(),
 });
 
 const schema = {
@@ -35,24 +35,22 @@ const handler = async (
 
   await knexController.transaction(async (trx) => {
     // Get id's of cylinders that belong to given set.
-    const cylinders: string[] = await trx
+    const rowData = await trx
       .select('cylinder')
       .from('diving_cylinder_to_set')
       .where('cylinder_set', setId);
 
     // Delete single cylinders from set.
-    await trx('diving_cylinder_to_set')
-      .where('diving_cylinder_set', setId)
-      .del();
+    await trx('diving_cylinder_to_set').where('cylinder_set', setId).del();
 
     // Delete single cylinders.
-    for (const cylinder of cylinders) {
-      await trx('diving_cylinder').where('id', cylinder).del();
+    for (const cylinder of rowData) {
+      await trx('diving_cylinder').where({ id: cylinder.cylinder }).del();
     }
 
     // Delete set.
     const setResponse = await trx('diving_cylinder_set')
-      .where('diving_cylinder_set', setId)
+      .where('id', setId)
       .del();
 
     if (setResponse === 0) {
@@ -60,7 +58,7 @@ const handler = async (
     }
   });
 
-  await reply.code(200).send(deleteSetReply);
+  await reply.code(200).send({ setId, message: 'Set deleted successfully!' });
 };
 
 export default async (fastify: FastifyInstance): Promise<void> => {
