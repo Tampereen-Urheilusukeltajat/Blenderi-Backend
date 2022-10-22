@@ -17,7 +17,6 @@ export const testPassword = async (
   salt: string
 ): Promise<boolean> => {
   const testHash = bcrypt.hashSync(password, salt);
-  console.log(oldHash);
 
   if (testHash === oldHash) {
     return true;

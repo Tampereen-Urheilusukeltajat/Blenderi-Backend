@@ -1,7 +1,6 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { knexController } from '../../database/database';
-import { hashPassword, testPassword } from '../../lib/auth';
-import { log } from '../../lib/log';
+import { testPassword } from '../../lib/auth';
 
 const schema = {
   description: 'login',
@@ -37,10 +36,10 @@ const handler = async function (
   }>,
   reply: FastifyReply
 ): Promise<void> {
-  const result: any = await knexController('user')
-    .where('email', request.body.email)
-    .first('id', 'salt', 'password_hash');
-  console.log(request.body);
+  const result: { id: 'String'; salt: 'String'; password_hash: 'String' } =
+    await knexController('user')
+      .where('email', request.body.email)
+      .first('id', 'salt', 'password_hash');
   if (
     await testPassword(request.body.password, result.password_hash, result.salt)
   ) {
