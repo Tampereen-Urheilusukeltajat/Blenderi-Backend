@@ -47,8 +47,11 @@ const editUserHandler = async (
   const updateBody: UpdateUserBody = req.body;
   const { archiveUser } = req.query;
 
-  // if empty request body.
-  if (Object.values(updateBody).every((el) => el === undefined)) {
+  // if empty request body and not archiving user.
+  if (
+    !archiveUser &&
+    Object.values(updateBody).every((el) => el === undefined)
+  ) {
     return errorHandler(reply, 400, 'Empty body.');
   }
 

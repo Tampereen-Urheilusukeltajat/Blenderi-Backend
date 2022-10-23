@@ -1,5 +1,6 @@
 id;email;forename;surname;is_admin;is_blender;salt;password_hash;archived_at;deleted_at;created_at;updated_at;
 2;test@email.fi;Tester;Blender;0;1;salt;hash!"#€;;;2020-01-19 03:14:07;2020-01-19 03:14:07;
+3;testi2@email.fi;Teemu;Testaaja;0;1;salt;hash!"#€;;;2020-01-19 03:14:07;2020-01-19 03:14:07;
 12341;alreadyin@use.fi;Pro;Blendaaja;0;1;salt;hash!"#€;;;2020-01-19 03:15:07;2020-02-19 03:17:07;
 
 

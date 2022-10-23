@@ -1,5 +1,5 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { Type, Static } from '@sinclair/typebox';
+import { Type } from '@sinclair/typebox';
 import { knexController } from '../../database/database';
 import {
   userIdParamsPayload,
@@ -12,7 +12,7 @@ const deleteUserReply = Type.Object({
 });
 
 const schema = {
-  description: 'Delete (anonymize) user with given userId',
+  description: 'Delete (=anonymize) user with given userId',
   summary: 'Delete user',
   tags: ['User'],
   params: userIdParamsPayload,
@@ -54,7 +54,7 @@ const handler = async (
 export default async (fastify: FastifyInstance): Promise<void> => {
   fastify.route({
     method: 'DELETE',
-    url: '/user/:userId',
+    url: '/:userId',
     handler,
     schema,
   });

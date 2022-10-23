@@ -27,99 +27,116 @@ describe('update user', () => {
     isBlender: false,
   };
 
-  test('it returns user with updated values', async () => {
-    const server = await getTestInstance();
+  describe('Happy cases', () => {
+    test('it returns user with updated values', async () => {
+      const server = await getTestInstance();
 
-    const res = await server.inject({
-      url: 'api/user/2/',
-      payload: updatedUser,
-      method: 'PATCH',
-      headers: { 'content-type': 'application/json' },
+      const res = await server.inject({
+        url: 'api/user/2/',
+        payload: updatedUser,
+        method: 'PATCH',
+        headers: { 'content-type': 'application/json' },
+      });
+
+      const resBody = JSON.parse(res.body);
+      expect(res.statusCode).toEqual(200);
+      expect(resBody).toEqual({
+        ...updatedUser,
+        id: '2',
+        archivedAt: '',
+      });
     });
 
-    const resBody = JSON.parse(res.body);
-    expect(res.statusCode).toEqual(200);
-    expect(resBody).toEqual({
-      ...updatedUser,
-      id: '2',
+    test('it archives user', async () => {
+      const server = await getTestInstance();
+      const res = await server.inject({
+        url: 'api/user/3?archiveUser=true',
+        payload: {},
+        method: 'PATCH',
+        headers: { 'content-type': 'application/json' },
+      });
+      const resBody = JSON.parse(res.body);
+      expect(res.statusCode).toEqual(200);
+      expect(resBody.archivedAt).not.toEqual('');
     });
   });
 
-  test('it returns 404 when no user with given id.', async () => {
-    const server = await getTestInstance();
+  describe('Negative cases', () => {
+    test('it returns 404 when no user with given id.', async () => {
+      const server = await getTestInstance();
 
-    const res = await server.inject({
-      url: 'api/user/9999/',
-      payload: { ...updatedUser, email: 'random123@email.com' },
-      method: 'PATCH',
-      headers: { 'content-type': 'application/json' },
+      const res = await server.inject({
+        url: 'api/user/9999/',
+        payload: { ...updatedUser, email: 'random123@email.com' },
+        method: 'PATCH',
+        headers: { 'content-type': 'application/json' },
+      });
+
+      expect(res.statusCode).toEqual(404);
+
+      const resBody = JSON.parse(res.body);
+
+      expect(resBody).toHaveProperty('error');
+      expect(resBody).toHaveProperty('message');
     });
 
-    expect(res.statusCode).toEqual(404);
+    test('it returns 400 when invalid body parameter.', async () => {
+      const server = await getTestInstance();
 
-    const resBody = JSON.parse(res.body);
+      const res = await server.inject({
+        url: 'api/user/2/',
+        // incorrect payload
+        payload: { kakka: '1234' },
+        method: 'PATCH',
+        headers: { 'content-type': 'application/json' },
+      });
 
-    expect(resBody).toHaveProperty('error');
-    expect(resBody).toHaveProperty('message');
-  });
+      expect(res.statusCode).toEqual(400);
 
-  test('it returns 400 when invalid body parameter.', async () => {
-    const server = await getTestInstance();
+      const resBody = JSON.parse(res.body);
 
-    const res = await server.inject({
-      url: 'api/user/2/',
-      // incorrect payload
-      payload: { kakka: '1234' },
-      method: 'PATCH',
-      headers: { 'content-type': 'application/json' },
+      expect(resBody).toHaveProperty('error');
+      expect(resBody).toHaveProperty('message');
     });
 
-    expect(res.statusCode).toEqual(400);
+    test('it returns 400 when empty body.', async () => {
+      const server = await getTestInstance();
 
-    const resBody = JSON.parse(res.body);
+      const res = await server.inject({
+        url: 'api/user/2/',
+        // incorrect payload
+        payload: {},
+        method: 'PATCH',
+        headers: { 'content-type': 'application/json' },
+      });
 
-    expect(resBody).toHaveProperty('error');
-    expect(resBody).toHaveProperty('message');
-  });
+      expect(res.statusCode).toEqual(400);
 
-  test('it returns 400 when empty body.', async () => {
-    const server = await getTestInstance();
+      const resBody = JSON.parse(res.body);
 
-    const res = await server.inject({
-      url: 'api/user/2/',
-      // incorrect payload
-      payload: {},
-      method: 'PATCH',
-      headers: { 'content-type': 'application/json' },
+      expect(resBody).toHaveProperty('error');
+      expect(resBody).toHaveProperty('message');
     });
 
-    expect(res.statusCode).toEqual(400);
+    test('it returns 409 when email already in use.', async () => {
+      const server = await getTestInstance();
 
-    const resBody = JSON.parse(res.body);
+      const res = await server.inject({
+        url: 'api/user/2/',
+        // incorrect payload type
+        payload: { ...updatedUser, email: 'alreadyin@use.fi' },
+        method: 'PATCH',
+        headers: { 'content-type': 'application/json' },
+      });
 
-    expect(resBody).toHaveProperty('error');
-    expect(resBody).toHaveProperty('message');
-  });
+      expect(res.statusCode).toEqual(409);
 
-  test('it returns 409 when email already in use.', async () => {
-    const server = await getTestInstance();
+      const resBody = JSON.parse(res.body);
 
-    const res = await server.inject({
-      url: 'api/user/2/',
-      // incorrect payload type
-      payload: { ...updatedUser, email: 'alreadyin@use.fi' },
-      method: 'PATCH',
-      headers: { 'content-type': 'application/json' },
+      expect(resBody).toHaveProperty('error');
+      expect(resBody).toHaveProperty('message');
     });
-
-    expect(res.statusCode).toEqual(409);
-
-    const resBody = JSON.parse(res.body);
-
-    expect(resBody).toHaveProperty('error');
-    expect(resBody).toHaveProperty('message');
   });
-
   test('password is not stored as plain text to db.', async () => {
     const server = await getTestInstance();
 
