@@ -46,7 +46,7 @@ const handler = async (
       setId
     );
     if (resultBody === undefined) {
-      throw new Error('Database update failed: update cylinder set');
+      throw new Error('Database select failed: select cylinder set');
     }
 
     await reply.code(200).send(resultBody);
