@@ -10,7 +10,7 @@ import {
 import selectCylinderSets from '../../lib/selectCylinderSets';
 
 const schema = {
-  description: 'Selects a diving cylinder set with given id',
+  description: 'Selects diving cylinder sets with given owner',
   tags: ['Cylinder set'],
   response: {
     200: Type.Array(cylinderSet),
@@ -28,7 +28,7 @@ const handler = async (
   await knexController.transaction(async (trx) => {
     const resultBody: CylinderSet[] | undefined = await selectCylinderSets(trx);
     if (resultBody === undefined) {
-      throw new Error('Database select failed: select all cylinder set');
+      throw new Error('Database select failed: select cylinder set by owner');
     }
 
     await reply
