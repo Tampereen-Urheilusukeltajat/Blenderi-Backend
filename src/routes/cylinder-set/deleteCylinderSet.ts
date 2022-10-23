@@ -14,11 +14,14 @@ const deleteSetReply = Type.Object({
 
 const schema = {
   description: 'Deletes a diving cylinder set',
-  tags: ['Cylinder set', 'Delete'],
+  tags: ['Cylinder set'],
   params: cylinderSetIdParamsPayload,
   response: {
     200: deleteSetReply,
+    400: { $ref: 'error' },
+    401: { $ref: 'error' },
     404: { $ref: 'error' },
+    403: { $ref: 'error' },
     500: { $ref: 'error' },
   },
 };
@@ -40,22 +43,18 @@ const handler = async (
       .from('diving_cylinder_to_set')
       .where('cylinder_set', setId);
 
-    // Delete single cylinders from set.
+    if (rowData.length === 0) {
+      return errorHandler(reply, 404, 'No set with given id found.');
+    }
+
+    // Delete cylinders from set.
     await trx('diving_cylinder_to_set').where('cylinder_set', setId).del();
 
     // Delete single cylinders.
-    for (const cylinder of rowData) {
-      await trx('diving_cylinder').where({ id: cylinder.cylinder }).del();
-    }
+    await trx('diving_cylinder').whereIn('id', rowData).del();
 
     // Delete set.
-    const setResponse = await trx('diving_cylinder_set')
-      .where('id', setId)
-      .del();
-
-    if (setResponse === 0) {
-      return errorHandler(reply, 404, 'No set with given id found.');
-    }
+    await trx('diving_cylinder_set').where('id', setId).del();
   });
 
   await reply.code(200).send({ setId, message: 'Set deleted successfully!' });
