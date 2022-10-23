@@ -21,9 +21,6 @@ const handler = async (
 ): Promise<void> => {
   await knexController.transaction(async (trx) => {
     const resultBody: CylinderSet[] | undefined = await selectCylinderSets(trx);
-    if (resultBody === undefined) {
-      throw new Error('Database select failed: select all cylinder set');
-    }
 
     await reply.code(200).send(resultBody);
   });

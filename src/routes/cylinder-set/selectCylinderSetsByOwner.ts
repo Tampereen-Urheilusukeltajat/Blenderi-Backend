@@ -8,6 +8,7 @@ import {
   CylinderSetOwnerParamsPayload,
 } from '../../types/cylinderSet.types';
 import selectCylinderSets from '../../lib/selectCylinderSets';
+import { errorHandler } from '../../lib/errorHandler';
 
 const schema = {
   description: 'Selects diving cylinder sets with given owner',
@@ -27,17 +28,17 @@ const handler = async (
 ): Promise<void> => {
   await knexController.transaction(async (trx) => {
     const resultBody: CylinderSet[] | undefined = await selectCylinderSets(trx);
-    if (resultBody === undefined) {
-      throw new Error('Database select failed: select cylinder set by owner');
-    }
-
-    await reply
-      .code(200)
-      .send(
-        resultBody.filter(
-          (cylinder) => cylinder.owner === req.params.cylinderSetOwner
-        )
+    if (resultBody !== undefined) {
+      const result = resultBody.filter(
+        (cylinder) => cylinder.owner === req.params.cylinderSetOwner
       );
+
+      if (result.length > 0) {
+        await reply.code(200).send(result);
+      } else {
+        await errorHandler(reply, 404, 'Cylinder set not found');
+      }
+    }
   });
 };
 

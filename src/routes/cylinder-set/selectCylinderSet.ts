@@ -32,21 +32,13 @@ const handler = async (
   const setId = request.params.cylinderSetId;
 
   await knexController.transaction(async (trx) => {
-    const selectResult = await trx('diving_cylinder_set')
-      .where('id', setId)
-      .select()
-      .first();
-    if (selectResult === 0) {
-      await errorHandler(reply, 404, 'Cylinder set not found');
-      return;
-    }
-
     const resultBody: CylinderSet | undefined = await selectCylinderSet(
       trx,
       setId
     );
     if (resultBody === undefined) {
-      throw new Error('Database select failed: select cylinder set');
+      await errorHandler(reply, 404, 'Cylinder set not found');
+      return;
     }
 
     await reply.code(200).send(resultBody);
