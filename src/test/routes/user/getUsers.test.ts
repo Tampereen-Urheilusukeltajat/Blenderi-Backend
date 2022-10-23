@@ -31,13 +31,13 @@ describe('Get users', () => {
     server = await getTestInstance();
   });
 
-  test('it returns all not archived users', async () => {
+  test('it returns all not archived or deleted users', async () => {
     const res = await server.inject({
       url: '/api/user/',
       method: 'GET',
     });
     const users = await knexController('user')
-      .where({ archived_at: null })
+      .where({ archived_at: null, deleted_at: null })
       .select('id');
     const resBody = JSON.parse(res.body);
     expect(res.statusCode).toEqual(200);
@@ -49,7 +49,9 @@ describe('Get users', () => {
       url: '/api/user?includeArchived=true',
       method: 'GET',
     });
-    const users = await knexController('user').select('id');
+    const users = await knexController('user')
+      .where({ deleted_at: null })
+      .select('id');
     const resBody = JSON.parse(res.body);
     expect(res.statusCode).toEqual(200);
     expect(resBody).toHaveLength(users.length);
