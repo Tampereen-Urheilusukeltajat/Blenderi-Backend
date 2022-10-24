@@ -1,5 +1,4 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { Type, Static } from '@sinclair/typebox';
 import { knexController } from '../../database/database';
 import { hashPassword } from '../../lib/auth';
 import { errorHandler } from '../../lib/errorHandler';
@@ -15,16 +14,10 @@ import {
   User,
 } from '../../types/user.types';
 
-const archiveUserQuery = Type.Object({
-  archiveUser: Type.Boolean({ default: false }),
-});
-type ArchiveUserQuery = Static<typeof archiveUserQuery>;
-
 const editUserSchema = {
   description: 'Edit data of already existing user or archived user.',
   summary: 'Edit user',
   tags: ['User', 'Update'],
-  query: archiveUserQuery,
   params: userIdParamsPayload,
   body: updateUserBody,
   response: {
@@ -40,13 +33,15 @@ const editUserHandler = async (
   req: FastifyRequest<{
     Body: UpdateUserBody;
     Params: UserIdParamsPayload;
-    Querystring: ArchiveUserQuery;
   }>,
   reply: FastifyReply
 ): Promise<void> => {
   const updateBody: UpdateUserBody = req.body;
-  const { archiveUser } = req.query;
 
+  let archiveUser = false;
+  if (updateBody.archive !== undefined && updateBody.archive) {
+    archiveUser = true;
+  }
   // if empty request body and not archiving user.
   if (
     !archiveUser &&

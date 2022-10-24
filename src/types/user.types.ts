@@ -23,6 +23,7 @@ export const updateUserBody = Type.Object({
   isAdmin: Type.Optional(Type.Boolean()),
   isBlender: Type.Optional(Type.Boolean()),
   password: Type.Optional(Type.String()),
+  archive: Type.Optional(Type.Boolean()),
 });
 
 export type UpdateUserBody = Static<typeof updateUserBody>;

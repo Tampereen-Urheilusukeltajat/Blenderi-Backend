@@ -50,12 +50,15 @@ describe('update user', () => {
     test('it archives user', async () => {
       const server = await getTestInstance();
       const res = await server.inject({
-        url: 'api/user/3?archiveUser=true',
-        payload: {},
+        url: 'api/user/3/',
+        payload: {
+          archive: true,
+        },
         method: 'PATCH',
         headers: { 'content-type': 'application/json' },
       });
       const resBody = JSON.parse(res.body);
+
       expect(res.statusCode).toEqual(200);
       expect(resBody.archivedAt).not.toEqual('');
     });
