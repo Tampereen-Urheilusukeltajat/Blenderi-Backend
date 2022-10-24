@@ -33,7 +33,7 @@ describe('Get user', () => {
   describe('User is found', () => {
     test('it returns 200 and has right properties', async () => {
       const res = await server.inject({
-        url: '/api/user/2/',
+        url: '/api/user/1be5abcd-53d4-11ed-9342-0242ac120002/',
         method: 'GET',
       });
       const resBody = JSON.parse(res.body);

@@ -30,9 +30,8 @@ describe('update user', () => {
   describe('Happy cases', () => {
     test('it returns user with updated values', async () => {
       const server = await getTestInstance();
-
       const res = await server.inject({
-        url: 'api/user/2/',
+        url: 'api/user/1be5abcd-53d4-11ed-9342-0242ac120002/',
         payload: updatedUser,
         method: 'PATCH',
         headers: { 'content-type': 'application/json' },
@@ -42,7 +41,7 @@ describe('update user', () => {
       expect(res.statusCode).toEqual(200);
       expect(resBody).toEqual({
         ...updatedUser,
-        id: '2',
+        id: '1be5abcd-53d4-11ed-9342-0242ac120002',
         archivedAt: '',
       });
     });
@@ -50,7 +49,7 @@ describe('update user', () => {
     test('it archives user', async () => {
       const server = await getTestInstance();
       const res = await server.inject({
-        url: 'api/user/3/',
+        url: 'api/user/1be5abcd-53d4-11ed-9342-0242ac120002/',
         payload: {
           archive: true,
         },
@@ -146,7 +145,7 @@ describe('update user', () => {
     const pass = 'plainpassword';
 
     const res = await server.inject({
-      url: 'api/user/2/',
+      url: 'api/user/1be5abcd-53d4-11ed-9342-0242ac120002/',
       // incorrect payload type
 
       payload: { password: pass },
