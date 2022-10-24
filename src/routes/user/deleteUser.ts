@@ -12,7 +12,8 @@ const deleteUserReply = Type.Object({
 });
 
 const schema = {
-  description: 'Mark user with given userId as deleted and anonymize relating data.',
+  description:
+    'Mark user with given userId as deleted and anonymize relating data.',
   summary: 'Delete user',
   tags: ['User'],
   params: userIdParamsPayload,
