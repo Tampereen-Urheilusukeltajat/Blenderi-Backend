@@ -30,8 +30,9 @@ describe('update user', () => {
   describe('Happy cases', () => {
     test('it returns user with updated values', async () => {
       const server = await getTestInstance();
+      const id = '1be5abcd-53d4-11ed-9342-0242ac120002';
       const res = await server.inject({
-        url: 'api/user/1be5abcd-53d4-11ed-9342-0242ac120002/',
+        url: `api/user/${id}/`,
         payload: updatedUser,
         method: 'PATCH',
         headers: { 'content-type': 'application/json' },
@@ -41,7 +42,7 @@ describe('update user', () => {
       expect(res.statusCode).toEqual(200);
       expect(resBody).toEqual({
         ...updatedUser,
-        id: '1be5abcd-53d4-11ed-9342-0242ac120002',
+        id,
         archivedAt: '',
       });
     });
@@ -86,7 +87,7 @@ describe('update user', () => {
       const server = await getTestInstance();
 
       const res = await server.inject({
-        url: 'api/user/2/',
+        url: 'api/user/1be5abcd-53d4-11ed-9342-0242ac120002/',
         // incorrect payload
         payload: { kakka: '1234' },
         method: 'PATCH',
@@ -105,7 +106,7 @@ describe('update user', () => {
       const server = await getTestInstance();
 
       const res = await server.inject({
-        url: 'api/user/2/',
+        url: 'api/user/1be5abcd-53d4-11ed-9342-0242ac120002/',
         // incorrect payload
         payload: {},
         method: 'PATCH',
@@ -124,7 +125,7 @@ describe('update user', () => {
       const server = await getTestInstance();
 
       const res = await server.inject({
-        url: 'api/user/2/',
+        url: 'api/user/1be5abcd-53d4-11ed-9342-0242ac120002/',
         // incorrect payload type
         payload: { ...updatedUser, email: 'alreadyin@use.fi' },
         method: 'PATCH',

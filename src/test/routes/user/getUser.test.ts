@@ -56,7 +56,7 @@ describe('Get user', () => {
   describe('User cant be returned', () => {
     test('it returns 404 if user is not found', async () => {
       const res = await server.inject({
-        url: '/api/user/notfound/',
+        url: '/api/user/1be5abcd-53d4-11ed-9342-0242ac120069/',
         method: 'GET',
       });
       expect(res.statusCode).toEqual(404);
@@ -67,7 +67,7 @@ describe('Get user', () => {
 
     test('it returns 404 if user is archived', async () => {
       const res = await server.inject({
-        url: '/api/user/archivedUser/',
+        url: '/api/user/fbdfc65b-52ce-11ed-85ed-0242ac120002/',
         method: 'GET',
       });
       expect(res.statusCode).toEqual(404);
@@ -78,7 +78,7 @@ describe('Get user', () => {
 
     test('it returns 404 if user is deleted', async () => {
       const res = await server.inject({
-        url: '/api/user/deletedUser/',
+        url: '/api/user/2020-01-19 05:15:07/',
         method: 'GET',
       });
       expect(res.statusCode).toEqual(404);
