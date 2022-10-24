@@ -33,6 +33,7 @@ describe('Delete user', () => {
 
   describe('successful', () => {
     const delUserId = '1be5abcd-53d4-11ed-9342-0242ac120002';
+
     test('it returns 200 when successful', async () => {
       const res = await server.inject({
         url: `api/user/${delUserId}`,
@@ -60,6 +61,13 @@ describe('Delete user', () => {
       expect(res.isAdmin).toEqual(0);
       expect(res.isBlender).toEqual(0);
       expect(res.deletedAt).not.toBeNull();
+    });
+
+    test('it deletes cylinder set data', async () => {
+      const res = await knexController('diving_cylinder_set')
+        .where({ owner: delUserId })
+        .select('id');
+      expect(res).toHaveLength(0);
     });
   });
 
