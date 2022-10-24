@@ -36,7 +36,7 @@ const handler = async (
 
   const setID = request.params.cylinderSetId;
 
-  // Delete culinder set.
+  // Delete cylinder set.
   const res = await deleteCylinderSet(setID);
 
   if (res.status !== 200) {

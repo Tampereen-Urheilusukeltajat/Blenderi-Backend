@@ -29,7 +29,7 @@ export const deleteCylinderSet = async (
     // Delete set.
     await trx('diving_cylinder_set').where('id', setID).del();
 
-    return { status: 200, message: 'set deleted successfully.' };
+    return { status: 200, message: 'Set deleted successfully.' };
   });
 
   return knexRes;
