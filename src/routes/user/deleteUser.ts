@@ -5,6 +5,7 @@ import {
   UserIdParamsPayload,
   deleteUserReply,
 } from '../../types/user.types';
+import { deleteCylinderSet } from '../../lib/deleteCylinderSet';
 
 const schema = {
   description:
@@ -41,6 +42,14 @@ const handler = async (
       message: 'User not found.',
     });
   }
+  const cylinderIds = await knexController('diving_cylinder_set')
+    .where({ owner: userId })
+    .select('id');
+
+  cylinderIds.map(async (dataPacket) => {
+    await deleteCylinderSet(dataPacket.id);
+  });
+
   const user = await knexController('user')
     .where({ id: userId })
     .select('id as userId', 'deleted_at as deletedAt');
