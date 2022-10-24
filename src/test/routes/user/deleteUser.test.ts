@@ -32,9 +32,10 @@ describe('Delete user', () => {
   });
 
   describe('successful', () => {
+    const delUserId = '1be5abcd-53d4-11ed-9342-0242ac120002';
     test('it returns 200 when successful', async () => {
       const res = await server.inject({
-        url: 'api/user/1',
+        url: `api/user/${delUserId}`,
         method: 'DELETE',
       });
       const resBody = JSON.parse(res.body);
@@ -44,7 +45,7 @@ describe('Delete user', () => {
 
     test('it anonymizes user data', async () => {
       const res = await knexController('user')
-        .where({ id: 1 })
+        .where({ id: delUserId })
         .first(
           'email',
           'forename',
@@ -65,7 +66,7 @@ describe('Delete user', () => {
   describe('not successful', () => {
     test('it returns 404 when user is not found', async () => {
       const res = await server.inject({
-        url: 'api/user/notfound',
+        url: 'api/user/1be5abcd-53d4-11ed-9342-0242ac120069',
         method: 'DELETE',
       });
       expect(res.statusCode).toEqual(404);
