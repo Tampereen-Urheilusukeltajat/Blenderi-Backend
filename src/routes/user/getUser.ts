@@ -1,7 +1,6 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { knexController } from '../../database/database';
 import { errorHandler } from '../../lib/errorHandler';
-
 import {
   userResponse,
   User,
@@ -32,6 +31,8 @@ const handler = async (
   const userId = req.params.userId;
   const user: User = await knexController<User>('user')
     .where('id', userId)
+    .whereNull('archived_at')
+    .whereNull('deleted_at')
     .first(
       'id',
       'email',
@@ -42,11 +43,7 @@ const handler = async (
       'archived_at as archivedAt',
       'deleted_at as deletedAt'
     );
-  if (
-    user === undefined ||
-    user.archivedAt !== null ||
-    user.deletedAt !== null
-  ) {
+  if (user === undefined) {
     return errorHandler(reply, 404, 'User not found.');
   }
   await reply.send(user);

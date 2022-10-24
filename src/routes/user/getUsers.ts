@@ -1,8 +1,7 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { Type, Static } from '@sinclair/typebox';
-import { knexController } from '../../database/database';
-
-import { User, userResponse } from '../../types/user.types';
+import { UserResponse, userResponse } from '../../types/user.types';
+import { selectNotArchivedUsers, selectUsers } from '../../lib/selectUsers';
 
 const includeArchived = Type.Object({
   includeArchived: Type.Boolean({ default: false }),
@@ -27,21 +26,11 @@ const handler = async (
 ): Promise<void> => {
   // TODO: Authorization
   const { includeArchived } = req.query;
-
-  const result = await knexController<User>('user')
-    .where('deleted_at', null)
-    .select(
-      'id',
-      'email',
-      'forename',
-      'surname',
-      'is_admin as isAdmin',
-      'is_blender as isBlender',
-      'archived_at as archivedAt'
-    );
+  let users: UserResponse[];
   includeArchived
-    ? await reply.send(result)
-    : await reply.send(result.filter((user) => user.archivedAt === null));
+    ? (users = await selectUsers())
+    : (users = await selectNotArchivedUsers());
+  await reply.send(users);
 };
 
 export default async (fastify: FastifyInstance): Promise<void> => {

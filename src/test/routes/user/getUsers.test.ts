@@ -50,10 +50,21 @@ describe('Get users', () => {
       method: 'GET',
     });
     const users = await knexController('user')
-      .where({ deleted_at: null })
+      .whereNull('deleted_at')
       .select('id');
     const resBody = JSON.parse(res.body);
     expect(res.statusCode).toEqual(200);
     expect(resBody).toHaveLength(users.length);
+  });
+
+  test('it returns empty list', async () => {
+    await knexController('user').del();
+    const res = await server.inject({
+      url: '/api/user?includeArchived=true',
+      method: 'GET',
+    });
+    const resBody = JSON.parse(res.body);
+    expect(res.statusCode).toEqual(200);
+    expect(resBody).toHaveLength(0);
   });
 });
