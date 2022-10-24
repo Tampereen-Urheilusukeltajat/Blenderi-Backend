@@ -38,19 +38,8 @@ describe('Get user', () => {
       });
       const resBody = JSON.parse(res.body);
       expect(res.statusCode).toEqual(200);
-      expect(resBody).toHaveProperty('id');
-      expect(resBody).toHaveProperty('email');
-      expect(resBody).toHaveProperty('forename');
-      expect(resBody).toHaveProperty('surname');
-      expect(resBody).toHaveProperty('isAdmin');
-      expect(resBody).toHaveProperty('isBlender');
-      expect(resBody).toHaveProperty('archivedAt');
-      expect(resBody).not.toHaveProperty('deletedAt');
-      expect(resBody).not.toHaveProperty('passwordHash');
-      expect(resBody).not.toHaveProperty('salt');
-      expect(resBody).not.toHaveProperty('deleted_at');
-      expect(resBody).not.toHaveProperty('created_at');
-      expect(resBody).not.toHaveProperty('updated_at');
+      expect(resBody.archivedAt).toEqual('');
+      expect(resBody).toMatchSnapshot();
     });
   });
   describe('User cant be returned', () => {
