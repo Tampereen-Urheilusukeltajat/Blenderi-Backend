@@ -67,7 +67,7 @@ describe('Get user', () => {
 
     test('it returns 404 if user is deleted', async () => {
       const res = await server.inject({
-        url: '/api/user/2020-01-19 05:15:07/',
+        url: '/api/user/db2e9bfa-53db-11ed-9342-0242ac120002',
         method: 'GET',
       });
       expect(res.statusCode).toEqual(404);

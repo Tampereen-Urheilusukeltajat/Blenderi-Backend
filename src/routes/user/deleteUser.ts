@@ -1,15 +1,10 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { Type } from '@sinclair/typebox';
 import { knexController } from '../../database/database';
 import {
   userIdParamsPayload,
   UserIdParamsPayload,
+  deleteUserReply,
 } from '../../types/user.types';
-
-const deleteUserReply = Type.Object({
-  userId: Type.String(),
-  deletedAt: Type.String(),
-});
 
 const schema = {
   description:

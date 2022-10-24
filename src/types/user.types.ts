@@ -54,10 +54,17 @@ export type CreateUserRequest = FastifyRequest<{
 }>;
 
 export const userIdParamsPayload = Type.Object({
-  userId: Type.String(),
+  userId: Type.String({ format: 'uuid' }),
 });
 
 export type UserIdParamsPayload = Static<typeof userIdParamsPayload>;
+
+export const deleteUserReply = Type.Object({
+  userId: Type.String({ format: 'uuid' }),
+  deletedAt: Type.String(),
+});
+
+export type DeleteUserReply = Static<typeof deleteUserReply>;
 
 const hashObj = Type.Object({
   hash: Type.String(),
