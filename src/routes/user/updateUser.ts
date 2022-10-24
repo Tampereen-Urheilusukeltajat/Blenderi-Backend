@@ -21,7 +21,7 @@ const archiveUserQuery = Type.Object({
 type ArchiveUserQuery = Static<typeof archiveUserQuery>;
 
 const editUserSchema = {
-  description: 'Edit data of already existing user or archive user.',
+  description: 'Edit data of already existing user or archived user.',
   summary: 'Edit user',
   tags: ['User', 'Update'],
   query: archiveUserQuery,
