@@ -72,7 +72,7 @@ describe('delete cylinder set', () => {
     expect(response1.length).toEqual(2);
   });
 
-  test('it responses 400 when no set with given id', async () => {
+  test('it responses 404 when no set with given id', async () => {
     const server = await getTestInstance();
     const res = await server.inject({
       url: 'api/cylinder-set/f5e1165e-f36e-4056-9a1b-5925a3c5793e',
