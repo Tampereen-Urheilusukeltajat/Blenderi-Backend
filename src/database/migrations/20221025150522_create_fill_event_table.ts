@@ -9,6 +9,7 @@ export async function up(knex: Knex): Promise<void> {
       .references('id')
       .inTable('diving_cylinder_set')
       .notNullable();
+    table.string('info', 2048); // arbitrary number
     table.timestamps(true, true);
   });
 
@@ -27,9 +28,10 @@ export async function up(knex: Knex): Promise<void> {
       .string('gas', 15)
       .checkIn(['pressurized_air', 'oxygen', 'helium', 'argon'])
       .notNullable();
-    table.integer('fill_pressure').notNullable();
-    table.string('info', 2048); // arbitrary number
+    table.integer('fill_pressure').unsigned().notNullable();
+    table.integer('cost').unsigned().notNullable(); // cost in euro cents
     table.unique(['fill_event', 'cylinder']);
+    table.timestamps(true, true);
   });
 }
 
