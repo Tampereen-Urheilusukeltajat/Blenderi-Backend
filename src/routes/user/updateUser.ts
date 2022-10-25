@@ -15,7 +15,7 @@ import {
 } from '../../types/user.types';
 
 const editUserSchema = {
-  description: 'Edit data of already existing user.',
+  description: 'Edit data of already existing user or archived user.',
   summary: 'Edit user',
   tags: ['User', 'Update'],
   params: userIdParamsPayload,
@@ -28,15 +28,25 @@ const editUserSchema = {
     409: { $ref: 'error' },
   },
 };
-
+// TODO: laita arkistointi tänne
 const editUserHandler = async (
-  req: FastifyRequest<{ Body: UpdateUserBody; Params: UserIdParamsPayload }>,
+  req: FastifyRequest<{
+    Body: UpdateUserBody;
+    Params: UserIdParamsPayload;
+  }>,
   reply: FastifyReply
 ): Promise<void> => {
   const updateBody: UpdateUserBody = req.body;
 
-  // if empty request body.
-  if (Object.values(updateBody).every((el) => el === undefined)) {
+  let archiveUser = false;
+  if (updateBody.archive !== undefined && updateBody.archive) {
+    archiveUser = true;
+  }
+  // if empty request body and not archiving user.
+  if (
+    !archiveUser &&
+    Object.values(updateBody).every((el) => el === undefined)
+  ) {
     return errorHandler(reply, 400, 'Empty body.');
   }
 
@@ -78,6 +88,7 @@ const editUserHandler = async (
       is_blender: updateBody.isBlender,
       password_hash: hashObj !== undefined ? hashObj.hash : undefined,
       salt: hashObj !== undefined ? hashObj.salt : undefined,
+      archived_at: archiveUser ? knexController.fn.now() : null,
     });
 
   // If no user found with given id.
@@ -93,7 +104,8 @@ const editUserHandler = async (
       'forename',
       'surname',
       'is_admin as isAdmin',
-      'is_blender as isBlender'
+      'is_blender as isBlender',
+      'archived_at as archivedAt'
     )
     .from<UserResponse>('user')
     .where({ id: userId });

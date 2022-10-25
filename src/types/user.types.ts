@@ -10,6 +10,8 @@ export const user = Type.Object({
   isBlender: Type.Boolean(),
   salt: Type.String(),
   passwordHash: Type.String(),
+  archivedAt: Type.String(),
+  deletedAt: Type.String(),
 });
 
 export type User = Static<typeof user>;
@@ -21,6 +23,7 @@ export const updateUserBody = Type.Object({
   isAdmin: Type.Optional(Type.Boolean()),
   isBlender: Type.Optional(Type.Boolean()),
   password: Type.Optional(Type.String()),
+  archive: Type.Optional(Type.Boolean()),
 });
 
 export type UpdateUserBody = Static<typeof updateUserBody>;
@@ -32,6 +35,7 @@ export const userResponse = Type.Object({
   surname: Type.String(),
   isAdmin: Type.Boolean(),
   isBlender: Type.Boolean(),
+  archivedAt: Type.String(),
 });
 
 export type UserResponse = Static<typeof userResponse>;
@@ -50,10 +54,17 @@ export type CreateUserRequest = FastifyRequest<{
 }>;
 
 export const userIdParamsPayload = Type.Object({
-  userId: Type.String(),
+  userId: Type.String({ format: 'uuid' }),
 });
 
 export type UserIdParamsPayload = Static<typeof userIdParamsPayload>;
+
+export const deleteUserReply = Type.Object({
+  userId: Type.String({ format: 'uuid' }),
+  deletedAt: Type.String(),
+});
+
+export type DeleteUserReply = Static<typeof deleteUserReply>;
 
 const hashObj = Type.Object({
   hash: Type.String(),

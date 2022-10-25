@@ -1,10 +1,9 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { knexController } from '../../database/database';
 import { errorHandler } from '../../lib/errorHandler';
-
 import {
   userResponse,
-  UserResponse,
+  User,
   userIdParamsPayload,
   UserIdParamsPayload,
 } from '../../types/user.types';
@@ -29,17 +28,20 @@ const handler = async (
   reply: FastifyReply
 ): Promise<void> => {
   // TODO: Authorization check
-  // TODO: Don't return if user is archived or deleted
   const userId = req.params.userId;
-  const user: UserResponse = await knexController<UserResponse>('user')
+  const user: User = await knexController<User>('user')
     .where('id', userId)
+    .whereNull('archived_at')
+    .whereNull('deleted_at')
     .first(
       'id',
       'email',
       'forename',
       'surname',
       'is_admin as isAdmin',
-      'is_blender as isBlender'
+      'is_blender as isBlender',
+      'archived_at as archivedAt',
+      'deleted_at as deletedAt'
     );
   if (user === undefined) {
     return errorHandler(reply, 404, 'User not found.');

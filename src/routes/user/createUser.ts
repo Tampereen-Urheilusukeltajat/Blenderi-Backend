@@ -66,7 +66,8 @@ const handler = async (
       'forename',
       'surname',
       'is_admin as isAdmin',
-      'is_blender as isBlender'
+      'is_blender as isBlender',
+      'archived_at as archivedAt'
     )
     .where({ email: request.body.email });
 
