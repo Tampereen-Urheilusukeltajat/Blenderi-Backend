@@ -17,7 +17,7 @@ import {
 const editUserSchema = {
   description: 'Edit data of already existing user or archived user.',
   summary: 'Edit user',
-  tags: ['User', 'Update'],
+  tags: ['User'],
   params: userIdParamsPayload,
   body: updateUserBody,
   response: {

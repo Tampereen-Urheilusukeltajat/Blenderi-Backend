@@ -4,9 +4,9 @@ services:
   mariadb:
     image: mariadb:10.9.3
     ports:
-      - 33900:3306
+      - '${MYSQL_PORT}:3306'
     volumes:
-      - ~/apps/blenderiApp:/var/lib/mysql
+      - blenderi-volume:/var/lib/mysql
     env_file:
       - .env
     environment:
@@ -16,3 +16,6 @@ services:
       - MYSQL_USER
       - MYSQL_PASSWORD
       - MYSQL_ROOT_PASSWORD
+volumes:
+  blenderi-volume:
+    name: ${DB_VOLUME_NAME}
