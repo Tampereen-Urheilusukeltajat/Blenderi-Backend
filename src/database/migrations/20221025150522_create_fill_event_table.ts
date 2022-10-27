@@ -15,7 +15,7 @@ export async function up(knex: Knex): Promise<void> {
     table.integer('argon_pressure').unsigned().notNullable().defaultTo(0);
     table.integer('diluent_pressure').unsigned().notNullable().defaultTo(0);
     table.integer('price').unsigned(); // euro cents
-    table.string('info', 1024); // arbitrary number
+    table.string('info', 1024); // magic number
     table.timestamps(true, true);
   });
 }
