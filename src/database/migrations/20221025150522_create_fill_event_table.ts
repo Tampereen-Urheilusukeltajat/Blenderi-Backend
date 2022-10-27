@@ -9,12 +9,13 @@ export async function up(knex: Knex): Promise<void> {
       .references('id')
       .inTable('diving_cylinder_set')
       .notNullable();
-    table.integer('air_pressure').unsigned();
-    table.integer('oxygen_pressure').unsigned();
-    table.integer('helium_pressure').unsigned();
-    table.integer('argon_pressure').unsigned();
+    table.integer('air_pressure').unsigned().notNullable().defaultTo(0);
+    table.integer('oxygen_pressure').unsigned().notNullable().defaultTo(0);
+    table.integer('helium_pressure').unsigned().notNullable().defaultTo(0);
+    table.integer('argon_pressure').unsigned().notNullable().defaultTo(0);
+    table.integer('diluent_pressure').unsigned().notNullable().defaultTo(0);
     table.integer('price').unsigned(); // euro cents
-    table.string('info', 2048); // arbitrary number
+    table.string('info', 1024); // arbitrary number
     table.timestamps(true, true);
   });
 }
