@@ -33,11 +33,12 @@ const handler = async (
         (cylinder) => cylinder.owner === req.params.cylinderSetOwner
       );
 
-      if (result.length > 0) {
-        await reply.code(200).send(result);
-      } else {
+      if (result.length === 0) {
         await errorHandler(reply, 404, 'Cylinder set not found');
+        return;
       }
+
+      await reply.code(200).send(result);
     }
   });
 };
