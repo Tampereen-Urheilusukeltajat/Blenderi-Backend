@@ -16,6 +16,14 @@ services:
       - MYSQL_USER
       - MYSQL_PASSWORD
       - MYSQL_ROOT_PASSWORD
+  redis:
+    image: redis:alpine
+    ports:
+      - '${REDIS_PORT}:6379'
+    volumes:
+      - redis-volume:/data
 volumes:
   blenderi-volume:
     name: ${DB_VOLUME_NAME}
+  redis-volume:
+    name: ${REDIS_VOLUME_NAME}

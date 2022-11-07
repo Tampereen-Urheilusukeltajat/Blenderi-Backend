@@ -1,6 +1,8 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { knexController } from '../../database/database';
 import { testPassword } from '../../lib/auth';
+import redis from '../../lib/redis';
+import { v4 as uuid } from 'uuid';
 
 const schema = {
   description: 'login',
@@ -18,7 +20,8 @@ const schema = {
       description: 'Logged in',
       type: 'object',
       properties: {
-        token: { type: 'string' },
+        accessToken: { type: 'string' },
+        refreshToken: { type: 'string' },
       },
     },
     400: { $ref: 'error' },
@@ -36,6 +39,8 @@ const handler = async function (
   }>,
   reply: FastifyReply
 ): Promise<void> {
+  await redis.connect();
+
   const result: { id: 'String'; salt: 'String'; password_hash: 'String' } =
     await knexController('user')
       .where('email', request.body.email)
@@ -43,9 +48,21 @@ const handler = async function (
   if (
     await testPassword(request.body.password, result.password_hash, result.salt)
   ) {
-    const token = this.jwt.sign({ id: result.id });
-    return reply.code(200).send({ token });
+    const jti: string = uuid();
+    const accessToken = this.jwt.sign({ id: result.id }, { expiresIn: 600 });
+    const refreshTokenExpireTime = 8640000; // 100 days
+    const refreshToken = this.jwt.sign(
+      { id: result.id },
+      { expiresIn: refreshTokenExpireTime, jti }
+    );
+    await redis.set(result.id + ':' + jti, refreshToken, {
+      EX: refreshTokenExpireTime,
+    });
+    return reply.code(200).send({ accessToken, refreshToken });
   }
+
+  await redis.disconnect();
+
   return reply.code(401).send({
     statusCode: 401,
     error: 'Unauthorized',
