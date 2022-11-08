@@ -1,8 +1,11 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { knexController } from '../../database/database';
 import { testPassword } from '../../lib/auth';
-import redis from '../../lib/redis';
+import { createClient } from 'redis';
 import { v4 as uuid } from 'uuid';
+
+// REMOVE
+const redis = createClient();
 
 const schema = {
   description: 'login',
@@ -58,6 +61,7 @@ const handler = async function (
     await redis.set(result.id + ':' + jti, refreshToken, {
       EX: refreshTokenExpireTime,
     });
+    await redis.disconnect();
     return reply.code(200).send({ accessToken, refreshToken });
   }
 
