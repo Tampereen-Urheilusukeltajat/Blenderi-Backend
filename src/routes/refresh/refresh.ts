@@ -1,7 +1,7 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { errorHandler } from '../../lib/errorHandler';
 import { v4 as uuid } from 'uuid';
-import { oldRefreshTokenIsValid, rotate } from '../../lib/jwtUtils';
+import { tokenIsUsable, rotate } from '../../lib/jwtUtils';
 
 const refreshTokenExpireTime = 8640000; // 100 days
 const accessTokenExpireTime = 100;
@@ -43,9 +43,7 @@ const handler = async function (
   const userId: string = oldRefreshTokenDecoded.id;
   const oldJti: string = oldRefreshTokenDecoded.jti;
 
-  if (
-    !(await oldRefreshTokenIsValid(request.body.refreshToken, userId, oldJti))
-  ) {
+  if (!(await tokenIsUsable(request.body.refreshToken, userId, oldJti))) {
     return errorHandler(reply, 403);
   }
 
@@ -54,7 +52,7 @@ const handler = async function (
     { id: userId },
     { expiresIn: refreshTokenExpireTime, jti }
   );
-  const accessToken = this.jwt.sign(
+  const accessToken: string = this.jwt.sign(
     { id: userId },
     { expiresIn: accessTokenExpireTime }
   );

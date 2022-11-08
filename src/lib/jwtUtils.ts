@@ -5,7 +5,7 @@ const redisClient = createClient();
 
 redisClient.on('error', (err) => log.error('Redis Client Error', err));
 
-export async function oldRefreshTokenIsValid(
+export async function tokenIsUsable(
   oldToken: string,
   userId: string,
   oldJti: string
