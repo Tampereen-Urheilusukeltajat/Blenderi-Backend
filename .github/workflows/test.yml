@@ -35,7 +35,7 @@ jobs:
         run: npm install
       - name: Create empty .env file
         run: touch .env
-      - name: Start the database
-        run: docker-compose up -d mariadb
+      - name: Start the database and jwt refresh token cache
+        run: docker-compose up -d mariadb redis
       - name: Run tests
         run: npm test
