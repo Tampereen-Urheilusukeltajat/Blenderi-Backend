@@ -26,6 +26,11 @@ export const buildServer = async (opts: {
       customOptions: {
         removeAdditional: 'all', // Remove additional params from the body etc
       },
+      plugins: [
+        (ajv) => {
+          ajv.addKeyword({ keyword: 'example' });
+        },
+      ],
     },
   });
 

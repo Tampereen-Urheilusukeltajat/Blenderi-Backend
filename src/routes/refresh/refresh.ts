@@ -1,7 +1,7 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { errorHandler } from '../../lib/errorHandler';
 import { v4 as uuid } from 'uuid';
-import { tokenIsUsable, rotate } from '../../lib/jwtUtils';
+import { tokenIsUsable, rotate } from '../../lib/refreshTokenUtils';
 
 const refreshTokenExpireTime = 8640000; // 100 days
 const accessTokenExpireTime = 100;
@@ -12,7 +12,11 @@ const schema = {
   body: {
     type: 'object',
     properties: {
-      refreshToken: { type: 'string' },
+      refreshToken: {
+        type: 'string',
+        example:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM3YThjMWM2LTVlZDYtMTFlZC1iNmYxLTAyNDJhYzEyMDAwNCIsImp0aSI6IjMxZjc3NjBmLWUwNmMtNDUwZi1iYWVjLWU2ZTY4YzkwYTkwZCIsImlhdCI6MTY2NzkzOTE3MiwiZXhwIjoxNjc2NTc5MTcyfQ.hDi1sadn1QC_UUdifNKu70p9MMrVxRGZx2jsLd7V04c',
+      },
     },
     required: ['refreshToken'],
   },
