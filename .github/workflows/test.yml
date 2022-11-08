@@ -12,6 +12,11 @@ env:
   MYSQL_USER: ${{ secrets.MYSQL_USER }}
   MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
   MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+  REDIS_VOLUME_NAME: redis-volume
+  REDIS_HOST: localhost
+  REDIS_PORT: 6379
+  REDIS_USER: blenderi
+  REDIS_PASSWORD: pass
 
 jobs:
   test:
