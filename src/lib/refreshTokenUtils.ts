@@ -3,13 +3,14 @@ import { log } from './log';
 
 const redisClient = createClient();
 
+// TODO: ??? paranna
 redisClient.on('error', (err) => log.error('Redis Client Error', err));
 
-export async function tokenIsUsable(
+export const tokenIsUsable = async (
   oldToken: string,
   userId: string,
   oldJti: string
-): Promise<boolean> {
+): Promise<boolean> => {
   await redisClient.connect();
   const oldTokenFromCache: string | null = await redisClient.get(
     userId + ':' + oldJti
@@ -17,15 +18,15 @@ export async function tokenIsUsable(
   await redisClient.disconnect();
 
   return oldTokenFromCache === oldToken;
-}
+};
 
-export async function rotate(
+export const rotate = async (
   oldJti: string,
   jti: string,
   userId: string,
   refreshToken: string,
   refreshTokenExpireTime: number
-): Promise<void> {
+): Promise<void> => {
   await redisClient.connect();
   await redisClient.del(userId + ':' + oldJti);
 
@@ -33,4 +34,4 @@ export async function rotate(
     EX: refreshTokenExpireTime,
   });
   await redisClient.disconnect();
-}
+};
