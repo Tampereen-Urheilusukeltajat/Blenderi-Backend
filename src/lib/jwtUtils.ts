@@ -9,6 +9,18 @@ const redisClient = createClient();
 // TODO: ??? paranna
 redisClient.on('error', (err) => log.error('Redis Client Error', err));
 
+export const initializeRefreshTokenRotationSession = async (
+  userId: string,
+  refreshTokenId: string,
+  refreshToken: string
+): Promise<void> => {
+  await redisClient.connect();
+  await redisClient.set(userId + ':' + refreshTokenId, refreshToken, {
+    EX: REFRESH_TOKEN_EXPIRE_TIME,
+  });
+  await redisClient.disconnect();
+};
+
 export const tokenIsUsable = async (
   oldToken: string,
   userId: string,

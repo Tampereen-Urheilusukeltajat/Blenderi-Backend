@@ -1,16 +1,13 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { knexController } from '../../database/database';
 import { passwordIsValid } from '../../lib/auth';
-import { createClient } from 'redis';
 import { v4 as uuid } from 'uuid';
 import { errorHandler } from '../../lib/errorHandler';
 import {
+  initializeRefreshTokenRotationSession,
   REFRESH_TOKEN_EXPIRE_TIME,
   ACCESS_TOKEN_EXPIRE_TIME,
 } from '../../lib/jwtUtils';
-
-// REMOVE
-const redis = createClient();
 
 const schema = {
   description: 'login',
@@ -47,8 +44,6 @@ const handler = async function (
   }>,
   reply: FastifyReply
 ): Promise<void> {
-  await redis.connect();
-
   const result: { id: 'String'; salt: 'String'; password_hash: 'String' } =
     await knexController('user')
       .where('email', request.body.email)
@@ -75,13 +70,14 @@ const handler = async function (
     { id: result.id },
     { expiresIn: REFRESH_TOKEN_EXPIRE_TIME, jti: refreshTokenId }
   );
-  await redis.set(result.id + ':' + refreshTokenId, refreshToken, {
-    EX: REFRESH_TOKEN_EXPIRE_TIME,
-  });
-  await redis.disconnect();
-  return reply.code(200).send({ accessToken, refreshToken });
 
-  await redis.disconnect();
+  await initializeRefreshTokenRotationSession(
+    result.id,
+    refreshTokenId,
+    refreshToken
+  );
+
+  return reply.code(200).send({ accessToken, refreshToken });
 };
 
 export default async (fastify: FastifyInstance): Promise<void> => {
