@@ -2,9 +2,12 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 // import { knexController } from "../../database/database";
 import {
   createFillEventBody,
+  CreateFillEventBody,
   fillEventResponse,
 } from '../../types/fillEvent.types';
 import { errorHandler } from '../../lib/errorHandler';
+// import { getGasPrice, /*insertFillEvent*/ } from '../../lib/fillEvent';
+
 const schema = {
   description: 'Creates a new fill event',
   tags: ['Fill event'],
@@ -19,10 +22,21 @@ const schema = {
 };
 
 const handler = async (
-  request: FastifyRequest,
+  request: FastifyRequest<{ Body: CreateFillEventBody }>,
   reply: FastifyReply
 ): Promise<void> => {
   // console.log(request.body);
+  /* const { airPressure, oxygenPressure, heliumPressure, argonPressure, diluentPressure, info } = request.body
+  if (!airPressure && !oxygenPressure && !heliumPressure && !argonPressure && !diluentPressure ){
+    return errorHandler(reply, 400, 'No gases were given')
+  }
+  if (airPressure && !oxygenPressure && !heliumPressure && !argonPressure && !diluentPressure){
+    await insertFillEvent("lmao", "cylinderSet", airPressure, oxygenPressure, heliumPressure, argonPressure, diluentPressure, 0, info) 
+    return reply.status(201);
+  }
+  const price: Number = await getGasPrice('oxygen')
+  // console.log(price);
+  */
   return errorHandler(reply, 403, 'lol');
 };
 
