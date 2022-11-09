@@ -5,8 +5,8 @@ import { createClient } from 'redis';
 import { v4 as uuid } from 'uuid';
 import { errorHandler } from '../../lib/errorHandler';
 import {
-  refreshTokenExpireTime,
-  accessTokenExpireTime,
+  REFRESH_TOKEN_EXPIRE_TIME,
+  ACCESS_TOKEN_EXPIRE_TIME,
 } from '../../lib/jwtUtils';
 
 // REMOVE
@@ -68,15 +68,15 @@ const handler = async function (
 
   const accessToken = this.jwt.sign(
     { id: result.id },
-    { expiresIn: accessTokenExpireTime }
+    { expiresIn: ACCESS_TOKEN_EXPIRE_TIME }
   );
 
   const refreshToken = this.jwt.sign(
     { id: result.id },
-    { expiresIn: refreshTokenExpireTime, jti: refreshTokenId }
+    { expiresIn: REFRESH_TOKEN_EXPIRE_TIME, jti: refreshTokenId }
   );
   await redis.set(result.id + ':' + refreshTokenId, refreshToken, {
-    EX: refreshTokenExpireTime,
+    EX: REFRESH_TOKEN_EXPIRE_TIME,
   });
   await redis.disconnect();
   return reply.code(200).send({ accessToken, refreshToken });

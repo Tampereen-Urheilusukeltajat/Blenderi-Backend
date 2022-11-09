@@ -1,8 +1,8 @@
 import { createClient } from 'redis';
 import { log } from './log';
 
-export const refreshTokenExpireTime = 8640000; // 100 days
-export const accessTokenExpireTime = 100;
+export const REFRESH_TOKEN_EXPIRE_TIME = 8640000; // 100 days
+export const ACCESS_TOKEN_EXPIRE_TIME = 100;
 
 const redisClient = createClient();
 

@@ -4,8 +4,8 @@ import { v4 as uuid } from 'uuid';
 import {
   tokenIsUsable,
   rotate,
-  refreshTokenExpireTime,
-  accessTokenExpireTime,
+  REFRESH_TOKEN_EXPIRE_TIME,
+  ACCESS_TOKEN_EXPIRE_TIME,
 } from '../../lib/jwtUtils';
 
 const schema = {
@@ -56,14 +56,14 @@ const handler = async function (
   const jti: string = uuid();
   const refreshToken = this.jwt.sign(
     { id: userId },
-    { expiresIn: refreshTokenExpireTime, jti }
+    { expiresIn: REFRESH_TOKEN_EXPIRE_TIME, jti }
   );
   const accessToken: string = this.jwt.sign(
     { id: userId },
-    { expiresIn: accessTokenExpireTime }
+    { expiresIn: ACCESS_TOKEN_EXPIRE_TIME }
   );
 
-  await rotate(oldJti, jti, userId, refreshToken, refreshTokenExpireTime);
+  await rotate(oldJti, jti, userId, refreshToken, REFRESH_TOKEN_EXPIRE_TIME);
 
   return reply.code(200).send({ accessToken, refreshToken });
 };
