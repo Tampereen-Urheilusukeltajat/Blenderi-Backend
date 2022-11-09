@@ -3,6 +3,7 @@ import { knexController } from '../../database/database';
 import { passwordIsValid } from '../../lib/auth';
 import { createClient } from 'redis';
 import { v4 as uuid } from 'uuid';
+import { errorHandler } from '../../lib/errorHandler';
 
 // REMOVE
 const redis = createClient();
@@ -55,27 +56,22 @@ const handler = async function (
       result.salt
     ))
   ) {
-    const jti: string = uuid();
-    const accessToken = this.jwt.sign({ id: result.id }, { expiresIn: 600 });
-    const refreshTokenExpireTime = 8640000; // 100 days
-    const refreshToken = this.jwt.sign(
-      { id: result.id },
-      { expiresIn: refreshTokenExpireTime, jti }
-    );
-    await redis.set(result.id + ':' + jti, refreshToken, {
-      EX: refreshTokenExpireTime,
-    });
-    await redis.disconnect();
-    return reply.code(200).send({ accessToken, refreshToken });
+    return errorHandler(reply, 401);
   }
+  const jti: string = uuid();
+  const accessToken = this.jwt.sign({ id: result.id }, { expiresIn: 600 });
+  const refreshTokenExpireTime = 8640000; // 100 days
+  const refreshToken = this.jwt.sign(
+    { id: result.id },
+    { expiresIn: refreshTokenExpireTime, jti }
+  );
+  await redis.set(result.id + ':' + jti, refreshToken, {
+    EX: refreshTokenExpireTime,
+  });
+  await redis.disconnect();
+  return reply.code(200).send({ accessToken, refreshToken });
 
   await redis.disconnect();
-
-  return reply.code(401).send({
-    statusCode: 401,
-    error: 'Unauthorized',
-    message: '🖕',
-  });
 };
 
 export default async (fastify: FastifyInstance): Promise<void> => {
