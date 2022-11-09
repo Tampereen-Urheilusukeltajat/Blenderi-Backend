@@ -1,10 +1,12 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { errorHandler } from '../../lib/errorHandler';
 import { v4 as uuid } from 'uuid';
-import { tokenIsUsable, rotate } from '../../lib/jwtUtils';
-
-const refreshTokenExpireTime = 8640000; // 100 days
-const accessTokenExpireTime = 100;
+import {
+  tokenIsUsable,
+  rotate,
+  refreshTokenExpireTime,
+  accessTokenExpireTime,
+} from '../../lib/jwtUtils';
 
 const schema = {
   description: 'refresh',

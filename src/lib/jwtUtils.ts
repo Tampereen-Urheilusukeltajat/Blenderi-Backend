@@ -1,6 +1,9 @@
 import { createClient } from 'redis';
 import { log } from './log';
 
+export const refreshTokenExpireTime = 8640000; // 100 days
+export const accessTokenExpireTime = 100;
+
 const redisClient = createClient();
 
 // TODO: ??? paranna

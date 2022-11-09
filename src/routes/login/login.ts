@@ -4,6 +4,10 @@ import { passwordIsValid } from '../../lib/auth';
 import { createClient } from 'redis';
 import { v4 as uuid } from 'uuid';
 import { errorHandler } from '../../lib/errorHandler';
+import {
+  refreshTokenExpireTime,
+  accessTokenExpireTime,
+} from '../../lib/jwtUtils';
 
 // REMOVE
 const redis = createClient();
@@ -49,6 +53,7 @@ const handler = async function (
     await knexController('user')
       .where('email', request.body.email)
       .first('id', 'salt', 'password_hash');
+
   if (
     !(await passwordIsValid(
       request.body.password,
@@ -58,14 +63,19 @@ const handler = async function (
   ) {
     return errorHandler(reply, 401);
   }
-  const jti: string = uuid();
-  const accessToken = this.jwt.sign({ id: result.id }, { expiresIn: 600 });
-  const refreshTokenExpireTime = 8640000; // 100 days
+
+  const refreshTokenId: string = uuid();
+
+  const accessToken = this.jwt.sign(
+    { id: result.id },
+    { expiresIn: accessTokenExpireTime }
+  );
+
   const refreshToken = this.jwt.sign(
     { id: result.id },
-    { expiresIn: refreshTokenExpireTime, jti }
+    { expiresIn: refreshTokenExpireTime, jti: refreshTokenId }
   );
-  await redis.set(result.id + ':' + jti, refreshToken, {
+  await redis.set(result.id + ':' + refreshTokenId, refreshToken, {
     EX: refreshTokenExpireTime,
   });
   await redis.disconnect();
