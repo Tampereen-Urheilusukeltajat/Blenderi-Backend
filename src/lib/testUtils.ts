@@ -25,6 +25,8 @@ const TABLE_READ_ORDER = [
   'diving_cylinder',
   'diving_cylinder_set',
   'diving_cylinder_to_set',
+  'prices',
+  'fill_event',
 ];
 
 const deriveReadOrder = (tableNames: string[]): string[] => {
