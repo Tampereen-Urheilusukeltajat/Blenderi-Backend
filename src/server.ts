@@ -10,11 +10,12 @@ import jwt from '@fastify/jwt';
 import { fastifyAutoload } from '@fastify/autoload';
 import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 
+import { v4 as uuid } from 'uuid';
 import { log } from './lib/log';
 import path from 'path';
 import { errorHandler } from './lib/errorHandler';
 
-const secret = 'donthackme';
+const SECRET = uuid();
 
 export const buildServer = async (opts: {
   routePrefix: string;
@@ -87,7 +88,7 @@ export const buildServer = async (opts: {
       },
     })
     .register(jwt, {
-      secret,
+      secret: SECRET,
     })
     .decorate(
       'authenticate',
