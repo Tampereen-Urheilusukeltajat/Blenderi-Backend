@@ -11,7 +11,7 @@ export const hashPassword = async (
   return { hash, salt };
 };
 
-export const testPassword = async (
+export const passwordIsValid = async (
   password: string,
   oldHash: string,
   salt: string

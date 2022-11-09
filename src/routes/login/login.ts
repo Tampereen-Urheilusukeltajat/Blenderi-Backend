@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { knexController } from '../../database/database';
-import { testPassword } from '../../lib/auth';
+import { passwordIsValid } from '../../lib/auth';
 import { createClient } from 'redis';
 import { v4 as uuid } from 'uuid';
 
@@ -49,7 +49,11 @@ const handler = async function (
       .where('email', request.body.email)
       .first('id', 'salt', 'password_hash');
   if (
-    await testPassword(request.body.password, result.password_hash, result.salt)
+    !(await passwordIsValid(
+      request.body.password,
+      result.password_hash,
+      result.salt
+    ))
   ) {
     const jti: string = uuid();
     const accessToken = this.jwt.sign({ id: result.id }, { expiresIn: 600 });
