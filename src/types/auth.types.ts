@@ -6,8 +6,6 @@ export const authResponse = Type.Object({
   accessToken: Type.String(),
 });
 
-export type AuthResponse = Static<typeof authResponse>;
-
 export const loginRequestBody = Type.Object({
   email: Type.String({ minLength: 3, maxLength: 254, pattern: '^.+@....+$' }),
   password: Type.String({ minLength: 8, maxLength: 1000 }),
