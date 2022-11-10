@@ -58,7 +58,7 @@ const handler = async function (
 
   const jti: string = uuid();
   const refreshToken = this.jwt.sign(
-    { id: userId },
+    { id: userId, isRefreshToken: true },
     { expiresIn: REFRESH_TOKEN_EXPIRE_TIME, jti }
   );
   const accessToken: string = this.jwt.sign(

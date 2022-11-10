@@ -98,7 +98,12 @@ export const buildServer = async (opts: {
       'authenticate',
       async (request: FastifyRequest, reply: FastifyReply) => {
         try {
-          await request.jwtVerify();
+          const accessToken: { isRefreshToken?: string } =
+            await request.jwtVerify();
+
+          if (accessToken.isRefreshToken !== undefined) {
+            return errorHandler(reply, 401);
+          }
         } catch (err) {
           return errorHandler(reply, 401);
         }

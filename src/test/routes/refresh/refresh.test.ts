@@ -80,14 +80,26 @@ describe('Refresh', () => {
       const res = await server.inject({
         url: '/api/refresh',
         method: 'POST',
-        payload: {
-          refreshToken: null,
-        },
+        payload: {},
       });
       expect(res.statusCode).toEqual(400);
       const resBody = JSON.parse(res.body);
       expect(resBody).not.toHaveProperty('accessToken');
       expect(resBody).not.toHaveProperty('refreshToken');
+    });
+
+    test('It returns 401 if refreshToken is used as accesstoken', async () => {
+      const res = await server.inject({
+        url: '/api/user/1be5abcd-53d4-11ed-9342-0242ac120002',
+        method: 'GET',
+        headers: {
+          Authorization: 'Bearer ' + String(refreshToken),
+        },
+      });
+      expect(res.statusCode).toEqual(401);
+      const resBody = JSON.parse(res.body);
+      expect(resBody).not.toHaveProperty('id');
+      expect(resBody).not.toHaveProperty('email');
     });
   });
 });
