@@ -1,8 +1,8 @@
 import { createClient } from 'redis';
 import { log } from './log';
 
-export const REFRESH_TOKEN_EXPIRE_TIME = 8640000; // 100 days
-export const ACCESS_TOKEN_EXPIRE_TIME = 100;
+export const REFRESH_TOKEN_EXPIRE_TIME = 2678400; // ~month
+export const ACCESS_TOKEN_EXPIRE_TIME = 600;
 export const EXAMPLE_JWT =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhIjpudWxsfQ.d3KrYIOoi5LIdMEbSpeMj7Hrw26hhBk0s9_FUwNTcoE';
 
