@@ -5,9 +5,9 @@ export const REFRESH_TOKEN_EXPIRE_TIME = 8640000; // 100 days
 export const ACCESS_TOKEN_EXPIRE_TIME = 100;
 
 const redisClient = createClient();
-
-// TODO: ??? paranna
-redisClient.on('error', (err) => log.error('Redis Client Error', err));
+redisClient.on('error', (error) =>
+  log.error('Redis client error event', error)
+);
 
 export const initializeRefreshTokenRotationSession = async (
   userId: string,
@@ -32,6 +32,11 @@ export const tokenIsUsable = async (
   );
   await redisClient.disconnect();
 
+  if (oldTokenFromCache === null) {
+    log.warn('Refresh token reuse or unknown refresh token.');
+    return false;
+  }
+
   return oldTokenFromCache === oldToken;
 };
 
@@ -43,10 +48,11 @@ export const rotate = async (
   refreshTokenExpireTime: number
 ): Promise<void> => {
   await redisClient.connect();
-  await redisClient.del(userId + ':' + oldJti);
 
+  await redisClient.del(userId + ':' + oldJti);
   await redisClient.set(userId + ':' + jti, refreshToken, {
     EX: refreshTokenExpireTime,
   });
+
   await redisClient.disconnect();
 };

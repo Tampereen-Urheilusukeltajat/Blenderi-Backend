@@ -1,6 +1,7 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { errorHandler } from '../../lib/errorHandler';
 import { v4 as uuid } from 'uuid';
+import { log } from '../../lib/log';
 import {
   tokenIsUsable,
   rotate,
@@ -45,7 +46,19 @@ const handler = async function (
   }>,
   reply: FastifyReply
 ): Promise<void> {
-  const oldRefreshTokenDecoded = this.jwt.verify(request.body.refreshToken);
+  let oldRefreshTokenDecoded;
+  try {
+    oldRefreshTokenDecoded = this.jwt.verify(request.body.refreshToken);
+  } catch (error) {
+    if (error?.code === 'FAST_JWT_INVALID_SIGNATURE') {
+      log.info('Received invalid refresh token.');
+    }
+
+    // In case of expired refresh token error.code would be
+    // FAST_JWT_EXPIRED. This is totally normal and should not be logged.
+
+    return errorHandler(reply, 401);
+  }
   const userId: string = oldRefreshTokenDecoded.id;
   const oldJti: string = oldRefreshTokenDecoded.jti;
 

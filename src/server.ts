@@ -15,7 +15,11 @@ import { log } from './lib/log';
 import path from 'path';
 import { errorHandler } from './lib/errorHandler';
 
-const SECRET = uuid();
+const JWT_SECRET =
+  process.env.NODE_ENV === 'development' &&
+  process.env.DEVELOPMENT_JWT_SECRET !== undefined
+    ? process.env.DEVELOPMENT_JWT_SECRET
+    : uuid();
 
 export const buildServer = async (opts: {
   routePrefix: string;
@@ -88,7 +92,7 @@ export const buildServer = async (opts: {
       },
     })
     .register(jwt, {
-      secret: SECRET,
+      secret: JWT_SECRET,
     })
     .decorate(
       'authenticate',
@@ -96,11 +100,7 @@ export const buildServer = async (opts: {
         try {
           await request.jwtVerify();
         } catch (err) {
-          await reply.code(401).send({
-            statusCode: 401,
-            error: 'Unauthorized',
-            message: 'please do authenticate yourself',
-          });
+          return errorHandler(reply, 401);
         }
       }
     )
