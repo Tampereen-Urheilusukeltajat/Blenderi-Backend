@@ -35,12 +35,12 @@ const handler = async function (
   request: LoginRequest,
   reply: FastifyReply
 ): Promise<void> {
-  const result: { id: 'String'; salt: 'String'; password_hash: 'String' } =
+  const userInfo: { id: 'String'; salt: 'String'; password_hash: 'String' } =
     await knexController('user')
       .where('email', request.body.email)
       .first('id', 'salt', 'password_hash');
 
-  if (result === undefined) {
+  if (userInfo === undefined) {
     // This means that user doesn't exist, we are not going to tell that to the client.
     return errorHandler(reply, 401);
   }
@@ -48,27 +48,27 @@ const handler = async function (
   if (
     !(await passwordIsValid(
       request.body.password,
-      result.password_hash,
-      result.salt
+      userInfo.password_hash,
+      userInfo.salt
     ))
   ) {
     return errorHandler(reply, 401);
   }
 
-  const refreshTokenId: string = uuid();
-
   const accessToken = this.jwt.sign(
-    { id: result.id },
+    { id: userInfo.id },
     { expiresIn: ACCESS_TOKEN_EXPIRE_TIME }
   );
 
+  const refreshTokenId: string = uuid();
+
   const refreshToken = this.jwt.sign(
-    { id: result.id, isRefreshToken: true },
+    { id: userInfo.id, isRefreshToken: true },
     { expiresIn: REFRESH_TOKEN_EXPIRE_TIME, jti: refreshTokenId }
   );
 
   await initializeRefreshTokenRotationSession(
-    result.id,
+    userInfo.id,
     refreshTokenId,
     refreshToken
   );
