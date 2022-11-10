@@ -7,6 +7,7 @@ import {
   initializeRefreshTokenRotationSession,
   REFRESH_TOKEN_EXPIRE_TIME,
   ACCESS_TOKEN_EXPIRE_TIME,
+  EXAMPLE_JWT,
 } from '../../lib/jwtUtils';
 import {
   loginRequestBody,
@@ -27,10 +28,8 @@ const schema = {
 
 schema.body.properties.email.example = 'john.doe@example.com';
 schema.body.properties.password.example = 'rockyou.txt';
-schema.response['200'].properties.accessToken.example =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2YWx1ZSI6ImFjY2Vzc1Rva2VuIGV4YW1wbGUifQ.RhzwDe3kBpP4ZbwTXiSN3tQ9KtdZ6hGJwHdy9cJtAjo';
-schema.response['200'].properties.refreshToken.example =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2YWx1ZSI6Im1lbmUgdMO2aWhpbiJ9.MRG6niUDfScxyj4p1NWh-0AJJlPjknC8wPTN2RM1d7g';
+schema.response['200'].properties.accessToken.example = EXAMPLE_JWT;
+schema.response['200'].properties.refreshToken.example = EXAMPLE_JWT;
 
 const handler = async function (
   request: LoginRequest,

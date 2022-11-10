@@ -18,3 +18,13 @@ export type LoginRequestBody = Static<typeof loginRequestBody>;
 export type LoginRequest = FastifyRequest<{
   Body: LoginRequestBody;
 }>;
+
+export const refreshRequestBody = Type.Object({
+  refreshToken: Type.String(),
+});
+
+export type RefreshRequestBody = Static<typeof refreshRequestBody>;
+
+export type RefreshRequest = FastifyRequest<{
+  Body: RefreshRequestBody;
+}>;

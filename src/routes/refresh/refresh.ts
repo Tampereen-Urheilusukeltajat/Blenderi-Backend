@@ -1,4 +1,4 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import { FastifyInstance, FastifyReply } from 'fastify';
 import { errorHandler } from '../../lib/errorHandler';
 import { v4 as uuid } from 'uuid';
 import { log } from '../../lib/log';
@@ -7,43 +7,32 @@ import {
   rotate,
   REFRESH_TOKEN_EXPIRE_TIME,
   ACCESS_TOKEN_EXPIRE_TIME,
+  EXAMPLE_JWT,
 } from '../../lib/jwtUtils';
+import {
+  refreshRequestBody,
+  RefreshRequest,
+  authResponse,
+} from '../../types/auth.types';
 
 const schema = {
-  description: 'refresh',
+  description: 'Rotate refresh token and get a new access token.',
   tags: ['Auth'],
-  body: {
-    type: 'object',
-    properties: {
-      refreshToken: {
-        type: 'string',
-        example:
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM3YThjMWM2LTVlZDYtMTFlZC1iNmYxLTAyNDJhYzEyMDAwNCIsImp0aSI6IjMxZjc3NjBmLWUwNmMtNDUwZi1iYWVjLWU2ZTY4YzkwYTkwZCIsImlhdCI6MTY2NzkzOTE3MiwiZXhwIjoxNjc2NTc5MTcyfQ.hDi1sadn1QC_UUdifNKu70p9MMrVxRGZx2jsLd7V04c',
-      },
-    },
-    required: ['refreshToken'],
-  },
+  body: refreshRequestBody,
   response: {
-    200: {
-      description: 'Refreshed',
-      type: 'object',
-      properties: {
-        accessToken: { type: 'string' },
-        refreshToken: { type: 'string' },
-      },
-    },
+    200: authResponse,
     400: { $ref: 'error' },
     403: { $ref: 'error' },
     500: { $ref: 'error' },
   },
 };
 
+schema.body.properties.refreshToken.example = EXAMPLE_JWT;
+schema.response['200'].properties.accessToken.example = EXAMPLE_JWT;
+schema.response['200'].properties.refreshToken.example = EXAMPLE_JWT;
+
 const handler = async function (
-  request: FastifyRequest<{
-    Body: {
-      refreshToken: 'string';
-    };
-  }>,
+  request: RefreshRequest,
   reply: FastifyReply
 ): Promise<void> {
   let oldRefreshTokenDecoded;
