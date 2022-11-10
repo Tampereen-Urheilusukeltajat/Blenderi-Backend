@@ -22,6 +22,7 @@ const schema = {
   response: {
     200: authResponse,
     400: { $ref: 'error' },
+    401: { $ref: 'error' },
     403: { $ref: 'error' },
     500: { $ref: 'error' },
   },
