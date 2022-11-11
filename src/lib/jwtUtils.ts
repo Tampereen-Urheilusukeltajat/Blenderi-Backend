@@ -39,6 +39,7 @@ export const tokenIsUsable = async (
     return false;
   }
 
+  // Check equality to catch possible jwt collision
   return oldTokenFromCache === oldToken;
 };
 
