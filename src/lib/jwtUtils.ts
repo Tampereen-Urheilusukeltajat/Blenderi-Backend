@@ -30,7 +30,7 @@ export const tokenIsUsable = async (
 ): Promise<boolean> => {
   await redisClient.connect();
   const oldTokenFromCache: string | null = await redisClient.get(
-    userId + ':' + oldJti
+    `${userId}:${oldJti}`
   );
   await redisClient.disconnect();
 
