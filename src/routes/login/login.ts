@@ -44,11 +44,12 @@ const handler = async function (
     // This means that user doesn't exist, we are not going to tell that to the client.
     return errorHandler(reply, 401);
   }
-const isPasswordValid = await passwordIsValid(
-      request.body.password,
-      userInfo.password_hash,
-      userInfo.salt
-    );
+  const isPasswordValid = await passwordIsValid(
+    request.body.password,
+    userInfo.password_hash,
+    userInfo.salt
+  );
+
   if (!isPasswordValid) {
     return errorHandler(reply, 401);
   }
