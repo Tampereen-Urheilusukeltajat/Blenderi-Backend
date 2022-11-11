@@ -1,9 +1,11 @@
 import { Knex } from 'knex';
-
+/* 
+  Used currency is euros (€) and the price is saved in euro cents per litre of gas (100 cents = 1 €).
+*/
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('prices', (table) => {
     table.enu('gas', ['oxygen', 'helium', 'argon']).notNullable();
-    table.integer('price').unsigned().notNullable(); // euro cents per ?? cost per litre? cost per storage tank bar????
+    table.integer('price_per_litre_in_eur_cents').unsigned().notNullable();
     table.timestamps(true, true);
   });
 }
