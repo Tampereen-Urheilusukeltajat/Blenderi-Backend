@@ -50,29 +50,35 @@ const handler = async function (
     return errorHandler(reply, 401);
   }
   const userId: string = oldRefreshTokenDecoded.id;
-  const oldJti: string = oldRefreshTokenDecoded.jti;
+  const oldRefreshTokenId: string = oldRefreshTokenDecoded.jti;
 
   const isTokenUsable = await tokenIsUsable(
     request.body.refreshToken,
     userId,
-    oldJti
+    oldRefreshTokenId
   );
 
   if (!isTokenUsable) {
     return errorHandler(reply, 403);
   }
 
-  const jti: string = uuid();
+  const refreshTokenId: string = uuid();
   const refreshToken = this.jwt.sign(
     { id: userId, isRefreshToken: true },
-    { expiresIn: REFRESH_TOKEN_EXPIRE_TIME, jti }
+    { expiresIn: REFRESH_TOKEN_EXPIRE_TIME, jti: refreshTokenId }
   );
   const accessToken: string = this.jwt.sign(
     { id: userId },
     { expiresIn: ACCESS_TOKEN_EXPIRE_TIME }
   );
 
-  await rotate(oldJti, jti, userId, refreshToken, REFRESH_TOKEN_EXPIRE_TIME);
+  await rotate(
+    oldRefreshTokenId,
+    refreshTokenId,
+    userId,
+    refreshToken,
+    REFRESH_TOKEN_EXPIRE_TIME
+  );
 
   return reply.code(200).send({ accessToken, refreshToken });
 };

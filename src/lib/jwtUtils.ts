@@ -26,11 +26,11 @@ export const initializeRefreshTokenRotationSession = async (
 export const tokenIsUsable = async (
   oldToken: string,
   userId: string,
-  oldJti: string
+  oldTokenId: string
 ): Promise<boolean> => {
   await redisClient.connect();
   const oldTokenFromCache: string | null = await redisClient.get(
-    `${userId}:${oldJti}`
+    `${userId}:${oldTokenId}`
   );
   await redisClient.disconnect();
 
@@ -44,16 +44,16 @@ export const tokenIsUsable = async (
 };
 
 export const rotate = async (
-  oldJti: string,
-  jti: string,
+  oldTokenId: string,
+  newTokenId: string,
   userId: string,
   refreshToken: string,
   refreshTokenExpireTime: number
 ): Promise<void> => {
   await redisClient.connect();
 
-  await redisClient.del(`${userId}:${oldJti}`);
-  await redisClient.set(`${userId}:${jti}`, refreshToken, {
+  await redisClient.del(`${userId}:${oldTokenId}`);
+  await redisClient.set(`${userId}:${newTokenId}`, refreshToken, {
     EX: refreshTokenExpireTime,
   });
 
