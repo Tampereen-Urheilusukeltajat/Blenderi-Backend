@@ -52,7 +52,13 @@ const handler = async function (
   const userId: string = oldRefreshTokenDecoded.id;
   const oldJti: string = oldRefreshTokenDecoded.jti;
 
-  if (!(await tokenIsUsable(request.body.refreshToken, userId, oldJti))) {
+  const isTokenUsable = await tokenIsUsable(
+    request.body.refreshToken,
+    userId,
+    oldJti
+  );
+
+  if (!isTokenUsable) {
     return errorHandler(reply, 403);
   }
 
