@@ -17,7 +17,7 @@ export const initializeRefreshTokenRotationSession = async (
   refreshToken: string
 ): Promise<void> => {
   await redisClient.connect();
-  await redisClient.set(userId + ':' + refreshTokenId, refreshToken, {
+  await redisClient.set(`${userId}:${refreshTokenId}`, refreshToken, {
     EX: REFRESH_TOKEN_EXPIRE_TIME,
   });
   await redisClient.disconnect();
@@ -52,8 +52,8 @@ export const rotate = async (
 ): Promise<void> => {
   await redisClient.connect();
 
-  await redisClient.del(userId + ':' + oldJti);
-  await redisClient.set(userId + ':' + jti, refreshToken, {
+  await redisClient.del(`${userId}:${oldJti}`);
+  await redisClient.set(`${userId}:${jti}`, refreshToken, {
     EX: refreshTokenExpireTime,
   });
 
