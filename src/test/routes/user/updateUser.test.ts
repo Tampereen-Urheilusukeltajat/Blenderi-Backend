@@ -21,6 +21,7 @@ describe('update user', () => {
 
   const updatedUser = {
     email: 'change@email.fi',
+    phone: '01',
     forename: 'Edited',
     surname: 'Change',
     isAdmin: true,
