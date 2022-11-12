@@ -3,6 +3,7 @@ import { FastifyInstance } from 'fastify';
 import { createTestDatabase, dropTestDatabase } from '../../../lib/testUtils';
 import { knexController } from '../../../database/database';
 import { buildServer } from '../../../server';
+import { CylinderSet } from '../../../types/cylinderSet.types';
 
 describe('select cylinder set', () => {
   const getTestInstance = async (): Promise<FastifyInstance> =>
@@ -40,6 +41,10 @@ describe('select cylinder set', () => {
     });
 
     expect(res.statusCode).toEqual(200);
+    const reply: CylinderSet[] = res.json();
+    expect(reply[0].id).toEqual('a4e1035e-f36e-4056-9a1b-5925a3c5793e');
+    expect(reply[0].owner).toEqual('a59faf66-4f75-11ed-98ae-77941df77788');
+    expect(reply[0].name).toEqual('aa');
   });
 
   test('responds with 404 when cylinder sets do not exist with given owner', async () => {
