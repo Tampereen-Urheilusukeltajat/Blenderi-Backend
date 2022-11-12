@@ -30,24 +30,12 @@ describe('select cylinder set', () => {
     expect(res.statusCode).toEqual(200);
   });
 
-  test('responds with 200 when cylinder set exists with given id', async () => {
-    const setId = 'f4e1035e-f36e-4056-9a1b-5925a3c5793e';
-    const server = await getTestInstance();
-
-    const res = await server.inject({
-      url: `api/cylinder-set/${setId}`,
-      method: 'GET',
-    });
-
-    expect(res.statusCode).toEqual(200);
-  });
-
   test('responds with 200 when one or more cylinder sets exist with given owner', async () => {
     const owner = 'a59faf66-4f75-11ed-98ae-77941df77788';
     const server = await getTestInstance();
 
     const res = await server.inject({
-      url: `api/cylinder-set/owner/${owner}`,
+      url: `api/cylinder-set/${owner}`,
       method: 'GET',
     });
 
@@ -59,19 +47,7 @@ describe('select cylinder set', () => {
     const server = await getTestInstance();
 
     const res = await server.inject({
-      url: `api/cylinder-set/owner/${owner}`,
-      method: 'GET',
-    });
-
-    expect(res.statusCode).toEqual(404);
-  });
-
-  test('responds with 404 when cylinder does not exist with given id', async () => {
-    const setId = 'f4e1035e-f36e-4056-9a1b-5925a3c5793f';
-    const server = await getTestInstance();
-
-    const res = await server.inject({
-      url: `api/cylinder-set/${setId}`,
+      url: `api/cylinder-set/${owner}`,
       method: 'GET',
     });
 
