@@ -8,7 +8,6 @@ import {
   CylinderSetOwnerParamsPayload,
 } from '../../types/cylinderSet.types';
 import selectCylinderSets from '../../lib/selectCylinderSets';
-import { errorHandler } from '../../lib/errorHandler';
 
 const schema = {
   description: 'Selects all diving cylinder sets.',
@@ -35,24 +34,19 @@ const handler = async (
   reply: FastifyReply
 ): Promise<void> => {
   await knexController.transaction(async (trx) => {
-    const resultBody: CylinderSet[] | undefined = await selectCylinderSets(trx);
+    const allSets: CylinderSet[] | undefined = await selectCylinderSets(trx);
     if (
-      resultBody !== undefined &&
+      allSets !== undefined &&
       request.params.cylinderSetOwner !== undefined
     ) {
-      const result = resultBody.filter(
+      const userSet = allSets.filter(
         (cylinder) => cylinder.owner === request.params.cylinderSetOwner
       );
 
-      if (result.length === 0) {
-        await errorHandler(reply, 404, 'Cylinder set not found');
-        return;
-      }
-
-      await reply.code(200).send(result);
+      await reply.code(200).send(userSet);
     }
 
-    await reply.code(200).send(resultBody);
+    await reply.code(200).send(allSets);
   });
 };
 

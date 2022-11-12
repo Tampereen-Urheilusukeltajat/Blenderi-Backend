@@ -47,7 +47,7 @@ describe('select cylinder set', () => {
     expect(reply[0].name).toEqual('aa');
   });
 
-  test('responds with 404 when cylinder sets do not exist with given owner', async () => {
+  test('responds with empty array when cylinder sets do not exist with given owner', async () => {
     const owner = 'a59faf66-4f75-11ed-98ae-77941df77789';
     const server = await getTestInstance();
 
@@ -56,6 +56,7 @@ describe('select cylinder set', () => {
       method: 'GET',
     });
 
-    expect(res.statusCode).toEqual(404);
+    const reply: CylinderSet[] = res.json();
+    expect(reply.length === 0).toBeTruthy();
   });
 });

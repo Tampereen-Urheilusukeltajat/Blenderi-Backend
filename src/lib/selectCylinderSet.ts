@@ -1,6 +1,7 @@
 import { Knex } from 'knex';
-import { Cylinder, CylinderSet } from '../types/cylinderSet.types';
+import { CylinderSet } from '../types/cylinderSet.types';
 import { log } from './log';
+import selectSingleCylinderSet from './selectSingleCylinderSet';
 
 export default async function selectCylinderSet(
   trx: Knex.Transaction,
@@ -16,26 +17,10 @@ export default async function selectCylinderSet(
     return undefined;
   }
 
-  set.cylinders = await trx('diving_cylinder')
-    .innerJoin(
-      'diving_cylinder_to_set',
-      'diving_cylinder.id',
-      '=',
-      'diving_cylinder_to_set.cylinder'
-    )
-    .select<Cylinder[]>(
-      'id',
-      'volume',
-      'pressure',
-      'material',
-      'serial_number as serialNumber',
-      'inspection'
-    )
-    .where('diving_cylinder_to_set.cylinder_set', id);
+  await selectSingleCylinderSet(trx, set, id);
 
   if (set.cylinders.length === 0) {
     log.error('set without cylinders', set);
-    return undefined;
   }
   return set;
 }
