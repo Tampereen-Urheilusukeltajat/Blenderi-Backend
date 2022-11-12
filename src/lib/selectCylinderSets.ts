@@ -5,9 +5,9 @@ import { log } from './log';
 export default async function selectCylinderSets(
   trx: Knex.Transaction
 ): Promise<CylinderSet[] | undefined> {
-  const set: CylinderSet[] | undefined = await trx(
+  const set: CylinderSet[] = await trx<CylinderSet[]>(
     'diving_cylinder_set'
-  ).select<CylinderSet[]>('id', 'owner', 'name');
+  ).select('id', 'owner', 'name');
 
   for (const singleSet of set) {
     singleSet.cylinders = await trx('diving_cylinder')
