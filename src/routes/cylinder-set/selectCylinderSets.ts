@@ -11,8 +11,17 @@ import selectCylinderSets from '../../lib/selectCylinderSets';
 import { errorHandler } from '../../lib/errorHandler';
 
 const schema = {
-  description:
-    'Selects a diving cylinder set with given owner id if defined. Otherwise returns all sets.',
+  description: 'Selects all diving cylinder sets.',
+  tags: ['Cylinder set'],
+  response: {
+    200: Type.Array(cylinderSet),
+    401: { $ref: 'error' },
+    403: { $ref: 'error' },
+  },
+};
+
+const schemaSetOwner = {
+  description: 'Selects a diving cylinder set by given owner.',
   tags: ['Cylinder set'],
   response: {
     200: Type.Array(cylinderSet),
@@ -50,14 +59,14 @@ const handler = async (
 export default async (fastify: FastifyInstance): Promise<void> => {
   fastify.route({
     method: 'GET',
-    url: '/:cylinderSetOwner',
+    url: '/',
     handler,
     schema,
   });
   fastify.route({
     method: 'GET',
-    url: '/',
+    url: '/:cylinderSetOwner',
     handler,
-    schema,
+    schema: schemaSetOwner,
   });
 };
