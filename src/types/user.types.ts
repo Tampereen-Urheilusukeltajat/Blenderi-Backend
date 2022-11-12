@@ -4,7 +4,7 @@ import { FastifyRequest } from 'fastify';
 export const user = Type.Object({
   id: Type.String(),
   email: Type.String(),
-  phone: Type.Optional(Type.String()),
+  phone: Type.String(),
   forename: Type.String(),
   surname: Type.String(),
   isAdmin: Type.Boolean(),
@@ -33,7 +33,7 @@ export type UpdateUserBody = Static<typeof updateUserBody>;
 export const userResponse = Type.Object({
   id: Type.String(),
   email: Type.String(),
-  phone: Type.Optional(Type.String()),
+  phone: Type.String(),
   forename: Type.String(),
   surname: Type.String(),
   isAdmin: Type.Boolean(),
@@ -45,7 +45,7 @@ export type UserResponse = Static<typeof userResponse>;
 
 export const createUserRequestBody = Type.Object({
   email: Type.String({ minLength: 3, maxLength: 254, pattern: '^.+@....+$' }), // We do not accept hosts without top level domain
-  phone: Type.Optional(Type.String({ minLength: 1, maxLength: 64 })),
+  phone: Type.String({ minLength: 1, maxLength: 64 }),
   forename: Type.String({ minLength: 1, maxLength: 255 }),
   surname: Type.String({ minLength: 1, maxLength: 255 }),
   password: Type.String({ minLength: 8, maxLength: 1000 }),
