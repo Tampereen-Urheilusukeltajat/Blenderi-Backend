@@ -45,7 +45,7 @@ export type UserResponse = Static<typeof userResponse>;
 
 export const createUserRequestBody = Type.Object({
   email: Type.String({ minLength: 3, maxLength: 254, pattern: '^.+@....+$' }), // We do not accept hosts without top level domain
-  phone: Type.String({ minLength: 1, maxLength: 64 }),
+  phone: Type.String({ minLength: 3, maxLength: 32 }),
   forename: Type.String({ minLength: 1, maxLength: 255 }),
   surname: Type.String({ minLength: 1, maxLength: 255 }),
   password: Type.String({ minLength: 8, maxLength: 1000 }),
