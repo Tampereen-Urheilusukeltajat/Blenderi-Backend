@@ -80,6 +80,7 @@ const editUserHandler = async (
     .where({ id: userId })
     .update({
       email: updateBody.email,
+      phone: updateBody.phone,
       forename: updateBody.forename,
       surname: updateBody.surname,
       is_admin: updateBody.isAdmin,

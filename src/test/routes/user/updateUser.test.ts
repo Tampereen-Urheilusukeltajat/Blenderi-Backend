@@ -21,7 +21,7 @@ describe('update user', () => {
 
   const updatedUser = {
     email: 'change@email.fi',
-    phone: '01',
+    phone: '001',
     forename: 'Edited',
     surname: 'Change',
     isAdmin: true,
@@ -71,7 +71,11 @@ describe('update user', () => {
 
       const res = await server.inject({
         url: 'api/user/fbdfc65b-52ce-11ed-85ed-0242ac120069/',
-        payload: { ...updatedUser, email: 'random123@email.com' },
+        payload: {
+          ...updatedUser,
+          email: 'random123@email.com',
+          phone: '54323',
+        },
         method: 'PATCH',
         headers: { 'content-type': 'application/json' },
       });
