@@ -22,14 +22,17 @@ const schema = {
 };
 
 const handler = async (
-  req: FastifyRequest<{ Params: CylinderSetOwnerParamsPayload }>,
+  request: FastifyRequest<{ Params: CylinderSetOwnerParamsPayload }>,
   reply: FastifyReply
 ): Promise<void> => {
   await knexController.transaction(async (trx) => {
     const resultBody: CylinderSet[] | undefined = await selectCylinderSets(trx);
-    if (resultBody !== undefined && req.params.cylinderSetOwner !== undefined) {
+    if (
+      resultBody !== undefined &&
+      request.params.cylinderSetOwner !== undefined
+    ) {
       const result = resultBody.filter(
-        (cylinder) => cylinder.owner === req.params.cylinderSetOwner
+        (cylinder) => cylinder.owner === request.params.cylinderSetOwner
       );
 
       if (result.length === 0) {
