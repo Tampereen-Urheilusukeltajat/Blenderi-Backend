@@ -99,6 +99,7 @@ const editUserHandler = async (
     .select(
       'id',
       'email',
+      'phone',
       'forename',
       'surname',
       'is_admin as isAdmin',

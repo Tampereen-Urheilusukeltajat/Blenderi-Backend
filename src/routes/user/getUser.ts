@@ -36,6 +36,7 @@ const handler = async (
     .first(
       'id',
       'email',
+      'phone',
       'forename',
       'surname',
       'is_admin as isAdmin',
