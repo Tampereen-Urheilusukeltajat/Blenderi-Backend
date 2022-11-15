@@ -6,6 +6,7 @@ import { buildServer } from '../../../server';
 
 const USER_PAYLOAD = {
   email: 'erkki@sukeltaja.fi',
+  phone: '123345567',
   forename: 'Erkki',
   surname: 'Nitikka',
   password: 'superhyväsalasana',
@@ -40,6 +41,7 @@ describe('create user', () => {
       expect(responseBody.email).toEqual(USER_PAYLOAD.email);
       expect(responseBody.forename).toEqual(USER_PAYLOAD.forename);
       expect(responseBody.surname).toEqual(USER_PAYLOAD.surname);
+      expect(responseBody.phone).toEqual(USER_PAYLOAD.phone);
       expect(responseBody).toHaveProperty('id');
       expect(responseBody).not.toHaveProperty('password');
       expect(responseBody).not.toHaveProperty('salt');
@@ -52,6 +54,7 @@ describe('create user', () => {
         method: 'POST',
         payload: {
           email: 'pertti@sukeltaja.fi',
+          phone: '020203',
           forename: '🦴',
           surname: '🦴',
           password: '🦴🦴🦴🦴🦴🦴🦴🦴',
@@ -73,6 +76,7 @@ describe('create user', () => {
           payload: {
             ...USER_PAYLOAD,
             email: 'email@[123.123.123.123]',
+            phone: '020204',
           },
         });
         expect(res.statusCode).toEqual(201);
@@ -86,6 +90,7 @@ describe('create user', () => {
           payload: {
             ...USER_PAYLOAD,
             email: 'ile+harrastussahkoposti@ilesoft.fi',
+            phone: '020205',
           },
         });
         expect(res.statusCode).toEqual(201);
@@ -102,6 +107,21 @@ describe('create user', () => {
         payload: {
           ...USER_PAYLOAD,
           email: 'admin@admin.com', // already exists
+        },
+      });
+
+      expect(res.statusCode).toEqual(409);
+    });
+
+    test('it responds with 409 if phone number already exists with another user', async () => {
+      const server = await getTestInstance();
+      const res = await server.inject({
+        url: 'api/user',
+        method: 'POST',
+        payload: {
+          ...USER_PAYLOAD,
+          email: 'example@example.com',
+          phone: '020202', // already exists
         },
       });
 

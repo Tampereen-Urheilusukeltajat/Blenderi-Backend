@@ -34,7 +34,7 @@ const deriveReadOrder = (tableNames: string[]): string[] => {
   );
   if (unknownTableNames.length > 0) {
     throw new Error(
-      'Unknown table names met! Plaese add them to TABLE_READ_ORDER!'
+      'Unknown table names met! Please add them to TABLE_READ_ORDER!'
     );
   }
 

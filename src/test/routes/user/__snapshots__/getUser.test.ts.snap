@@ -8,6 +8,7 @@ exports[`Get user User is found it returns 200 and has right properties 1`] = `
   "id": "1be5abcd-53d4-11ed-9342-0242ac120002",
   "isAdmin": false,
   "isBlender": true,
+  "phone": "00001",
   "surname": "Blender",
 }
 `;

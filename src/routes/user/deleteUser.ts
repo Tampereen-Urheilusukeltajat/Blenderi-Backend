@@ -29,6 +29,7 @@ const handler = async (
   const userId: string = req.params.userId;
   const result = await knexController('user').where({ id: userId }).update({
     email: null,
+    phone: null,
     forename: null,
     surname: null,
     is_admin: false,
