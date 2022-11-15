@@ -26,5 +26,6 @@ module.exports = {
     '@typescript-eslint/return-await': ['error', 'never'],
     'eol-last': ['error', 'always'],
     '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
+    '@typescript-eslint/dot-notation': 0,
   },
 };

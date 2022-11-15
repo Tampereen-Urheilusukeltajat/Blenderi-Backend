@@ -53,6 +53,7 @@ export default async (fastify: FastifyInstance): Promise<void> => {
   fastify.route({
     method: 'GET',
     url: '/:userId',
+    preValidation: [fastify['authenticate']],
     handler,
     schema,
   });

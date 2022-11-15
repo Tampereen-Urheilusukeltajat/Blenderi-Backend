@@ -2,7 +2,7 @@
 
 ## Local development with Linux (Ubuntu based distros)
 
-Start the database
+Start the database and refresh token session store
 
 ```
 sudo docker-compose up

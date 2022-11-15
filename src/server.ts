@@ -1,13 +1,25 @@
-import fastify, { FastifyInstance } from 'fastify';
+import fastify, {
+  FastifyInstance,
+  FastifyRequest,
+  FastifyReply,
+} from 'fastify';
 import { fastifySwagger } from '@fastify/swagger';
 import { fastifyHelmet } from '@fastify/helmet';
 import fastifyCors from '@fastify/cors';
+import jwt from '@fastify/jwt';
 import { fastifyAutoload } from '@fastify/autoload';
 import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 
+import { v4 as uuid } from 'uuid';
 import { log } from './lib/log';
 import path from 'path';
 import { errorHandler } from './lib/errorHandler';
+
+const JWT_SECRET =
+  process.env.NODE_ENV === 'development' &&
+  process.env.DEVELOPMENT_JWT_SECRET !== undefined
+    ? process.env.DEVELOPMENT_JWT_SECRET
+    : uuid();
 
 export const buildServer = async (opts: {
   routePrefix: string;
@@ -19,6 +31,11 @@ export const buildServer = async (opts: {
       customOptions: {
         removeAdditional: 'all', // Remove additional params from the body etc
       },
+      plugins: [
+        (ajv) => {
+          ajv.addKeyword({ keyword: 'example' });
+        },
+      ],
     },
   });
 
@@ -74,6 +91,24 @@ export const buildServer = async (opts: {
         cb(null, true);
       },
     })
+    .register(jwt, {
+      secret: JWT_SECRET,
+    })
+    .decorate(
+      'authenticate',
+      async (request: FastifyRequest, reply: FastifyReply) => {
+        try {
+          const accessToken: { isRefreshToken?: string } =
+            await request.jwtVerify();
+
+          if (accessToken.isRefreshToken !== undefined) {
+            return errorHandler(reply, 401);
+          }
+        } catch (err) {
+          return errorHandler(reply, 401);
+        }
+      }
+    )
     .register(fastifyAutoload, {
       dir: path.join(__dirname, 'routes'),
       dirNameRoutePrefix: (_folderParent, folderName) =>

@@ -12,6 +12,11 @@ env:
   MYSQL_USER: ${{ secrets.MYSQL_USER }}
   MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
   MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+  REDIS_VOLUME_NAME: redis-volume
+  REDIS_HOST: localhost
+  REDIS_PORT: 6379
+  REDIS_USER: blenderi
+  REDIS_PASSWORD: pass
 
 jobs:
   test:
@@ -30,7 +35,7 @@ jobs:
         run: npm install
       - name: Create empty .env file
         run: touch .env
-      - name: Start the database
-        run: docker-compose up -d mariadb
+      - name: Start the database and jwt refresh token cache
+        run: docker-compose up -d mariadb redis
       - name: Run tests
         run: npm test
