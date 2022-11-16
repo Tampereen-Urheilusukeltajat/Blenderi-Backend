@@ -11,8 +11,12 @@ import {
   userResponse,
   userIdParamsPayload,
   UserResponse,
-  User,
 } from '../../types/user.types';
+import {
+  phoneAlreadyExists,
+  emailAlreadyExists,
+} from '../../lib/collisionChecks';
+import { allMembersUndefined } from '../../lib/empty';
 
 const editUserSchema = {
   description: 'Edit data of already existing user or archived user.',
@@ -42,32 +46,26 @@ const editUserHandler = async (
   if (updateBody.archive !== undefined && updateBody.archive) {
     archiveUser = true;
   }
-  // if empty request body and not archiving user.
-  if (
-    !archiveUser &&
-    Object.values(updateBody).every((el) => el === undefined)
-  ) {
+
+  if (allMembersUndefined(updateBody) && !archiveUser) {
     return errorHandler(reply, 400, 'Empty body.');
   }
 
   const userId = req.params.userId;
 
   if (updateBody.email !== undefined) {
-    const emailCount: number = await knexController<User>('user')
-      .count('email')
-      .where('email', updateBody.email)
-      .first()
-      .then((row: { 'count(`email`)': number }) =>
-        Number(row['count(`email`)'])
-      );
+    if (await emailAlreadyExists(updateBody.email)) {
+      const msg = 'Tried to update user with duplicate email';
+      log.debug(msg);
+      return errorHandler(reply, 409, msg);
+    }
+  }
 
-    if (emailCount > 0) {
-      log.debug('Tried to update user with duplicate email');
-      return errorHandler(
-        reply,
-        409,
-        'Tried to update user with duplicate email'
-      );
+  if (updateBody.phone !== undefined) {
+    if (await phoneAlreadyExists(updateBody.phone)) {
+      const msg = 'Tried to create user with duplicate phone number';
+      log.debug(msg);
+      return errorHandler(reply, 409, msg);
     }
   }
 
@@ -82,6 +80,7 @@ const editUserHandler = async (
     .where({ id: userId })
     .update({
       email: updateBody.email,
+      phone: updateBody.phone,
       forename: updateBody.forename,
       surname: updateBody.surname,
       is_admin: updateBody.isAdmin,
@@ -101,6 +100,7 @@ const editUserHandler = async (
     .select(
       'id',
       'email',
+      'phone',
       'forename',
       'surname',
       'is_admin as isAdmin',

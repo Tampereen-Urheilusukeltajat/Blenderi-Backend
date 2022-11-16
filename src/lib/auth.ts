@@ -10,3 +10,9 @@ export const hashPassword = async (
 
   return { hash, salt };
 };
+
+export const passwordIsValid = async (
+  password: string,
+  expectedHash: string,
+  salt: string
+): Promise<boolean> => bcrypt.hashSync(password, salt) === expectedHash;

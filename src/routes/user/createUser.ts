@@ -1,14 +1,18 @@
 import { FastifyInstance, FastifyReply } from 'fastify';
 import { knexController } from '../../database/database';
 import {
-  User,
   userResponse,
+  UserResponse,
   createUserRequestBody,
   CreateUserRequest,
 } from '../../types/user.types';
 import { hashPassword } from '../../lib/auth';
 import { log } from '../../lib/log';
 import { errorHandler } from '../../lib/errorHandler';
+import {
+  phoneAlreadyExists,
+  emailAlreadyExists,
+} from '../../lib/collisionChecks';
 
 const schema = {
   description: 'Creates a user',
@@ -28,25 +32,23 @@ const handler = async (
   request: CreateUserRequest,
   reply: FastifyReply
 ): Promise<void> => {
-  const emailCount: number = await knexController<User>('user')
-    .count('email')
-    .where('email', request.body.email)
-    .first()
-    .then((row: { 'count(`email`)': number }) => Number(row['count(`email`)']));
+  if (await emailAlreadyExists(request.body.email)) {
+    const msg = 'Tried to create user with duplicate email';
+    log.debug(msg);
+    return errorHandler(reply, 409, msg);
+  }
 
-  if (emailCount > 0) {
-    log.debug('Tried to create user with duplicate email');
-    return errorHandler(
-      reply,
-      409,
-      'Tried to create user with duplicate email'
-    );
+  if (await phoneAlreadyExists(request.body.phone)) {
+    const msg = 'Tried to create user with duplicate phone number';
+    log.debug(msg);
+    return errorHandler(reply, 409, msg);
   }
 
   const hashObj = await hashPassword(request.body.password);
 
   await knexController('user').insert({
     email: request.body.email,
+    phone: request.body.phone,
     forename: request.body.forename,
     surname: request.body.surname,
     is_admin: false,
@@ -60,18 +62,20 @@ const handler = async (
   // Ultimate race condition stuff
   // TODO: fix
   const createdUser = await knexController('user')
-    .select(
+    .select<UserResponse[]>(
       'id',
       'email',
+      'phone',
       'forename',
       'surname',
       'is_admin as isAdmin',
       'is_blender as isBlender',
       'archived_at as archivedAt'
     )
-    .where({ email: request.body.email });
+    .where({ email: request.body.email })
+    .first();
 
-  return reply.code(201).send(...createdUser);
+  return reply.code(201).send(createdUser);
 };
 
 export default async (fastify: FastifyInstance): Promise<void> => {

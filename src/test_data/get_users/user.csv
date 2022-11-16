@@ -1,7 +1,7 @@
-id;email;forename;surname;is_admin;is_blender;salt;password_hash;archived_at;deleted_at;created_at;updated_at;
-1be5abcd-53d4-11ed-9342-0242ac120002;test@email.fi;Tester;Blender;0;1;salt;hash!"#€;;;2020-01-19 03:14:07;2020-01-19 03:14:07;
-54e3e8b0-53d4-11ed-9342-0242ac120002;testi2@email.fi;Teemu;Testaaja;0;1;salt;hash!"#€;;;2020-01-19 03:14:07;2020-01-19 03:14:07;
-db2e9bfa-53db-11ed-9342-0242ac120002;alreadyin@use.fi;Pro;Blendaaja;0;1;salt;hash!"#€;;2020-01-19 05:15:07;2020-01-19 03:15:07;2020-02-19 03:17:07;
-fbdfc65b-52ce-11ed-85ed-0242ac120002;alreadynotin@use.fi;Pro;Blendaaja;0;1;salt;hash!"#€;2020-01-19 07:15:07;;2020-01-19 03:15:07;2020-02-19 03:17:07;
+id;email;phone;forename;surname;is_admin;is_blender;salt;password_hash;archived_at;deleted_at;created_at;updated_at;
+1be5abcd-53d4-11ed-9342-0242ac120002;test@email.fi;001;Tester;Blender;0;1;salt;hash!"#€;;;2020-01-19 03:14:07;2020-01-19 03:14:07;
+54e3e8b0-53d4-11ed-9342-0242ac120002;testi2@email.fi;002;Teemu;Testaaja;0;1;salt;hash!"#€;;;2020-01-19 03:14:07;2020-01-19 03:14:07;
+db2e9bfa-53db-11ed-9342-0242ac120002;alreadyin@use.fi;003;Pro;Blendaaja;0;1;salt;hash!"#€;;2020-01-19 05:15:07;2020-01-19 03:15:07;2020-02-19 03:17:07;
+fbdfc65b-52ce-11ed-85ed-0242ac120002;alreadynotin@use.fi;004;Pro;Blendaaja;0;1;salt;hash!"#€;2020-01-19 07:15:07;;2020-01-19 03:15:07;2020-02-19 03:17:07;
 
 
