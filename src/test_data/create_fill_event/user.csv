@@ -1,2 +1,3 @@
-id;email;forename;surname;is_admin;is_blender;salt;password_hash;archived_at;deleted_at;created_at;updated_at;
-a58fff36-4f75-11ed-96ae-77941df88822;delete@taursu.fi;Sauli;Sukeltaja;0;1;salt;password_hash;;;2020-01-20 03:17:07;2020-01-20 03:17:07;
+id;email;phone;forename;surname;is_admin;is_blender;salt;password_hash;archived_at;deleted_at;created_at;updated_at;
+a58fff36-4f75-11ed-96ae-77941df88822;delete@taursu.fi;1234567890;Sauli;Sukeltaja;0;1;salt;password_hash;;;2020-01-20 03:17:07;2020-01-20 03:17:07;
+f03b9a1b-65d6-11ed-8432-0242ac120002;oujeaasd@XD.fi;1234567891;testijäbä;asd;0;0;salt;password_hash;;;2020-01-20 03:17:07;2020-01-20 03:17:07;
