@@ -6,6 +6,7 @@ export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('prices', (table) => {
     table.enu('gas', ['oxygen', 'helium', 'argon']).notNullable();
     table.integer('price_per_litre_in_eur_cents').unsigned().notNullable();
+    table.uuid('admin').references('id').inTable('user').notNullable();
     table.timestamps(true, true);
   });
 }
