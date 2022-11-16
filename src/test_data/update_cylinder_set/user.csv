@@ -1,2 +1,2 @@
-id;email;forename;surname;is_admin;is_blender;salt;password_hash;archived_at;deleted_at;created_at;updated_at;
-a59faf66-4f75-11ed-98ae-77941df77788;user@taursu.fi;petri;penettäjä;0;1;salt;password_hash;;;2020-01-19 03:14:07;2020-01-19 03:14:07;
+id;email;phone;forename;surname;is_admin;is_blender;salt;password_hash;archived_at;deleted_at;created_at;updated_at;
+a59faf66-4f75-11ed-98ae-77941df77788;user@taursu.fi;020202;petri;penettäjä;0;1;salt;password_hash;;;2020-01-19 03:14:07;2020-01-19 03:14:07;

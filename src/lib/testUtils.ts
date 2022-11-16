@@ -16,7 +16,8 @@ import { knexController } from '../database/database';
 const MYSQL_ROOT_PASSWORD = process.env.MYSQL_ROOT_PASSWORD;
 
 /**
- * We can't read tables to the database in random order, since they might have foreign keys that are depended on each other.
+ * We can't read tables to the database in random order,
+ * since they might have foreign keys that are depended on each other.
  * This array provides an order in which the tables are read to the database.
  */
 const TABLE_READ_ORDER = [
@@ -33,7 +34,7 @@ const deriveReadOrder = (tableNames: string[]): string[] => {
   );
   if (unknownTableNames.length > 0) {
     throw new Error(
-      'Unknown table names met! Plaese add them to TABLE_READ_ORDER!'
+      'Unknown table names met! Please add them to TABLE_READ_ORDER!'
     );
   }
 

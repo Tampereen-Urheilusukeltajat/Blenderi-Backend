@@ -8,6 +8,7 @@ export const selectNotArchivedUsers = async (): Promise<UserResponse[]> => {
     .select(
       'id',
       'email',
+      'phone',
       'forename',
       'surname',
       'is_admin as isAdmin',
@@ -23,6 +24,7 @@ export const selectUsers = async (): Promise<UserResponse[]> => {
     .select(
       'id',
       'email',
+      'phone',
       'forename',
       'surname',
       'is_admin as isAdmin',
