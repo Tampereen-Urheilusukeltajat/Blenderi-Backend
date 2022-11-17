@@ -49,3 +49,12 @@ export const gasPrices = Type.Object({
   diluentPrice: Type.Integer({ minimum: 0 }),
 });
 export type GasPrices = Static<typeof gasPrices>;
+
+export const gasPressures = Type.Object({
+  air: Type.Integer({ minimum: 0 }),
+  oxygen: Type.Integer({ minimum: 0 }),
+  helium: Type.Integer({ minimum: 0 }),
+  argon: Type.Integer({ minimum: 0 }),
+  diluent: Type.Integer({ minimum: 0 }),
+});
+export type GasPressures = Static<typeof gasPressures>;

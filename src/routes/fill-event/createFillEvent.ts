@@ -6,11 +6,13 @@ import {
   CreateFillEventBody,
   fillEventResponse,
   GasPrices,
+  GasPressures,
 } from '../../types/fillEvent.types';
 import { User } from '../../types/user.types';
 import { errorHandler } from '../../lib/errorHandler';
 import { knexController } from '../../database/database';
 import {
+  calcFillEventPrice,
   getGasPrices,
   insertFillEvent,
   selectFillEventByUser,
@@ -88,6 +90,15 @@ const handler = async (
   if (prices === undefined) {
     return errorHandler(reply, 500, 'Prices are not set');
   }
+
+  const pressures: GasPressures = {
+    air: airPressure,
+    oxygen: oxygenPressure,
+    helium: heliumPressure,
+    argon: argonPressure,
+    diluent: diluentPressure,
+  };
+  const price: number = calcFillEventPrice(prices, pressures);
   const eventId = uuid();
   await insertFillEvent(
     eventId,
@@ -98,7 +109,7 @@ const handler = async (
     heliumPressure,
     argonPressure,
     diluentPressure,
-    0,
+    price,
     info
   );
   // now this is a fine race condition

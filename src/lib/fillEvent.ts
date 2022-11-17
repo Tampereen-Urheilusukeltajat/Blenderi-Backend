@@ -1,11 +1,16 @@
 import { knexController } from '../database/database';
-import { FillEventResponse, GasPrices } from '../types/fillEvent.types';
+import {
+  FillEventResponse,
+  GasPrices,
+  GasPressures,
+} from '../types/fillEvent.types';
 
 export const getGasPrice = async (gas: string): Promise<number | undefined> => {
   const res = await knexController('prices')
     .orderBy('created_at', 'desc')
-    .first('price')
+    .first('price_per_litre_in_eur_cents as price')
     .where({ gas });
+  if (res === undefined) return undefined;
   return res.price;
 };
 
@@ -28,6 +33,14 @@ export const getGasPrices = async (): Promise<GasPrices | undefined> => {
     argonPrice,
     diluentPrice,
   };
+};
+
+export const calcFillEventPrice = (
+  prices: GasPrices,
+  pressures: GasPressures
+): number => {
+  // TODO
+  return 0;
 };
 
 export const insertFillEvent = async (
