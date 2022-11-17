@@ -48,6 +48,27 @@ describe('update user', () => {
       });
     });
 
+    test('it returns 200 when updating values and passing current email & phone.', async () => {
+      const server = await getTestInstance();
+      const id = '54e3e8b0-53d4-11ed-9342-0242ac120002';
+      const res = await server.inject({
+        url: `api/user/${id}/`,
+        payload: { ...updatedUser, email: 'testi2@email.fi', phone: '002' },
+        method: 'PATCH',
+        headers: { 'content-type': 'application/json' },
+      });
+
+      const resBody = JSON.parse(res.body);
+      expect(res.statusCode).toEqual(200);
+      expect(resBody).toEqual({
+        ...updatedUser,
+        email: 'testi2@email.fi',
+        phone: '002',
+        archivedAt: '',
+        id,
+      });
+    });
+
     test('it archives user', async () => {
       const server = await getTestInstance();
       const res = await server.inject({
@@ -138,6 +159,43 @@ describe('update user', () => {
       });
 
       expect(res.statusCode).toEqual(409);
+
+      const resBody = JSON.parse(res.body);
+
+      expect(resBody).toHaveProperty('error');
+      expect(resBody).toHaveProperty('message');
+    });
+
+    test('it returns 409 when phone already in use.', async () => {
+      const server = await getTestInstance();
+
+      const res = await server.inject({
+        url: 'api/user/1be5abcd-53d4-11ed-9342-0242ac120002/',
+        // incorrect payload type
+        payload: { ...updatedUser, phone: '003' },
+        method: 'PATCH',
+        headers: { 'content-type': 'application/json' },
+      });
+
+      expect(res.statusCode).toEqual(409);
+
+      const resBody = JSON.parse(res.body);
+
+      expect(resBody).toHaveProperty('error');
+      expect(resBody).toHaveProperty('message');
+    });
+
+    test('it returns 404 when updating deleted user.', async () => {
+      const server = await getTestInstance();
+
+      const res = await server.inject({
+        url: 'api/user/f1c605f5-6667-11ed-a6a4-0242ac120003/',
+        payload: { forename: 'Deleted', surname: 'User' },
+        method: 'PATCH',
+        headers: { 'content-type': 'application/json' },
+      });
+
+      expect(res.statusCode).toEqual(404);
 
       const resBody = JSON.parse(res.body);
 
