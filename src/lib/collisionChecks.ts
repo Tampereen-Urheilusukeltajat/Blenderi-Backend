@@ -1,7 +1,10 @@
 import { knexController } from '../database/database';
 import { User } from '../types/user.types';
 
-// return true if given phone number already in database. False if not or it's linked to given id.
+/* 
+Return true if given phone number already in database.
+False if not or it's linked to given id. 
+*/
 export const phoneAlreadyExists = async (
   newPhone: string,
   userID?: string
@@ -25,7 +28,10 @@ export const phoneAlreadyExists = async (
   return count !== 0;
 };
 
-// return true if given email already in database. False if not or it's linked to given id.
+/* 
+Return true if given email already in database. 
+False if not or it's linked to given id.
+*/
 export const emailAlreadyExists = async (
   newEmail: string,
   userID?: string
