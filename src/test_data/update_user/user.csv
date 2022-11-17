@@ -3,5 +3,6 @@ id;email;phone;forename;surname;is_admin;is_blender;salt;password_hash;archived_
 54e3e8b0-53d4-11ed-9342-0242ac120002;testi2@email.fi;002;Teemu;Testaaja;0;1;salt;hash!"#€;;;2020-01-19 03:14:07;2020-01-19 03:14:07;
 db2e9bfa-53db-11ed-9342-0242ac120002;alreadyin@use.fi;003;Pro;Blendaaja;0;1;salt;hash!"#€;;2020-01-19 05:15:07;2020-01-19 03:15:07;2020-02-19 03:17:07;
 fbdfc65b-52ce-11ed-85ed-0242ac120002;alreadynotin@use.fi;004;Pro;Blendaaja;0;1;salt;hash!"#€;2020-01-19 07:15:07;;2020-01-19 03:15:07;2020-02-19 03:17:07;
+f1c605f5-6667-11ed-a6a4-0242ac120003;;;;;0;0;salt;hash!"#€;;2022-11-17 11:21:55.000;2020-01-19 03:15:07;2020-02-19 03:17:07;
 
 

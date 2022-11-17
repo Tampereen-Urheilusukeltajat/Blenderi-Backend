@@ -77,7 +77,7 @@ const editUserHandler = async (
 
   // edit user
   const editResponse = await knexController('user')
-    .where({ id: userId })
+    .where({ id: userId, deleted_at: null })
     .update({
       email: updateBody.email,
       phone: updateBody.phone,
@@ -90,7 +90,7 @@ const editUserHandler = async (
       archived_at: archiveUser ? knexController.fn.now() : null,
     });
 
-  // If no user found with given id.
+  // If no user found with given id or user deleted.
   if (editResponse === 0) {
     return errorHandler(reply, 404, 'User not found.');
   }

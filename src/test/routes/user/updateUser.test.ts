@@ -144,6 +144,24 @@ describe('update user', () => {
       expect(resBody).toHaveProperty('error');
       expect(resBody).toHaveProperty('message');
     });
+
+    test('it returns 404 when updating deleted user.', async () => {
+      const server = await getTestInstance();
+
+      const res = await server.inject({
+        url: 'api/user/f1c605f5-6667-11ed-a6a4-0242ac120003/',
+        payload: { forename: 'Deleted', surname: 'User' },
+        method: 'PATCH',
+        headers: { 'content-type': 'application/json' },
+      });
+
+      expect(res.statusCode).toEqual(404);
+
+      const resBody = JSON.parse(res.body);
+
+      expect(resBody).toHaveProperty('error');
+      expect(resBody).toHaveProperty('message');
+    });
   });
   test('password is not stored as plain text to db.', async () => {
     const server = await getTestInstance();
