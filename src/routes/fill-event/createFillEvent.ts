@@ -1,17 +1,22 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import { v4 as uuid } from 'uuid';
 // import { knexController } from "../../database/database";
 import {
   createFillEventBody,
   CreateFillEventBody,
   fillEventResponse,
+  GasPrices,
 } from '../../types/fillEvent.types';
 import { User } from '../../types/user.types';
 import { errorHandler } from '../../lib/errorHandler';
 import { knexController } from '../../database/database';
 import {
-  /* getGasPrice, */ insertFillEvent,
-  selectLatestFillEventByUser,
+  getGasPrices,
+  insertFillEvent,
+  selectFillEventByUser,
 } from '../../lib/fillEvent';
+// import { log } from 'console';
+import selectCylinderSet from '../../lib/selectCylinderSet';
 
 const schema = {
   description: 'Creates a new fill event',
@@ -61,6 +66,7 @@ const handler = async (
   const user: User = await knexController<User>('user')
     .where('id', auth.id)
     .first('id', 'is_blender as isBlender');
+
   if (
     !user.isBlender &&
     (oxygenPressure !== 0 ||
@@ -70,9 +76,21 @@ const handler = async (
   ) {
     return errorHandler(reply, 403, 'User does not have blender priviledges.');
   }
-  // TODO: check if cylinder set exists
-  // const price: Number = await getGasPrice('oxygen');
+
+  const set = await knexController.transaction(async (trx) => {
+    return selectCylinderSet(trx, cylinderSetId);
+  });
+  if (set === undefined) {
+    return errorHandler(reply, 400, 'Cylinder set was not found');
+  }
+
+  const prices: GasPrices | undefined = await getGasPrices();
+  if (prices === undefined) {
+    return errorHandler(reply, 500, 'Prices are not set');
+  }
+  const eventId = uuid();
   await insertFillEvent(
+    eventId,
     auth.id,
     cylinderSetId,
     airPressure,
@@ -84,8 +102,10 @@ const handler = async (
     info
   );
   // now this is a fine race condition
-  const res = selectLatestFillEventByUser(auth.id);
-  return reply.code(201).send(res[0]);
+  const res = await selectFillEventByUser(auth.id, eventId);
+  // console.log(res);
+
+  return reply.code(201).send(res);
 };
 
 export default async (fastify: FastifyInstance): Promise<void> => {

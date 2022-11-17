@@ -1,8 +1,7 @@
 import { knexController } from '../database/database';
-import { v4 as uuid } from 'uuid';
-import { FillEventResponse } from '../types/fillEvent.types';
+import { FillEventResponse, GasPrices } from '../types/fillEvent.types';
 
-export const getGasPrice = async (gas: string): Promise<number> => {
+export const getGasPrice = async (gas: string): Promise<number | undefined> => {
   const res = await knexController('prices')
     .orderBy('created_at', 'desc')
     .first('price')
@@ -10,7 +9,29 @@ export const getGasPrice = async (gas: string): Promise<number> => {
   return res.price;
 };
 
+export const getGasPrices = async (): Promise<GasPrices | undefined> => {
+  const oxygenPrice = await getGasPrice('oxygen');
+  const heliumPrice = await getGasPrice('helium');
+  const argonPrice = await getGasPrice('argon');
+  const diluentPrice = await getGasPrice('diluent');
+  if (
+    oxygenPrice === undefined ||
+    heliumPrice === undefined ||
+    argonPrice === undefined ||
+    diluentPrice === undefined
+  ) {
+    return undefined;
+  }
+  return {
+    oxygenPrice,
+    heliumPrice,
+    argonPrice,
+    diluentPrice,
+  };
+};
+
 export const insertFillEvent = async (
+  id: string,
   userId: string,
   cylinderSet: string,
   airPressure: number,
@@ -21,11 +42,8 @@ export const insertFillEvent = async (
   price: number,
   info: string | undefined
 ): Promise<void> => {
-  const eventId = uuid();
-  // console.log(eventId);
-
   await knexController('fill_event').insert({
-    id: eventId,
+    id,
     user: userId,
     cylinder_set: cylinderSet,
     air_pressure: airPressure,
@@ -38,12 +56,12 @@ export const insertFillEvent = async (
   });
 };
 
-export const selectLatestFillEventByUser = async (
-  userId: string
+export const selectFillEventByUser = async (
+  userId: string,
+  id: string
 ): Promise<FillEventResponse> => {
   const res = await knexController('fill_event')
-    .where('user', userId)
-    .orderBy('created_at', 'desc')
+    .where('id', id)
     .first<FillEventResponse>(
       'id',
       'user as userId',

@@ -41,3 +41,11 @@ export const fillEventResponse = Type.Object({
 });
 
 export type FillEventResponse = Static<typeof fillEventResponse>;
+
+export const gasPrices = Type.Object({
+  oxygenPrice: Type.Integer({ minimum: 0 }),
+  heliumPrice: Type.Integer({ minimum: 0 }),
+  argonPrice: Type.Integer({ minimum: 0 }),
+  diluentPrice: Type.Integer({ minimum: 0 }),
+});
+export type GasPrices = Static<typeof gasPrices>;
