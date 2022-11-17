@@ -47,6 +47,20 @@ describe('update user', () => {
         archivedAt: '',
       });
     });
+    test('it returns 200 when updating email.', async () => {
+      const server = await getTestInstance();
+      const id = '54e3e8b0-53d4-11ed-9342-0242ac120002';
+      const res = await server.inject({
+        url: `api/user/${id}/`,
+        payload: { email: 'updated_email@luukku.com' },
+        method: 'PATCH',
+        headers: { 'content-type': 'application/json' },
+      });
+
+      const resBody = JSON.parse(res.body);
+      expect(res.statusCode).toEqual(200);
+      expect(resBody).toHaveProperty('email', 'updated_email@luukku.com');
+    });
 
     test('it archives user', async () => {
       const server = await getTestInstance();
