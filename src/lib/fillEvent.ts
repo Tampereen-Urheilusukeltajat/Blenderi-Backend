@@ -15,23 +15,23 @@ export const getGasPrice = async (gas: string): Promise<number | undefined> => {
 };
 
 export const getGasPrices = async (): Promise<GasPrices | undefined> => {
-  const oxygenPrice = await getGasPrice('oxygen');
-  const heliumPrice = await getGasPrice('helium');
-  const argonPrice = await getGasPrice('argon');
-  const diluentPrice = await getGasPrice('diluent');
+  const oxygen = await getGasPrice('oxygen');
+  const helium = await getGasPrice('helium');
+  const argon = await getGasPrice('argon');
+  const diluent = await getGasPrice('diluent');
   if (
-    oxygenPrice === undefined ||
-    heliumPrice === undefined ||
-    argonPrice === undefined ||
-    diluentPrice === undefined
+    oxygen === undefined ||
+    helium === undefined ||
+    argon === undefined ||
+    diluent === undefined
   ) {
     return undefined;
   }
   return {
-    oxygenPrice,
-    heliumPrice,
-    argonPrice,
-    diluentPrice,
+    oxygen,
+    helium,
+    argon,
+    diluent,
   };
 };
 
@@ -39,8 +39,17 @@ export const calcFillEventPrice = (
   prices: GasPrices,
   pressures: GasPressures
 ): number => {
-  // TODO
-  return 0;
+  const storageVol = 50;
+  const oxygenVol: number = pressures.oxygen * storageVol;
+  const heliumVol: number = pressures.helium * storageVol;
+  const argonVol: number = pressures.argon * storageVol;
+  const diluentVol: number = pressures.diluent * storageVol;
+  return (
+    prices.oxygen * oxygenVol +
+    prices.helium * heliumVol +
+    prices.argon * argonVol +
+    prices.diluent * diluentVol
+  );
 };
 
 export const insertFillEvent = async (

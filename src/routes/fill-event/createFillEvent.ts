@@ -114,8 +114,6 @@ const handler = async (
   );
   // now this is a fine race condition
   const res = await selectFillEventByUser(auth.id, eventId);
-  // console.log(res);
-
   return reply.code(201).send(res);
 };
 
