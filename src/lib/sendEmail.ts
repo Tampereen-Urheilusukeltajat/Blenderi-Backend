@@ -1,18 +1,15 @@
 import sgMail from '@sendgrid/mail';
 import { emailMsg } from '../types/email.types';
-import { log } from './log';
 
 const API_KEY: string | undefined = process.env.SENDGRID_API_KEY;
 const FROM_EMAIL: string | undefined = process.env.SENDGRID_FROM_EMAIL;
 
 /* 
-Return true if email was sent succesfully. 
 Use second sandbox = true in tests, so no real emails are sent.
 */
-const sendEmail = (msg: emailMsg, sandbox = false): boolean => {
+const sendEmail = (msg: emailMsg, sandbox = false): void => {
   if (API_KEY === undefined || FROM_EMAIL === undefined) {
-    log.error('sendEmail function has no API key or "from" address!');
-    return false;
+    throw new Error('sendEmail function has no API key or "from" address!');
   }
   sgMail.setApiKey(API_KEY);
 
@@ -29,15 +26,18 @@ const sendEmail = (msg: emailMsg, sandbox = false): boolean => {
 
       // 200 on sandbox, 202 on real email.
       if (response[0].statusCode !== 202 && response[0].statusCode !== 200) {
-        return false;
+        throw new Error(
+          `SendGrid returned statusCode ${response[0].statusCode}.`
+        );
       }
     } catch (error) {
-      log.error('Error when sending email. Error:', error);
-      return false;
+      let message = 'Unknown Error on sendEmail';
+      if (error instanceof Error) message = error.message;
+      else message = String(error);
+
+      throw new Error(`Error when sending email. Error: ${message}.`);
     }
   })();
-
-  return true;
 };
 
 export default sendEmail;
