@@ -110,3 +110,6 @@ dist
 # Build
 build/*
 *.swp
+
+#DS_Store
+.DS_Store
