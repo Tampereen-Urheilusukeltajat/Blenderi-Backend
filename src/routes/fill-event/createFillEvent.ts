@@ -1,6 +1,5 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { v4 as uuid } from 'uuid';
-// import { knexController } from "../../database/database";
 import {
   createFillEventBody,
   CreateFillEventBody,
@@ -17,7 +16,6 @@ import {
   insertFillEvent,
   selectFillEventByUser,
 } from '../../lib/fillEvent';
-// import { log } from 'console';
 import selectCylinderSet from '../../lib/selectCylinderSet';
 
 const schema = {
