@@ -96,7 +96,6 @@ export const selectFillEventByUser = async (
       'price',
       'info'
     );
-  // console.log(res);
 
   return res;
 };

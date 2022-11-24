@@ -4,7 +4,6 @@ import {
   createFillEventBody,
   CreateFillEventBody,
   fillEventResponse,
-  GasPrices,
   GasPressures,
 } from '../../types/fillEvent.types';
 import { User } from '../../types/user.types';
@@ -31,12 +30,6 @@ const schema = {
   },
 };
 
-type authUser = {
-  id: string;
-  iat: number;
-  exp: number;
-};
-
 const handler = async (
   request: FastifyRequest<{ Body: CreateFillEventBody }>,
   reply: FastifyReply
@@ -60,11 +53,11 @@ const handler = async (
   ) {
     return errorHandler(reply, 400, 'No gases were given.');
   }
-  // cast that bad boy
-  const auth = request.user as authUser;
+
+  const authUser = request.user;
 
   const user: User = await knexController<User>('user')
-    .where('id', auth.id)
+    .where('id', authUser.id)
     .first('id', 'is_blender as isBlender');
 
   if (
@@ -84,7 +77,7 @@ const handler = async (
     return errorHandler(reply, 400, 'Cylinder set was not found');
   }
 
-  const prices: GasPrices | undefined = await getGasPrices();
+  const prices = await getGasPrices();
   if (prices === undefined) {
     return errorHandler(reply, 500, 'Prices are not set');
   }
@@ -100,7 +93,7 @@ const handler = async (
   const eventId = uuid();
   await insertFillEvent(
     eventId,
-    auth.id,
+    authUser.id,
     cylinderSetId,
     airPressure,
     oxygenPressure,
@@ -111,7 +104,7 @@ const handler = async (
     info
   );
   // now this is a fine race condition
-  const res = await selectFillEventByUser(auth.id, eventId);
+  const res = await selectFillEventByUser(authUser.id, eventId);
   return reply.code(201).send(res);
 };
 

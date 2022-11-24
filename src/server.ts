@@ -21,6 +21,19 @@ const JWT_SECRET =
     ? process.env.DEVELOPMENT_JWT_SECRET
     : uuid();
 
+type AuthUser = {
+  id: string;
+  iat: number;
+  exp: number;
+};
+
+declare module '@fastify/jwt' {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+  interface FastifyJWT {
+    user: AuthUser;
+  }
+}
+
 export const buildServer = async (opts: {
   routePrefix: string;
 }): Promise<FastifyInstance> => {
