@@ -59,3 +59,11 @@ export const cylinderSetIdParamsPayload = Type.Object({
 export type CylinderSetIdParamsPayload = Static<
   typeof cylinderSetIdParamsPayload
 >;
+
+export const cylinderSetOwnerParamsPayload = Type.Object({
+  cylinderSetOwner: Type.Optional(Type.String()),
+});
+
+export type CylinderSetOwnerParamsPayload = Static<
+  typeof cylinderSetOwnerParamsPayload
+>;
