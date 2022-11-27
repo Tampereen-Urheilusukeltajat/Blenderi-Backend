@@ -26,3 +26,9 @@ export type RefreshRequestBody = Static<typeof refreshRequestBody>;
 export type RefreshRequest = FastifyRequest<{
   Body: RefreshRequestBody;
 }>;
+
+export type AuthUser = {
+  id: string;
+  iat: number;
+  exp: number;
+};

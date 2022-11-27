@@ -45,13 +45,10 @@ describe('create fill event', () => {
   describe('successful', () => {
     test('it creates a new fill event with only compressed air', async () => {
       const PAYLOAD = {
-        cylinderSetId: 'f4e1035e-f36e-4056-9a1b-5925a3c5793e',
+        cylinderSetId: 'a4e1035e-f36e-4056-9a1b-5925a3c5793e', // single cylinder set
+        gasMixture: 'Paineilma',
         airPressure: 10,
-        oxygenPressure: 0,
-        heliumPressure: 0,
-        argonPressure: 0,
-        diluentPressure: 0,
-        info: 'Tämä on kompressoitua ilmaa',
+        storageCylinderUsage: [],
       };
       const res = await server.inject({
         url: 'api/fill-event',
@@ -65,12 +62,22 @@ describe('create fill event', () => {
     });
     test('it creates a new fill event with blender priviledges', async () => {
       const PAYLOAD = {
-        cylinderSetId: 'f4e1035e-f36e-4056-9a1b-5925a3c5793e',
-        airPressure: 12,
-        oxygenPressure: 3,
-        heliumPressure: 4,
-        argonPressure: 0,
-        diluentPressure: 0,
+        cylinderSetId: 'b4e1035e-f36e-4056-9a1b-5925a3c5793e',
+        gasMixture: 'seos',
+        airPressure: 5,
+        storageCylinderUsage: [
+          {
+            storageCylinderId: 1,
+            startPressure: 10,
+            endPressure: 8,
+          },
+          {
+            storageCylinderId: 3,
+            startPressure: 13.5,
+            endPressure: 10.2,
+          },
+        ],
+        description: 'Tämä on jonkinlainen seos',
       };
       const res = await server.inject({
         url: 'api/fill-event',
@@ -79,7 +86,11 @@ describe('create fill event', () => {
         headers,
       });
       const resBody = JSON.parse(res.body);
-      const expectedPrice: number = 3 * 50 * 666 + 4 * 50 * 300;
+      const expectedPrice =
+        PAYLOAD.storageCylinderUsage[0].startPressure -
+        PAYLOAD.storageCylinderUsage[0].endPressure * 50 * 300 +
+        PAYLOAD.storageCylinderUsage[1].startPressure -
+        PAYLOAD.storageCylinderUsage[1].endPressure * 50 * 150;
       expect(res.statusCode).toEqual(201);
       expect(resBody.price).toEqual(expectedPrice);
     });
@@ -90,11 +101,8 @@ describe('create fill event', () => {
       const PAYLOAD = {
         cylinderSetId: 'f4e1035e-f36e-4056-9a1b-5925a3c5793e',
         airPressure: 0,
-        oxygenPressure: 0,
-        heliumPressure: 0,
-        argonPressure: 0,
-        diluentPressure: 0,
-        info: 'Tämä on ylimääräistä infoa',
+        storageCylinderUsage: [],
+        description: 'Tämä on ylimääräistä infoa',
       };
       const res = await server.inject({
         url: 'api/fill-event',
@@ -109,11 +117,8 @@ describe('create fill event', () => {
       const PAYLOAD = {
         cylinderSetId: 'a4e1035e-f36e-4056-9a1b-696969696969',
         airPressure: 12,
-        oxygenPressure: 0,
-        heliumPressure: 0,
-        argonPressure: 0,
-        diluentPressure: 0,
-        info: 'Tämä on ylimääräistä infoa',
+        storageCylinderUsage: [],
+        description: 'Tämä on ylimääräistä infoa',
       };
       const res = await server.inject({
         url: 'api/fill-event',
@@ -124,15 +129,34 @@ describe('create fill event', () => {
       expect(res.statusCode).toEqual(400);
     });
 
-    test('it fails with negative gas amounts', async () => {
+    test('it fails with negative air pressure', async () => {
       const PAYLOAD = {
         cylinderSetId: 'f4e1035e-f36e-4056-9a1b-5925a3c5793e',
         airPressure: -4,
-        oxygenPressure: -3,
-        heliumPressure: -55,
-        argonPressure: -23,
-        diluentPressure: -9,
-        info: 'Tämä on ylimääräistä infoa',
+        storageCylinderUsage: [],
+        description: 'Tämä on ylimääräistä infoa',
+      };
+      const res = await server.inject({
+        url: 'api/fill-event',
+        method: 'POST',
+        body: PAYLOAD,
+        headers,
+      });
+      expect(res.statusCode).toEqual(400);
+    });
+
+    test('it fails with negative storageCylinder pressure', async () => {
+      const PAYLOAD = {
+        cylinderSetId: 'f4e1035e-f36e-4056-9a1b-5925a3c5793e',
+        airPressure: 10,
+        storageCylinderUsage: [
+          {
+            storageCylinderId: 1,
+            startPressure: 10,
+            endPressure: 8,
+          },
+        ],
+        description: 'Tämä on ylimääräistä infoa',
       };
       const res = await server.inject({
         url: 'api/fill-event',
@@ -156,11 +180,14 @@ describe('create fill event', () => {
       headers = { Authorization: 'Bearer ' + String(tokens.accessToken) };
       const PAYLOAD = {
         cylinderSetId: 'b4e1035e-f36e-4056-9a1b-5925a3c57100',
-        airPressure: 3,
-        oxygenPressure: 1,
-        heliumPressure: 3,
-        argonPressure: 4,
-        diluentPressure: 0,
+        airPressure: 10,
+        storageCylinderUsage: [
+          {
+            storageCylinderId: 1,
+            startPressure: 10,
+            endPressure: 8,
+          },
+        ],
         info: 'Tämä on ylimääräistä infoa',
       };
       const res = await server.inject({

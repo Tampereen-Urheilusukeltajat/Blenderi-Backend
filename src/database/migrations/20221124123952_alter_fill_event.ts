@@ -28,7 +28,7 @@ export async function up(knex: Knex): Promise<void> {
 
   /**
    * There can only be one active price for one gas.
-   * When inserting, you must check that there is no overlap in active times
+   * When inserting a new price, you must check that there is no overlap in active times
    * ie. you must update active_to-field of the previous price.
    */
   await knex.schema.createTable('gas_price', (table) => {
