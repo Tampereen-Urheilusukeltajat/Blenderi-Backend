@@ -59,20 +59,19 @@ describe('logout', () => {
       expect(resBody.id).toEqual('1be5abcd-53d4-11ed-9342-0242ac120002');
     });
   });
-  describe('User cant be returned', () => {
-    test('it returns 401 if refresh token is invalid', async () => {
-      const res = await server.inject({
-        url: '/api/logout/',
-        method: 'POST',
-        headers,
-        payload: {
-          refreshToken: 'invalid.invalid.invalid',
-        },
-      });
-      const resBody = JSON.parse(res.body);
-      expect(res.statusCode).toEqual(401);
-      expect(resBody.message).not.toEqual('Refresh token invalidated.');
-      expect(resBody.id).not.toEqual('1be5abcd-53d4-11ed-9342-0242ac120002');
+
+  test('it returns 401 if refresh token is invalid', async () => {
+    const res = await server.inject({
+      url: '/api/logout/',
+      method: 'POST',
+      headers,
+      payload: {
+        refreshToken: 'invalid.invalid.invalid',
+      },
     });
+    const resBody = JSON.parse(res.body);
+    expect(res.statusCode).toEqual(401);
+    expect(resBody.message).not.toEqual('Refresh token invalidated.');
+    expect(resBody.id).not.toEqual('1be5abcd-53d4-11ed-9342-0242ac120002');
   });
 });
