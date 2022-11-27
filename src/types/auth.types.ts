@@ -26,3 +26,22 @@ export type RefreshRequestBody = Static<typeof refreshRequestBody>;
 export type RefreshRequest = FastifyRequest<{
   Body: RefreshRequestBody;
 }>;
+
+export const logoutRequestBody = Type.Object({
+  refreshToken: Type.String(),
+});
+
+export type LogoutRequestBody = Static<typeof logoutRequestBody>;
+
+export type LogoutRequest = FastifyRequest<{
+  Body: RefreshRequestBody;
+}>;
+
+export const logoutResponseBody = Type.Object({
+  message: Type.String(),
+  id: Type.String({ format: 'uuid' }),
+});
+
+export type LogoutResponseBody = FastifyRequest<{
+  Body: LogoutResponseBody;
+}>;
