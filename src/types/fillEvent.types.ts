@@ -11,8 +11,8 @@ export type StorageCylinder = Static<typeof storageCylinder>;
 
 export const storageCylinderUsage = Type.Object({
   storageCylinderId: Type.Integer({ minimum: 0 }),
-  startPressure: Type.Integer({ minimum: 0 }),
-  endPressure: Type.Integer({ minimum: 0 }),
+  startPressure: Type.Number({ minimum: 0 }),
+  endPressure: Type.Number({ minimum: 0 }),
 });
 
 export type StorageCylinderUsage = Static<typeof storageCylinderUsage>;

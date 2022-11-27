@@ -36,15 +36,15 @@ const getActivePriceId = async (
     .andWhere('active_to', '>', knexController.fn.now())
     .andWhere('active_from', '<', knexController.fn.now())
     .select('id');
-
-  if (prices.length > 1) {
+  const pricesArr = prices.map((price) => JSON.parse(JSON.stringify(price)));
+  if (pricesArr.length > 1) {
     log.error(`Multiple active prices were found for gasId: ${gasId}`);
     throw new Error(`Multiple active prices`);
   } else if (prices.length === 0) {
     log.error(`No price was found for gasId: ${gasId}`);
     throw new Error(`Price not found`);
   }
-  return prices[0].id;
+  return pricesArr[0].id;
 };
 
 const getAirGasId = async (trx: Knex.Transaction): Promise<number> => {
@@ -88,11 +88,18 @@ export const createFillEvent = async (
     await trx.rollback();
     return { status: 400, message: 'Cylinder set was not found' };
   }
+  const params = [user.id, cylinderSetId, gasMixture];
+  let sql: string;
+  if (description === undefined) {
+    sql =
+      'INSERT INTO fill_event (user_id, cylinder_set_id, gas_mixture) VALUES (?,?,?) RETURNING id';
+  } else {
+    sql =
+      'INSERT INTO fill_event (user_id, cylinder_set_id, gas_mixture, description) VALUES (?,?,?,?) RETURNING id';
+    params.push(description);
+  }
   // Use knex.raw to enable use of RETURNING clause to avoid race conditions
-  const res = await trx.raw(
-    'INSERT INTO fill_event (user_id, cylinder_set_id, gas_mixture, description) VALUES (?,?,?,?) RETURNING id',
-    [user.id, cylinderSetId, gasMixture, description]
-  );
+  const res = await trx.raw(sql, params);
   const fillEventId = JSON.parse(JSON.stringify(res))[0][0].id;
 
   try {
@@ -175,5 +182,6 @@ export const calcTotalCost = async (id: number): Promise<number> => {
     })
   );
   const totalPrice = pricesPerGas.reduce((acc, curValue) => acc + curValue);
+  await trx.commit();
   return totalPrice;
 };

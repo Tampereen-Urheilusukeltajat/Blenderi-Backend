@@ -47,8 +47,8 @@ describe('create fill event', () => {
       const PAYLOAD = {
         cylinderSetId: 'a4e1035e-f36e-4056-9a1b-5925a3c5793e', // single cylinder set
         gasMixture: 'Paineilma',
-        airPressure: 10,
-        storageCylinderUsage: [],
+        filledAir: true,
+        storageCylinderUsageArr: [],
       };
       const res = await server.inject({
         url: 'api/fill-event',
@@ -64,15 +64,15 @@ describe('create fill event', () => {
       const PAYLOAD = {
         cylinderSetId: 'b4e1035e-f36e-4056-9a1b-5925a3c5793e',
         gasMixture: 'seos',
-        airPressure: 5,
-        storageCylinderUsage: [
+        filledAir: false,
+        storageCylinderUsageArr: [
           {
             storageCylinderId: 1,
             startPressure: 10,
             endPressure: 8,
           },
           {
-            storageCylinderId: 3,
+            storageCylinderId: 5,
             startPressure: 13.5,
             endPressure: 10.2,
           },
@@ -87,10 +87,14 @@ describe('create fill event', () => {
       });
       const resBody = JSON.parse(res.body);
       const expectedPrice =
-        PAYLOAD.storageCylinderUsage[0].startPressure -
-        PAYLOAD.storageCylinderUsage[0].endPressure * 50 * 300 +
-        PAYLOAD.storageCylinderUsage[1].startPressure -
-        PAYLOAD.storageCylinderUsage[1].endPressure * 50 * 150;
+        (PAYLOAD.storageCylinderUsageArr[0].startPressure -
+          PAYLOAD.storageCylinderUsageArr[0].endPressure) *
+          50 *
+          300 +
+        (PAYLOAD.storageCylinderUsageArr[1].startPressure -
+          PAYLOAD.storageCylinderUsageArr[1].endPressure) *
+          50 *
+          150;
       expect(res.statusCode).toEqual(201);
       expect(resBody.price).toEqual(expectedPrice);
     });
@@ -101,7 +105,7 @@ describe('create fill event', () => {
       const PAYLOAD = {
         cylinderSetId: 'f4e1035e-f36e-4056-9a1b-5925a3c5793e',
         airPressure: 0,
-        storageCylinderUsage: [],
+        storageCylinderUsageArr: [],
         description: 'Tämä on ylimääräistä infoa',
       };
       const res = await server.inject({
@@ -117,7 +121,7 @@ describe('create fill event', () => {
       const PAYLOAD = {
         cylinderSetId: 'a4e1035e-f36e-4056-9a1b-696969696969',
         airPressure: 12,
-        storageCylinderUsage: [],
+        storageCylinderUsageArr: [],
         description: 'Tämä on ylimääräistä infoa',
       };
       const res = await server.inject({
@@ -133,7 +137,7 @@ describe('create fill event', () => {
       const PAYLOAD = {
         cylinderSetId: 'f4e1035e-f36e-4056-9a1b-5925a3c5793e',
         airPressure: -4,
-        storageCylinderUsage: [],
+        storageCylinderUsageArr: [],
         description: 'Tämä on ylimääräistä infoa',
       };
       const res = await server.inject({
@@ -149,7 +153,7 @@ describe('create fill event', () => {
       const PAYLOAD = {
         cylinderSetId: 'f4e1035e-f36e-4056-9a1b-5925a3c5793e',
         airPressure: 10,
-        storageCylinderUsage: [
+        storageCylinderUsageArr: [
           {
             storageCylinderId: 1,
             startPressure: 10,
@@ -180,15 +184,15 @@ describe('create fill event', () => {
       headers = { Authorization: 'Bearer ' + String(tokens.accessToken) };
       const PAYLOAD = {
         cylinderSetId: 'b4e1035e-f36e-4056-9a1b-5925a3c57100',
-        airPressure: 10,
-        storageCylinderUsage: [
+        gasMixture: 'EAN32',
+        filledAir: true,
+        storageCylinderUsageArr: [
           {
             storageCylinderId: 1,
             startPressure: 10,
             endPressure: 8,
           },
         ],
-        info: 'Tämä on ylimääräistä infoa',
       };
       const res = await server.inject({
         url: 'api/fill-event',
