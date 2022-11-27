@@ -1,7 +1,7 @@
 import { Type, Static } from '@sinclair/typebox';
 
 export const storageCylinder = Type.Object({
-  storageCylinderId: Type.Integer({ minimum: 0 }),
+  id: Type.Integer({ minimum: 0 }),
   gasId: Type.Integer({ minimum: 0 }),
   volume: Type.Number({ minimum: 0 }),
   name: Type.String({ minLength: 1, maxLength: 256 }),
@@ -33,6 +33,8 @@ export const gas = Type.Object({
   name: Type.String({ maxLength: 128 }),
 });
 
+export type Gas = Static<typeof gas>;
+
 export const gasPrice = Type.Object({
   id: Type.Integer({ minimum: 0 }),
   gasId: Type.Integer({ minimum: 0 }),
@@ -46,8 +48,8 @@ export type GasPrice = Static<typeof gasPrice>;
 export const createFillEventBody = Type.Object({
   cylinderSetId: Type.String({ format: 'uuid' }),
   gasMixture: Type.String({ maxLength: 124 }),
-  airPressure: Type.Integer({ minimum: 0 }),
-  storageCylinderUsage: Type.Array(storageCylinderUsage),
+  filledAir: Type.Boolean(),
+  storageCylinderUsageArr: Type.Array(storageCylinderUsage),
   description: Type.Optional(Type.String({ maxLength: 1024 })),
 });
 
@@ -58,7 +60,7 @@ export const fillEventResponse = Type.Object({
   userId: Type.String({ format: 'uuid' }),
   cylinderSetId: Type.String({ format: 'uuid' }),
   gasMixture: Type.String({ maxLength: 124 }),
-  storageCylinderUsage: Type.Array(storageCylinderUsage),
+  storageCylinderUsageArr: Type.Array(storageCylinderUsage),
   description: Type.Optional(Type.String({ maxLength: 1024 })),
   price: Type.Integer({ minimum: 0 }),
 });
