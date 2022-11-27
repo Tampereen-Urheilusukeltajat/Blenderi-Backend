@@ -5,7 +5,7 @@ import {
   fillEventResponse,
 } from '../../types/fillEvent.types';
 import { errorHandler } from '../../lib/errorHandler';
-import { createFillEvent } from '../../lib/fillEvent';
+import { createFillEvent, calcTotalCost } from '../../lib/fillEvent';
 
 const schema = {
   description: 'Creates a new fill event',
@@ -25,11 +25,17 @@ const handler = async (
   reply: FastifyReply
 ): Promise<void> => {
   const res = await createFillEvent(request.user, request.body);
-  if (res.status !== 201) {
+  if (res.fillEventId === undefined) {
     return errorHandler(reply, res.status, res.message);
   }
   // TODO: öööh pitäis varmaan palauttaa tähän jotain
-  return reply.code(201).send(res.message);
+  const totalCost = await calcTotalCost(res.fillEventId);
+  return reply.code(201).send({
+    id: res.fillEventId,
+    userId: request.user.id,
+    price: totalCost,
+    ...request.body,
+  });
 };
 
 export default async (fastify: FastifyInstance): Promise<void> => {

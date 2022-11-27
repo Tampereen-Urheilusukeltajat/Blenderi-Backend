@@ -1,10 +1,10 @@
 import { knexController } from '../database/database';
 import {
   CreateFillEventBody,
-  FillEventResponse,
   StorageCylinder,
   GasPrice,
   Gas,
+  FillEventGasFill,
 } from '../types/fillEvent.types';
 import { AuthUser } from '../types/auth.types';
 import { User } from '../types/user.types';
@@ -27,34 +27,23 @@ export const getStorageCylinder = async (
   return sc;
 };
 
-export const getGasName = async (
-  trx: Knex.Transaction,
-  gasId: number
-): Promise<string | undefined> => {
-  const name = await trx('gas').where('gas_id', gasId).first('name');
-  if (name === undefined) {
-    log.error(`Unknown gas id: ${gasId}`);
-  }
-  return name;
-};
-
-export const getActivePriceId = async (
+const getActivePriceId = async (
   trx: Knex.Transaction,
   gasId: number
 ): Promise<number> => {
-  const prices: GasPrice = await trx<GasPrice>('gas_price')
+  const prices: GasPrice[] = await trx<GasPrice>('gas_price')
     .where('gas_id', gasId)
     .andWhere('active_to', '>', knexController.fn.now())
     .andWhere('active_from', '<', knexController.fn.now())
     .select('id');
-  /*
+
   if (prices.length > 1) {
     log.error(`Multiple active prices were found for gasId: ${gasId}`);
     throw new Error(`Multiple active prices`);
   } else if (prices.length === 0) {
     log.error(`No price was found for gasId: ${gasId}`);
     throw new Error(`Price not found`);
-  } */
+  }
   return prices[0].id;
 };
 
@@ -70,7 +59,7 @@ const getAirGasId = async (trx: Knex.Transaction): Promise<number> => {
 export const createFillEvent = async (
   authUser: AuthUser,
   body: CreateFillEventBody
-): Promise<{ status: number; message: string }> => {
+): Promise<{ status: number; message: string; fillEventId?: number }> => {
   const {
     cylinderSetId,
     gasMixture,
@@ -108,6 +97,7 @@ export const createFillEvent = async (
 
   try {
     if (filledAir) {
+      // If air is filled, save it
       const airGasId = await getAirGasId(trx);
       const airPriceId = await getActivePriceId(trx, airGasId);
       await trx('fill_event_gas_fill').insert({
@@ -116,14 +106,13 @@ export const createFillEvent = async (
       });
     }
     await Promise.all(
+      // Save gas fills
       storageCylinderUsageArr.map(async (scu): Promise<void> => {
         const storageCylinder = await getStorageCylinder(
           trx,
           scu.storageCylinderId
         );
-
         const priceId = await getActivePriceId(trx, storageCylinder.gasId);
-
         await trx('fill_event_gas_fill').insert({
           fill_event_id: fillEventId,
           gas_price_id: priceId,
@@ -150,84 +139,41 @@ export const createFillEvent = async (
     }
   }
   await trx.commit();
-  return { status: 201, message: 'Fill event created successfully' };
-};
-/*
-
-export const getGasPrice = async (gas: string): Promise<number | undefined> => {
-  const res = await knexController('prices')
-    .orderBy('created_at', 'desc')
-    .first('price_per_litre_in_eur_cents as price')
-    .where({ gas });
-  if (res === undefined) return undefined;
-  return res.price;
-}; */
-/*
-export const getGasPrices = async (): Promise<GasPrices | undefined> => {
-  const oxygen = await getGasPrice('oxygen');
-  const helium = await getGasPrice('helium');
-  const argon = await getGasPrice('argon');
-  const diluent = await getGasPrice('diluent');
-  if (
-    oxygen === undefined ||
-    helium === undefined ||
-    argon === undefined ||
-    diluent === undefined
-  ) {
-    return undefined;
-  }
   return {
-    oxygen,
-    helium,
-    argon,
-    diluent,
+    status: 201,
+    message: 'Fill event created successfully',
+    fillEventId,
   };
-}; */
-
-export const insertFillEvent = async (
-  id: string,
-  userId: string,
-  cylinderSet: string,
-  airPressure: number,
-  oxygenPressure: number,
-  heliumPressure: number,
-  argonPressure: number,
-  diluentPressure: number,
-  price: number,
-  info: string | undefined
-): Promise<void> => {
-  await knexController('fill_event').insert({
-    id,
-    user: userId,
-    cylinder_set: cylinderSet,
-    air_pressure: airPressure,
-    oxygen_pressure: oxygenPressure,
-    helium_pressure: heliumPressure,
-    argon_pressure: argonPressure,
-    diluent_pressure: diluentPressure,
-    price,
-    info,
-  });
 };
 
-export const selectFillEventByUser = async (
-  userId: string,
-  id: string
-): Promise<FillEventResponse> => {
-  const res = await knexController('fill_event')
-    .where('id', id)
-    .first<FillEventResponse>(
-      'id',
-      'user as userId',
-      'cylinder_set as cylinderSetId',
-      'air_pressure as airPressure',
-      'oxygen_pressure as oxygenPressure',
-      'helium_pressure as heliumPressure',
-      'argon_pressure as argonPressure',
-      'diluent_pressure as diluentPressure',
-      'price',
-      'info'
+export const calcTotalCost = async (id: number): Promise<number> => {
+  const trx = await knexController.transaction();
+  const fillings: FillEventGasFill[] = await trx<FillEventGasFill>(
+    'fill_event_gas_fill'
+  )
+    .where('fill_event_id', id)
+    .select(
+      'storage_cylinder_id as storageCylinderId',
+      'gas_price_id as gasPriceId',
+      'volume_litres as volumeLitres'
     );
+  const fillArr = fillings.map((fill) => JSON.parse(JSON.stringify(fill)));
 
-  return res;
+  const pricesPerGas: number[] = await Promise.all(
+    fillArr.map(async (fill): Promise<number> => {
+      if (fill.storageCylinderId === null) {
+        return 0;
+      } // air
+      else {
+        // gas
+        const gasPrice: GasPrice = await trx<GasPrice>('gas_price')
+          .where('id', fill.gasPriceId)
+          .first('price_eur_cents as priceEurCents');
+        const price = JSON.parse(JSON.stringify(gasPrice));
+        return fill.volumeLitres * price.priceEurCents;
+      }
+    })
+  );
+  const totalPrice = pricesPerGas.reduce((acc, curValue) => acc + curValue);
+  return totalPrice;
 };

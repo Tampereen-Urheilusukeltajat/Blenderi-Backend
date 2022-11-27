@@ -66,3 +66,12 @@ export const fillEventResponse = Type.Object({
 });
 
 export type FillEventResponse = Static<typeof fillEventResponse>;
+
+export const fillEventGasFill = Type.Object({
+  fillEventId: Type.Integer({ minimum: 0 }),
+  storageCylinderId: Type.Integer({ minimum: 0 }),
+  volumeLitres: Type.Integer({ minimum: 0 }),
+  gasPriceId: Type.Integer({ minimum: 0 }),
+});
+
+export type FillEventGasFill = Static<typeof fillEventGasFill>;
