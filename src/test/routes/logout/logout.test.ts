@@ -60,7 +60,7 @@ describe('logout', () => {
     });
   });
   describe('User cant be returned', () => {
-    test('it returns 403 if refresh token is invalid', async () => {
+    test('it returns 401 if refresh token is invalid', async () => {
       const res = await server.inject({
         url: '/api/logout/',
         method: 'POST',
@@ -70,7 +70,7 @@ describe('logout', () => {
         },
       });
       const resBody = JSON.parse(res.body);
-      expect(res.statusCode).toEqual(403);
+      expect(res.statusCode).toEqual(401);
       expect(resBody.message).not.toEqual('Refresh token invalidated.');
       expect(resBody.id).not.toEqual('1be5abcd-53d4-11ed-9342-0242ac120002');
     });
