@@ -61,3 +61,12 @@ export const rotate = async (
 
   await redisClient.disconnect();
 };
+
+export const invalidate = async (
+  tokenId: string,
+  userId: string
+): Promise<void> => {
+  await redisClient.connect();
+  await redisClient.del(`${userId}:${tokenId}`);
+  await redisClient.disconnect();
+};

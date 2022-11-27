@@ -11,6 +11,7 @@ import {
   userResponse,
   userIdParamsPayload,
   UserResponse,
+  User,
 } from '../../types/user.types';
 import {
   phoneAlreadyExists,
@@ -53,8 +54,18 @@ const editUserHandler = async (
 
   const userId = req.params.userId;
 
+  // If no user found with given id or user deleted.
+  const foundUsers: number = await knexController<User>('user')
+    .count('id')
+    .where('id', userId)
+    .first()
+    .then((row: { 'count(`id`)': number }) => Number(row['count(`id`)']));
+  if (foundUsers !== 1) {
+    return errorHandler(reply, 404, 'User not found.');
+  }
+
   if (updateBody.email !== undefined) {
-    if (await emailAlreadyExists(updateBody.email)) {
+    if (await emailAlreadyExists(updateBody.email, userId)) {
       const msg = 'Tried to update user with duplicate email';
       log.debug(msg);
       return errorHandler(reply, 409, msg);
@@ -62,8 +73,8 @@ const editUserHandler = async (
   }
 
   if (updateBody.phone !== undefined) {
-    if (await phoneAlreadyExists(updateBody.phone)) {
-      const msg = 'Tried to create user with duplicate phone number';
+    if (await phoneAlreadyExists(updateBody.phone, userId)) {
+      const msg = 'Tried to update user with duplicate phone number';
       log.debug(msg);
       return errorHandler(reply, 409, msg);
     }
@@ -76,8 +87,8 @@ const editUserHandler = async (
   }
 
   // edit user
-  const editResponse = await knexController('user')
-    .where({ id: userId })
+  const usersResponse = await knexController('user')
+    .where({ id: userId, deleted_at: null })
     .update({
       email: updateBody.email,
       phone: updateBody.phone,
@@ -90,8 +101,7 @@ const editUserHandler = async (
       archived_at: archiveUser ? knexController.fn.now() : null,
     });
 
-  // If no user found with given id.
-  if (editResponse === 0) {
+  if (usersResponse === 0) {
     return errorHandler(reply, 404, 'User not found.');
   }
 
