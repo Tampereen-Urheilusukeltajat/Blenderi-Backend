@@ -60,7 +60,7 @@ describe('create fill event', () => {
       expect(res.statusCode).toEqual(201);
       expect(resBody.price).toEqual(0);
     });
-    test('it creates a new fill event with blender priviledges', async () => {
+    test('it creates a new fill event with blender privileges', async () => {
       const PAYLOAD = {
         cylinderSetId: 'b4e1035e-f36e-4056-9a1b-5925a3c5793e',
         gasMixture: 'seos',
