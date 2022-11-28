@@ -5,7 +5,7 @@ import {
   fillEventResponse,
 } from '../../types/fillEvent.types';
 import { errorHandler } from '../../lib/errorHandler';
-import { createFillEvent, calcTotalCost } from '../../lib/fillEvent';
+import { createFillEvent } from '../../lib/fillEvent';
 
 const schema = {
   description: 'Creates a new fill event',
@@ -30,11 +30,9 @@ const handler = async (
   if (res.fillEventId === undefined) {
     return errorHandler(reply, res.status, res.message);
   }
-  const totalCost = await calcTotalCost(res.fillEventId);
   return reply.code(201).send({
     id: res.fillEventId,
     userId: request.user.id,
-    price: totalCost,
     ...request.body,
   });
 };

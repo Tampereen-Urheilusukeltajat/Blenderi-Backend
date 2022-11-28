@@ -56,6 +56,7 @@ describe('create fill event', () => {
         gasMixture: 'Paineilma',
         filledAir: true,
         storageCylinderUsageArr: [],
+        price: 0,
       };
       const res = await server.inject({
         url: 'api/fill-event',
@@ -95,6 +96,7 @@ describe('create fill event', () => {
           },
         ],
         description: 'Tämä on jonkinlainen seos',
+        price: 60000,
       };
       const res = await server.inject({
         url: 'api/fill-event',
@@ -108,8 +110,10 @@ describe('create fill event', () => {
           PAYLOAD.storageCylinderUsageArr[0].endPressure) *
           50 *
           300 +
-        (PAYLOAD.storageCylinderUsageArr[1].startPressure -
-          PAYLOAD.storageCylinderUsageArr[1].endPressure) *
+        Math.ceil(
+          PAYLOAD.storageCylinderUsageArr[1].startPressure -
+            PAYLOAD.storageCylinderUsageArr[1].endPressure
+        ) *
           50 *
           150;
       expect(res.statusCode).toEqual(201);
@@ -139,9 +143,11 @@ describe('create fill event', () => {
     test('it fails when no gases are given', async () => {
       const PAYLOAD = {
         cylinderSetId: 'f4e1035e-f36e-4056-9a1b-5925a3c5793e',
+        gasMixture: 'no gas',
         filledAir: false,
         storageCylinderUsageArr: [],
         description: 'Tämä on ylimääräistä infoa',
+        price: 0,
       };
       const res = await server.inject({
         url: 'api/fill-event',
@@ -150,14 +156,18 @@ describe('create fill event', () => {
         headers,
       });
       expect(res.statusCode).toEqual(400);
+      const body = JSON.parse(res.body);
+      expect(body.message).toEqual('No gases were given');
     });
 
     test('it fails with invalid cylinder set', async () => {
       const PAYLOAD = {
         cylinderSetId: 'a4e1035e-f36e-4056-9a1b-696969696969',
+        gasMixture: 'invalid cylinder set',
         filledAir: true,
         storageCylinderUsageArr: [],
         description: 'Tämä on ylimääräistä infoa',
+        price: 0,
       };
       const res = await server.inject({
         url: 'api/fill-event',
@@ -166,11 +176,14 @@ describe('create fill event', () => {
         headers,
       });
       expect(res.statusCode).toEqual(400);
+      const body = JSON.parse(res.body);
+      expect(body.message).toEqual('Cylinder set was not found');
     });
 
     test('it fails with negative storageCylinder pressure', async () => {
       const PAYLOAD = {
         cylinderSetId: 'f4e1035e-f36e-4056-9a1b-5925a3c5793e',
+        gasMixture: 'neg pressure',
         filledAir: true,
         storageCylinderUsageArr: [
           {
@@ -180,6 +193,7 @@ describe('create fill event', () => {
           },
         ],
         description: 'Tämä on ylimääräistä infoa',
+        price: 30000,
       };
       const res = await server.inject({
         url: 'api/fill-event',
@@ -188,6 +202,34 @@ describe('create fill event', () => {
         headers,
       });
       expect(res.statusCode).toEqual(400);
+      const body = JSON.parse(res.body);
+      expect(body.message).toEqual('Cannot have negative fill pressure');
+    });
+
+    test('it fails when the request price is not right', async () => {
+      const PAYLOAD = {
+        cylinderSetId: 'f4e1035e-f36e-4056-9a1b-5925a3c5793e',
+        filledAir: true,
+        gasMixture: 'price=bad',
+        storageCylinderUsageArr: [
+          {
+            storageCylinderId: 1,
+            startPressure: 10,
+            endPressure: 8,
+          },
+        ],
+        description: 'Tämä on ylimääräistä infoa',
+        price: 0,
+      };
+      const res = await server.inject({
+        url: 'api/fill-event',
+        method: 'POST',
+        body: PAYLOAD,
+        headers,
+      });
+      expect(res.statusCode).toEqual(400);
+      const body = JSON.parse(res.body);
+      expect(body.message).toEqual('Client price did not match server price');
     });
 
     test('it fails if the user does not have blender privileges', async () => {
@@ -212,6 +254,7 @@ describe('create fill event', () => {
             endPressure: 8,
           },
         ],
+        price: 30000,
       };
       const res = await server.inject({
         url: 'api/fill-event',

@@ -19,6 +19,7 @@ export const getStorageCylinder = async (
   const storageCylinderQuery = await trx<StorageCylinder>('storage_cylinder')
     .where('id', id)
     .first('id', 'gas_id as gasId', 'volume', 'name');
+
   if (storageCylinderQuery === undefined) {
     log.error('Storage cylinder not found');
     throw new Error('Storage cylinder not found');
@@ -66,6 +67,7 @@ export const createFillEvent = async (
     filledAir,
     storageCylinderUsageArr,
     description,
+    price,
   } = body;
 
   if (!filledAir && storageCylinderUsageArr.length === 0) {
@@ -83,7 +85,7 @@ export const createFillEvent = async (
     await trx.rollback();
     return { status: 403, message: 'User does not have blender priviledges' };
   }
-  const set = selectCylinderSet(trx, cylinderSetId);
+  const set = await selectCylinderSet(trx, cylinderSetId);
   if (set === undefined) {
     await trx.rollback();
     return { status: 400, message: 'Cylinder set was not found' };
@@ -91,6 +93,8 @@ export const createFillEvent = async (
   const params: Array<string | null> = [user.id, cylinderSetId, gasMixture];
   const sql =
     'INSERT INTO fill_event (user_id, cylinder_set_id, gas_mixture, description) VALUES (?,?,?,?) RETURNING id';
+  /* Rule is disabled as all possible falsy (empty string and undefined) values should lead to a null-value 
+     being inserted into the database thus being safe */
   // eslint-disable-next-line  @typescript-eslint/strict-boolean-expressions
   description ? params.push(description) : params.push(null);
   // Use knex.raw to enable use of RETURNING clause to avoid race conditions
@@ -110,6 +114,9 @@ export const createFillEvent = async (
     await Promise.all(
       // Save gas fills
       storageCylinderUsageArr.map(async (scu): Promise<void> => {
+        if (scu.startPressure < scu.endPressure) {
+          throw new Error('Negative fill pressure');
+        }
         const storageCylinder = await getStorageCylinder(
           trx,
           scu.storageCylinderId
@@ -120,7 +127,8 @@ export const createFillEvent = async (
           gas_price_id: priceId,
           storage_cylinder_id: storageCylinder.id,
           volume_litres:
-            (scu.startPressure - scu.endPressure) * storageCylinder.volume,
+            Math.ceil(scu.startPressure - scu.endPressure) *
+            storageCylinder.volume,
         });
       })
     );
@@ -135,10 +143,18 @@ export const createFillEvent = async (
         return { status: 500 };
       case 'Gas id was not found for air':
         return { status: 500 };
+      case 'Negative fill pressure':
+        return { status: 400, message: 'Cannot have negative fill pressure' };
       default:
         log.error(e.message);
         return { status: 500 };
     }
+  }
+  // Check that the price advertised to the user is correct
+  const totalCost = await calcTotalCost(trx, fillEventId);
+  if (totalCost !== price) {
+    await trx.rollback();
+    return { status: 400, message: 'Client price did not match server price' };
   }
   await trx.commit();
   return {
@@ -148,8 +164,10 @@ export const createFillEvent = async (
   };
 };
 
-export const calcTotalCost = async (id: number): Promise<number> => {
-  const trx = await knexController.transaction();
+export const calcTotalCost = async (
+  trx: Knex.Transaction,
+  id: number
+): Promise<number> => {
   const fillings: FillEventGasFill[] = await trx<FillEventGasFill>(
     'fill_event_gas_fill'
   )
@@ -175,6 +193,5 @@ export const calcTotalCost = async (id: number): Promise<number> => {
     })
   );
   const totalPrice = pricesPerGas.reduce((acc, curValue) => acc + curValue);
-  await trx.commit();
   return totalPrice;
 };

@@ -51,6 +51,7 @@ export const createFillEventBody = Type.Object({
   filledAir: Type.Boolean(),
   storageCylinderUsageArr: Type.Array(storageCylinderUsage),
   description: Type.Optional(Type.String({ maxLength: 1024 })),
+  price: Type.Integer({ minimum: 0 }),
 });
 
 export type CreateFillEventBody = Static<typeof createFillEventBody>;
