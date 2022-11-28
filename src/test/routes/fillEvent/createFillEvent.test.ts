@@ -171,7 +171,7 @@ describe('create fill event', () => {
       expect(res.statusCode).toEqual(400);
     });
 
-    test('it fails if the user does not have blender priviledges', async () => {
+    test('it fails if the user does not have blender privileges', async () => {
       const login = await server.inject({
         url: '/api/login',
         method: 'POST',
