@@ -30,7 +30,6 @@ const handler = async (
   if (res.fillEventId === undefined) {
     return errorHandler(reply, res.status, res.message);
   }
-  // TODO: öööh pitäis varmaan palauttaa tähän jotain
   const totalCost = await calcTotalCost(res.fillEventId);
   return reply.code(201).send({
     id: res.fillEventId,

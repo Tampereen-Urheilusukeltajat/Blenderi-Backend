@@ -104,7 +104,7 @@ describe('create fill event', () => {
     test('it fails when no gases are given', async () => {
       const PAYLOAD = {
         cylinderSetId: 'f4e1035e-f36e-4056-9a1b-5925a3c5793e',
-        airPressure: 0,
+        filledAir: false,
         storageCylinderUsageArr: [],
         description: 'Tämä on ylimääräistä infoa',
       };
@@ -120,23 +120,7 @@ describe('create fill event', () => {
     test('it fails with invalid cylinder set', async () => {
       const PAYLOAD = {
         cylinderSetId: 'a4e1035e-f36e-4056-9a1b-696969696969',
-        airPressure: 12,
-        storageCylinderUsageArr: [],
-        description: 'Tämä on ylimääräistä infoa',
-      };
-      const res = await server.inject({
-        url: 'api/fill-event',
-        method: 'POST',
-        body: PAYLOAD,
-        headers,
-      });
-      expect(res.statusCode).toEqual(400);
-    });
-
-    test('it fails with negative air pressure', async () => {
-      const PAYLOAD = {
-        cylinderSetId: 'f4e1035e-f36e-4056-9a1b-5925a3c5793e',
-        airPressure: -4,
+        filledAir: true,
         storageCylinderUsageArr: [],
         description: 'Tämä on ylimääräistä infoa',
       };
@@ -152,12 +136,12 @@ describe('create fill event', () => {
     test('it fails with negative storageCylinder pressure', async () => {
       const PAYLOAD = {
         cylinderSetId: 'f4e1035e-f36e-4056-9a1b-5925a3c5793e',
-        airPressure: 10,
+        filledAir: true,
         storageCylinderUsageArr: [
           {
             storageCylinderId: 1,
-            startPressure: 10,
-            endPressure: 8,
+            startPressure: 8,
+            endPressure: 10,
           },
         ],
         description: 'Tämä on ylimääräistä infoa',
