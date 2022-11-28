@@ -20,6 +20,8 @@ const schema = {
   },
 };
 
+schema.body.properties.gasMixture.example = 'EAN21';
+
 const handler = async (
   request: FastifyRequest<{ Body: CreateFillEventBody }>,
   reply: FastifyReply
