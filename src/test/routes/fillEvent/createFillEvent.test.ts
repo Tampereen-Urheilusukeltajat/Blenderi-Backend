@@ -100,7 +100,7 @@ describe('create fill event', () => {
     });
   });
 
-  describe('unsuccesful', () => {
+  describe('unsuccessful', () => {
     test('it fails when no gases are given', async () => {
       const PAYLOAD = {
         cylinderSetId: 'f4e1035e-f36e-4056-9a1b-5925a3c5793e',
