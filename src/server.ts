@@ -14,12 +14,20 @@ import { v4 as uuid } from 'uuid';
 import { log } from './lib/log';
 import path from 'path';
 import { errorHandler } from './lib/errorHandler';
+import { AuthUser } from './types/auth.types';
 
 const JWT_SECRET =
   process.env.NODE_ENV === 'development' &&
   process.env.DEVELOPMENT_JWT_SECRET !== undefined
     ? process.env.DEVELOPMENT_JWT_SECRET
     : uuid();
+
+declare module '@fastify/jwt' {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+  interface FastifyJWT {
+    user: AuthUser;
+  }
+}
 
 export const buildServer = async (opts: {
   routePrefix: string;

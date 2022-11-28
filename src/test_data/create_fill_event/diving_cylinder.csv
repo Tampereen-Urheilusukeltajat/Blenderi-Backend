@@ -1,0 +1,6 @@
+id;volume;pressure;material;serial_number;inspection;created_at;updated_at;
+1e54c95c-c2fe-4d86-9406-c88f45c0bde9;10;200;steel;koodi;2010-11-11;2022-10-18T11:02:35;2022-10-18T11:02:35;
+362ab1b8-4f88-11ed-aa8f-a7bc5ca309a3;10;200;carbon fiber;toinenkoodi;2010-11-11;2022-10-18T11:02:35;2022-10-18T11:02:35;
+a62ab1b8-4f88-11ed-aa8f-a7bc5ca309a3;10;200;carbon fiber;aa;2010-11-11;2022-10-18T11:02:35;2022-10-18T11:02:35;
+b62ab1b8-4f88-11ed-aa8f-a7bc5ca309a3;10;200;carbon fiber;bb;2010-11-11;2022-10-18T11:02:35;2022-10-18T11:02:35;
+b62ab1b8-4f88-11ed-aa8f-a7bc5ca309a6;10;200;steel;bb;2010-11-11;2022-10-18T11:02:35;2022-10-18T11:02:35;
