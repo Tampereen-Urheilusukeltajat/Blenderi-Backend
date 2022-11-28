@@ -5,6 +5,7 @@ import {
   beforeAll,
   afterAll,
   beforeEach,
+  afterEach,
 } from '@jest/globals';
 import { FastifyInstance } from 'fastify';
 import { createTestDatabase, dropTestDatabase } from '../../../lib/testUtils';
@@ -43,6 +44,12 @@ describe('create fill event', () => {
   });
 
   describe('successful', () => {
+    afterAll(async () => {
+      // delete successful fill events
+      await knexController('fill_event_gas_fill').del();
+      await knexController('fill_event').del();
+    });
+
     test('it creates a new fill event with only compressed air', async () => {
       const PAYLOAD = {
         cylinderSetId: 'a4e1035e-f36e-4056-9a1b-5925a3c5793e', // single cylinder set
@@ -59,7 +66,17 @@ describe('create fill event', () => {
       const resBody = JSON.parse(res.body);
       expect(res.statusCode).toEqual(201);
       expect(resBody.price).toEqual(0);
+
+      const fillEvent = await knexController('fill_event')
+        .where('id', resBody.id)
+        .select();
+      const fillEventGasFills = await knexController('fill_event_gas_fill')
+        .where('fill_event_id', resBody.id)
+        .select();
+      expect(fillEvent).toHaveLength(1);
+      expect(fillEventGasFills).toHaveLength(1);
     });
+
     test('it creates a new fill event with blender privileges', async () => {
       const PAYLOAD = {
         cylinderSetId: 'b4e1035e-f36e-4056-9a1b-5925a3c5793e',
@@ -97,10 +114,28 @@ describe('create fill event', () => {
           150;
       expect(res.statusCode).toEqual(201);
       expect(resBody.price).toEqual(expectedPrice);
+
+      const fillEvent = await knexController('fill_event')
+        .where('id', resBody.id)
+        .select();
+      const fillEventGasFills = await knexController('fill_event_gas_fill')
+        .where('fill_event_id', resBody.id)
+        .select();
+      expect(fillEvent).toHaveLength(1);
+      expect(fillEventGasFills).toHaveLength(2);
     });
   });
 
   describe('unsuccessful', () => {
+    afterEach(async () => {
+      const fillEvents = await knexController('fill_event').select();
+      const fillEventGasFills = await knexController(
+        'fill_event_gas_fill'
+      ).select();
+      expect(fillEvents).toHaveLength(0);
+      expect(fillEventGasFills).toHaveLength(0);
+    });
+
     test('it fails when no gases are given', async () => {
       const PAYLOAD = {
         cylinderSetId: 'f4e1035e-f36e-4056-9a1b-5925a3c5793e',
