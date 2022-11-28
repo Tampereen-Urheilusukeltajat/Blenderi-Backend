@@ -59,7 +59,7 @@ const getAirGasId = async (trx: Knex.Transaction): Promise<number> => {
 export const createFillEvent = async (
   authUser: AuthUser,
   body: CreateFillEventBody
-): Promise<{ status: number; message: string; fillEventId?: number }> => {
+): Promise<{ status: number; message?: string; fillEventId?: number }> => {
   const {
     cylinderSetId,
     gasMixture,
@@ -88,16 +88,11 @@ export const createFillEvent = async (
     await trx.rollback();
     return { status: 400, message: 'Cylinder set was not found' };
   }
-  const params = [user.id, cylinderSetId, gasMixture];
-  let sql: string;
-  if (description === undefined) {
-    sql =
-      'INSERT INTO fill_event (user_id, cylinder_set_id, gas_mixture) VALUES (?,?,?) RETURNING id';
-  } else {
-    sql =
-      'INSERT INTO fill_event (user_id, cylinder_set_id, gas_mixture, description) VALUES (?,?,?,?) RETURNING id';
-    params.push(description);
-  }
+  const params: Array<string | null> = [user.id, cylinderSetId, gasMixture];
+  const sql =
+    'INSERT INTO fill_event (user_id, cylinder_set_id, gas_mixture, description) VALUES (?,?,?,?) RETURNING id';
+  // eslint-disable-next-line  @typescript-eslint/strict-boolean-expressions
+  description ? params.push(description) : params.push(null);
   // Use knex.raw to enable use of RETURNING clause to avoid race conditions
   const res = await trx.raw(sql, params);
   const fillEventId = JSON.parse(JSON.stringify(res))[0][0].id;
@@ -135,14 +130,14 @@ export const createFillEvent = async (
       case 'Storage cylinder not found':
         return { status: 400, message: 'Invalid storage cylinder' };
       case 'Price not found':
-        return { status: 500, message: 'Internal server error' };
+        return { status: 500 };
       case 'Multiple active prices':
-        return { status: 500, message: 'Internal server error' };
+        return { status: 500 };
       case 'Gas id was not found for air':
-        return { status: 500, message: 'Internal server error' };
+        return { status: 500 };
       default:
         log.error(e.message);
-        return { status: 500, message: 'Internal server error' };
+        return { status: 500 };
     }
   }
   await trx.commit();
@@ -169,16 +164,14 @@ export const calcTotalCost = async (id: number): Promise<number> => {
   const pricesPerGas: number[] = await Promise.all(
     fillArr.map(async (fill): Promise<number> => {
       if (fill.storageCylinderId === null) {
+        // compressed air
         return 0;
-      } // air
-      else {
-        // gas
-        const gasPrice: GasPrice = await trx<GasPrice>('gas_price')
-          .where('id', fill.gasPriceId)
-          .first('price_eur_cents as priceEurCents');
-        const price = JSON.parse(JSON.stringify(gasPrice));
-        return fill.volumeLitres * price.priceEurCents;
       }
+      const gasPrice: GasPrice = await trx<GasPrice>('gas_price')
+        .where('id', fill.gasPriceId)
+        .first('price_eur_cents as priceEurCents');
+      const price = JSON.parse(JSON.stringify(gasPrice));
+      return fill.volumeLitres * price.priceEurCents;
     })
   );
   const totalPrice = pricesPerGas.reduce((acc, curValue) => acc + curValue);
