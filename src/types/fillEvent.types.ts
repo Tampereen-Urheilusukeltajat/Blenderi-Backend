@@ -39,8 +39,8 @@ export const gasPrice = Type.Object({
   id: Type.Integer({ minimum: 0 }),
   gasId: Type.Integer({ minimum: 0 }),
   priceEurCents: Type.Integer({ minimum: 0 }),
-  activeFrom: Type.String({ minLength: 19, maxLength: 19 }),
-  activeTo: Type.String({ minLength: 19, maxLength: 19 }),
+  activeFrom: Type.String({ format: 'date-time' }),
+  activeTo: Type.String({ format: 'date-time' }),
 });
 
 export type GasPrice = Static<typeof gasPrice>;
