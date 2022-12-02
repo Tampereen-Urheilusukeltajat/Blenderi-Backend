@@ -92,5 +92,20 @@ describe('Login', () => {
       expect(resBody).not.toHaveProperty('accessToken');
       expect(resBody).not.toHaveProperty('refreshToken');
     });
+
+    test('Archived user cannot login', async () => {
+      const res = await server.inject({
+        url: '/api/login',
+        method: 'POST',
+        payload: {
+          email: 'oujea@XD.fi',
+          password: 'password',
+        },
+      });
+      expect(res.statusCode).toEqual(401);
+      const resBody = JSON.parse(res.body);
+      expect(resBody).not.toHaveProperty('accessToken');
+      expect(resBody).not.toHaveProperty('refreshToken');
+    });
   });
 });

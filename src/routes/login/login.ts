@@ -35,15 +35,25 @@ const handler = async function (
   request: LoginRequest,
   reply: FastifyReply
 ): Promise<void> {
-  const userInfo: { id: 'String'; salt: 'String'; password_hash: 'String' } =
-    await knexController('user')
-      .where('email', request.body.email)
-      .first('id', 'salt', 'password_hash');
+  const userInfo: {
+    id: 'String';
+    salt: 'String';
+    password_hash: 'String';
+    archivedAt: string | null;
+  } = await knexController('user')
+    .where('email', request.body.email)
+    .first('id', 'salt', 'password_hash', 'archived_at as archivedAt');
 
   if (userInfo === undefined) {
     // This means that user doesn't exist, we are not going to tell that to the client.
     return errorHandler(reply, 401);
   }
+
+  if (userInfo.archivedAt !== null) {
+    // User is archived, don't allow login
+    return errorHandler(reply, 401);
+  }
+
   const isPasswordValid = await passwordIsValid(
     request.body.password,
     userInfo.password_hash,
