@@ -1,21 +1,5 @@
 import { Type, Static } from '@sinclair/typebox';
-
-export const storageCylinder = Type.Object({
-  id: Type.Integer({ minimum: 0 }),
-  gasId: Type.Integer({ minimum: 0 }),
-  volume: Type.Number({ minimum: 0 }),
-  name: Type.String({ minLength: 1, maxLength: 256 }),
-});
-
-export type StorageCylinder = Static<typeof storageCylinder>;
-
-export const storageCylinderUsage = Type.Object({
-  storageCylinderId: Type.Integer({ minimum: 0 }),
-  startPressure: Type.Number({ minimum: 0 }),
-  endPressure: Type.Number({ minimum: 0 }),
-});
-
-export type StorageCylinderUsage = Static<typeof storageCylinderUsage>;
+import { storageCylinderUsage } from './storageCylinder.types';
 
 export const fillEvent = Type.Object({
   id: Type.Integer({ minimum: 0 }),
