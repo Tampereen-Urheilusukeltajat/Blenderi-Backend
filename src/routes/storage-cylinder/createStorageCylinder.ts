@@ -1,4 +1,6 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import { errorHandler } from '../../lib/errorHandler';
+import { getGasById } from '../../lib/gas';
 import { createStorageCylinder } from '../../lib/storageCylinder';
 import {
   CreateStorageCylinderBody,
@@ -25,8 +27,11 @@ const handler = async (
   }>,
   reply: FastifyReply
 ): Promise<void> => {
+  const gasExists = await getGasById(request.body.gasId);
+  if (!gasExists) return errorHandler(reply, 400, 'Gas does not exist');
+
   const insertedStorageCylinder = await createStorageCylinder(request.body);
-  return reply.send(insertedStorageCylinder);
+  return reply.code(201).send(insertedStorageCylinder);
 };
 
 export default async (fastify: FastifyInstance): Promise<void> => {

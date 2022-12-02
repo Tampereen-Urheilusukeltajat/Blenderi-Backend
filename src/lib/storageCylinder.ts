@@ -12,7 +12,13 @@ export const getStorageCylinder = async (
 ): Promise<StorageCylinder> => {
   const storageCylinderQuery = await trx<StorageCylinder>('storage_cylinder')
     .where('id', id)
-    .first('id', 'gas_id as gasId', 'volume', 'name');
+    .first(
+      'id',
+      'gas_id AS gasId',
+      'volume',
+      'name',
+      'max_pressure AS maxPressure'
+    );
 
   if (storageCylinderQuery === undefined) {
     log.error('Storage cylinder not found');
@@ -28,12 +34,25 @@ export const createStorageCylinder = async (
   trx?: Knex.Transaction
 ): Promise<StorageCylinder> => {
   const transaction = trx ?? (await knexController.transaction());
-  const insertedSCId = await transaction('storage_cylinder').insert({
-    gas_id: payload.gasId,
-    max_pressure: payload.maxPressure,
-    name: payload.name,
-    volume: payload.volume,
-  })[0];
+  const sql =
+    'INSERT INTO storage_cylinder (gas_id, max_pressure, name, volume) VALUES (?,?,?,?) RETURNING id';
+  const params = [
+    payload.gasId,
+    payload.maxPressure,
+    payload.name,
+    payload.volume,
+  ];
 
-  return getStorageCylinder(transaction, insertedSCId);
+  // Type source: trust me bro & trial and error
+  const res = await transaction.raw<Array<Array<{ id: number }>>>(sql, params);
+  const [[{ id: insertedStorageCylinderId }]] = res;
+
+  const insertedSC = await getStorageCylinder(
+    transaction,
+    insertedStorageCylinderId
+  );
+
+  await transaction.commit();
+
+  return insertedSC;
 };
