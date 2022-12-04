@@ -27,5 +27,6 @@ module.exports = {
     'eol-last': ['error', 'always'],
     '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
     '@typescript-eslint/dot-notation': 0,
+    '@typescript-eslint/strict-boolean-expressions': 'off',
   },
 };

@@ -1,7 +1,6 @@
 import { knexController } from '../database/database';
 import {
   CreateFillEventBody,
-  StorageCylinder,
   GasPrice,
   Gas,
   FillEventGasFill,
@@ -11,22 +10,7 @@ import { User } from '../types/user.types';
 import selectCylinderSet from './selectCylinderSet';
 import { log } from './log';
 import { Knex } from 'knex';
-
-export const getStorageCylinder = async (
-  trx: Knex.Transaction,
-  id: number
-): Promise<StorageCylinder> => {
-  const storageCylinderQuery = await trx<StorageCylinder>('storage_cylinder')
-    .where('id', id)
-    .first('id', 'gas_id as gasId', 'volume', 'name');
-
-  if (storageCylinderQuery === undefined) {
-    log.error('Storage cylinder not found');
-    throw new Error('Storage cylinder not found');
-  }
-  const sc: StorageCylinder = JSON.parse(JSON.stringify(storageCylinderQuery));
-  return sc;
-};
+import { getStorageCylinder } from './storageCylinder';
 
 const getActivePriceId = async (
   trx: Knex.Transaction,
@@ -37,7 +21,9 @@ const getActivePriceId = async (
     .andWhere('active_to', '>', knexController.fn.now())
     .andWhere('active_from', '<', knexController.fn.now())
     .select('id');
+
   const pricesArr = prices.map((price) => JSON.parse(JSON.stringify(price)));
+
   if (pricesArr.length > 1) {
     log.error(`Multiple active prices were found for gasId: ${gasId}`);
     throw new Error(`Multiple active prices`);
@@ -45,15 +31,18 @@ const getActivePriceId = async (
     log.error(`No price was found for gasId: ${gasId}`);
     throw new Error(`Price not found`);
   }
+
   return pricesArr[0].id;
 };
 
 const getAirGasId = async (trx: Knex.Transaction): Promise<number> => {
   const air: Gas = await trx<Gas>('gas').where('name', 'Air').first('id');
+
   if (air === undefined) {
     log.error('Gas id was not found for air');
     throw new Error('Gas id was not found for air');
   }
+
   return air.id;
 };
 
@@ -85,6 +74,7 @@ export const createFillEvent = async (
     await trx.rollback();
     return { status: 403, message: 'User does not have blender priviledges' };
   }
+
   const set = await selectCylinderSet(trx, cylinderSetId);
   if (set === undefined) {
     await trx.rollback();
@@ -93,10 +83,14 @@ export const createFillEvent = async (
   const params: Array<string | null> = [user.id, cylinderSetId, gasMixture];
   const sql =
     'INSERT INTO fill_event (user_id, cylinder_set_id, gas_mixture, description) VALUES (?,?,?,?) RETURNING id';
-  /* Rule is disabled as all possible falsy (empty string and undefined) values should lead to a null-value 
-     being inserted into the database thus being safe */
+
+  /**
+   * Rule is disabled as all possible falsy (empty string and undefined) values should lead to a null-value
+   * being inserted into the database thus being safe
+   */
   // eslint-disable-next-line  @typescript-eslint/strict-boolean-expressions
   description ? params.push(description) : params.push(null);
+
   // Use knex.raw to enable use of RETURNING clause to avoid race conditions
   const res = await trx.raw(sql, params);
   const fillEventId = JSON.parse(JSON.stringify(res))[0][0].id;
