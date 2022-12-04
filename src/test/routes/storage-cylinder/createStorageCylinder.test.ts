@@ -67,7 +67,7 @@ describe('Create storage cylinder', () => {
   });
 
   describe('Happy path', () => {
-    test('responds 201 if the storageCylinder has been created succesfully', async () => {
+    test('responds 201 if the storageCylinder has been created successfully', async () => {
       const res = await server.inject({
         headers,
         method: 'POST',

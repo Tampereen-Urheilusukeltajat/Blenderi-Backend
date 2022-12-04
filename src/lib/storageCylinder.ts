@@ -10,7 +10,7 @@ export const getStorageCylinder = async (
   trx: Knex.Transaction,
   id: number
 ): Promise<StorageCylinder> => {
-  const storageCylinderQuery = await trx<StorageCylinder>('storage_cylinder')
+  const storageCylinder = await trx<StorageCylinder>('storage_cylinder')
     .where('id', id)
     .first(
       'id',
@@ -20,13 +20,12 @@ export const getStorageCylinder = async (
       'max_pressure AS maxPressure'
     );
 
-  if (storageCylinderQuery === undefined) {
+  if (storageCylinder === undefined) {
     log.error('Storage cylinder not found');
     throw new Error('Storage cylinder not found');
   }
 
-  const sc: StorageCylinder = JSON.parse(JSON.stringify(storageCylinderQuery));
-  return sc;
+  return JSON.parse(JSON.stringify(storageCylinder));
 };
 
 export const createStorageCylinder = async (
