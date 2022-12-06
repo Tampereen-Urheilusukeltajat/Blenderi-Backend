@@ -54,7 +54,38 @@ describe('Create storage cylinder', () => {
       expect(res.statusCode).toEqual(200);
       const body: StorageCylinder = JSON.parse(res.body);
 
-      expect(body).toMatchInlineSnapshot();
+      expect(body).toMatchInlineSnapshot(`
+        [
+          {
+            "gasId": 2,
+            "id": "1",
+            "maxPressure": 200,
+            "name": "1",
+            "volume": 50,
+          },
+          {
+            "gasId": 3,
+            "id": "2",
+            "maxPressure": 200,
+            "name": "1",
+            "volume": 50,
+          },
+          {
+            "gasId": 4,
+            "id": "3",
+            "maxPressure": 200,
+            "name": "1",
+            "volume": 50,
+          },
+          {
+            "gasId": 5,
+            "id": "4",
+            "maxPressure": 200,
+            "name": "1",
+            "volume": 24,
+          },
+        ]
+      `);
     });
   });
 
