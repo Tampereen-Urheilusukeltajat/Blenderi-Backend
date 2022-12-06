@@ -19,6 +19,7 @@ const handler = async (
   reply: FastifyReply
 ): Promise<void> => {
   const storageCylinders = await getStorageCylinders();
+
   return reply.code(200).send(storageCylinders);
 };
 
