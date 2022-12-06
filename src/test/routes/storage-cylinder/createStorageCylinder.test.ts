@@ -51,7 +51,7 @@ describe('Create storage cylinder', () => {
   });
 
   let server: FastifyInstance;
-  let headers;
+  let headers: { Authorization: string };
   beforeEach(async () => {
     server = await getTestInstance();
     const res = await server.inject({
