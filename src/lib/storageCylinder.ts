@@ -55,3 +55,17 @@ export const createStorageCylinder = async (
 
   return insertedSC;
 };
+
+export const getStorageCylinders = async (
+  trx?: Knex.Transaction
+): Promise<StorageCylinder[]> => {
+  const transaction = trx ?? knexController;
+
+  return transaction('storage_cylinder').select(
+    'id',
+    'gas_id AS gasId',
+    'volume',
+    'name',
+    'max_pressure AS maxPressure'
+  );
+};
