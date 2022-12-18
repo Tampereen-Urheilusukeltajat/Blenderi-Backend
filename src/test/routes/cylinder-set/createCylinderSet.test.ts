@@ -299,4 +299,32 @@ describe('create cylinder set', () => {
 
     expect(res.statusCode).toEqual(400);
   });
+
+  test('it responds with 400 if owner id is not in uuid format', async () => {
+    const payload = {
+      owner: '123403984525',
+      name: 'validBotleName',
+      cylinders: [
+        {
+          volume: 15,
+          pressure: 200,
+          material: 'steel',
+          serialNumber: '3540965436löj564',
+          inspection: '2020-01-01',
+        },
+      ],
+    };
+
+    const server = await getTestInstance();
+    const res = await server.inject({
+      url: 'api/cylinder-set',
+      method: 'POST',
+      payload,
+    });
+
+    expect(res.statusCode).toEqual(400);
+
+    const responseBody = JSON.parse(res.body);
+    expect(responseBody.message).toEqual('body/owner must match format "uuid"');
+  });
 });
