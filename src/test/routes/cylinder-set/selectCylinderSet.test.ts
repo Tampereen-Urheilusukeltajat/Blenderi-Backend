@@ -1,4 +1,11 @@
-import { describe, test, expect, beforeAll, afterAll } from '@jest/globals';
+import {
+  describe,
+  test,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} from '@jest/globals';
 import { FastifyInstance } from 'fastify';
 import { createTestDatabase, dropTestDatabase } from '../../../lib/testUtils';
 import { knexController } from '../../../database/database';
@@ -20,12 +27,27 @@ describe('select cylinder set', () => {
     await knexController.destroy();
   });
 
-  test('responds with 200 when there are cylinder sets in the database and no id is specified', async () => {
-    const server = await getTestInstance();
+  let server;
+  let headers: object;
+  beforeEach(async () => {
+    server = await getTestInstance();
+    const res = await server.inject({
+      url: '/api/login',
+      method: 'POST',
+      payload: {
+        email: 'user@taursu.fi',
+        password: 'salasana',
+      },
+    });
+    const tokens = JSON.parse(res.body);
+    headers = { Authorization: 'Bearer ' + String(tokens.accessToken) };
+  });
 
+  test('responds with 200 when there are cylinder sets in the database and no id is specified', async () => {
     const res = await server.inject({
       url: `api/cylinder-set/`,
       method: 'GET',
+      headers,
     });
 
     expect(res.statusCode).toEqual(200);
@@ -33,11 +55,11 @@ describe('select cylinder set', () => {
 
   test('responds with 200 when one or more cylinder sets exist with given owner', async () => {
     const owner = 'a59faf66-4f75-11ed-98ae-77941df77788';
-    const server = await getTestInstance();
 
     const res = await server.inject({
       url: `api/cylinder-set/${owner}`,
       method: 'GET',
+      headers,
     });
 
     expect(res.statusCode).toEqual(200);
@@ -49,11 +71,11 @@ describe('select cylinder set', () => {
 
   test('responds with empty array when cylinder sets do not exist with given owner', async () => {
     const owner = 'a59faf66-4f75-11ed-98ae-77941df77789';
-    const server = await getTestInstance();
 
     const res = await server.inject({
       url: `api/cylinder-set/${owner}`,
       method: 'GET',
+      headers,
     });
 
     const reply: CylinderSet[] = res.json();
@@ -62,7 +84,6 @@ describe('select cylinder set', () => {
 
   test('it responds with 401 if request is unauthenticated', async () => {
     const owner = 'a59faf66-4f75-11ed-98ae-77941df77788';
-    const server = await getTestInstance();
 
     const res = await server.inject({
       url: `api/cylinder-set/${owner}`,
