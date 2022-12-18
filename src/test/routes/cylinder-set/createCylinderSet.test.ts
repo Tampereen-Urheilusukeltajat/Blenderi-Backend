@@ -327,4 +327,33 @@ describe('create cylinder set', () => {
     const responseBody = JSON.parse(res.body);
     expect(responseBody.message).toEqual('body/owner must match format "uuid"');
   });
+
+  test('it responds with 401 if request is unauthenticated', async () => {
+    const payload = {
+      owner: 'd57ff56c-7ed5-11ed-a20a-27a77b2da7d7',
+      name: 'bottleagain',
+      cylinders: [
+        {
+          volume: 15,
+          pressure: 200,
+          material: 'steel',
+          serialNumber: '3540965436löj564',
+          inspection: '2020-01-01',
+        },
+      ],
+    };
+
+    const server = await getTestInstance();
+    const res = await server.inject({
+      url: 'api/cylinder-set',
+      method: 'POST',
+      payload,
+      headers: { Authorization: 'Bearer definitely not valid jwt token' },
+    });
+
+    expect(res.statusCode).toEqual(401);
+    const responseBody = JSON.parse(res.body);
+
+    expect(responseBody).toEqual({ statusCode: 401, error: 'Unauthorized' });
+  });
 });
