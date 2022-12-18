@@ -11,7 +11,7 @@ export const createCylinderBody = Type.Object({
 export type CreateCylinderBody = Static<typeof createCylinderBody>;
 
 export const cylinder = Type.Intersect([
-  Type.Object({ id: Type.String() }),
+  Type.Object({ id: Type.String({ format: 'uuid' }) }),
   createCylinderBody,
 ]);
 
@@ -29,7 +29,7 @@ export const updateCylinderBody = Type.Object({
 export type UpdateCylinderBody = Static<typeof updateCylinderBody>;
 
 export const createCylinderSet = Type.Object({
-  owner: Type.String(),
+  owner: Type.String({ format: 'uuid' }),
   name: Type.String({ minLength: 1, maxLength: 255 }),
   cylinders: Type.Array(createCylinderBody, { minItems: 1 }),
 });
@@ -37,8 +37,8 @@ export const createCylinderSet = Type.Object({
 export type CreateCylinderSet = Static<typeof createCylinderSet>;
 
 export const cylinderSet = Type.Object({
-  id: Type.String(),
-  owner: Type.String(),
+  id: Type.String({ format: 'uuid' }),
+  owner: Type.String({ format: 'uuid' }),
   name: Type.String(),
   cylinders: Type.Array(cylinder),
 });
@@ -61,7 +61,7 @@ export type CylinderSetIdParamsPayload = Static<
 >;
 
 export const cylinderSetOwnerParamsPayload = Type.Object({
-  cylinderSetOwner: Type.Optional(Type.String()),
+  cylinderSetOwner: Type.Optional(Type.String({ format: 'uuid' })),
 });
 
 export type CylinderSetOwnerParamsPayload = Static<
