@@ -1,4 +1,11 @@
-import { describe, test, expect, beforeAll, afterAll } from '@jest/globals';
+import {
+  describe,
+  test,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} from '@jest/globals';
 import { FastifyInstance } from 'fastify';
 import { createTestDatabase, dropTestDatabase } from '../../../lib/testUtils';
 import { knexController } from '../../../database/database';
@@ -19,16 +26,32 @@ describe('update cylinder set', () => {
     await knexController.destroy();
   });
 
+  let server;
+  let headers: object;
+  beforeEach(async () => {
+    server = await getTestInstance();
+    const res = await server.inject({
+      url: '/api/login',
+      method: 'POST',
+      payload: {
+        email: 'user@taursu.fi',
+        password: 'salasana',
+      },
+    });
+    const tokens = JSON.parse(res.body);
+    headers = { Authorization: 'Bearer ' + String(tokens.accessToken) };
+  });
+
   describe('happy paths', () => {
     test('it responds with 200 and proper body if update was successful; no cylinders updated', async () => {
       const payload = {
         name: 'bottlename',
       };
 
-      const server = await getTestInstance();
       const res = await server.inject({
         url: 'api/cylinder-set/f4e1035e-f36e-4056-9a1b-5925a3c5793e',
         method: 'PATCH',
+        headers,
         payload,
       });
 
@@ -52,10 +75,10 @@ describe('update cylinder set', () => {
         ],
       };
 
-      const server = await getTestInstance();
       const res = await server.inject({
         url: 'api/cylinder-set/f4e1035e-f36e-4056-9a1b-5925a3c5793e',
         method: 'PATCH',
+        headers,
         payload,
       });
 
@@ -82,10 +105,10 @@ describe('update cylinder set', () => {
         cylinders: [],
       };
 
-      const server = await getTestInstance();
       const res = await server.inject({
         url: 'api/cylinder-set/05e3d142-4f79-11ed-a77d-7399a01cf8ab',
         method: 'PATCH',
+        headers,
         payload,
       });
 
@@ -97,10 +120,10 @@ describe('update cylinder set', () => {
         name: 'bb',
       };
 
-      const server = await getTestInstance();
       const res = await server.inject({
         url: 'api/cylinder-set/a4e1035e-f36e-4056-9a1b-5925a3c5793e',
         method: 'PATCH',
+        headers,
         payload,
       });
 
@@ -117,10 +140,10 @@ describe('update cylinder set', () => {
           },
         ],
       };
-      const server = await getTestInstance();
       const res = await server.inject({
         url: 'api/cylinder-set/f4e1035e-f36e-4056-9a1b-5925a3c5793e',
         method: 'PATCH',
+        headers,
         payload,
       });
 
@@ -133,7 +156,6 @@ describe('update cylinder set', () => {
         name: 'bottleagain',
       };
 
-      const server = await getTestInstance();
       const res = await server.inject({
         url: 'api/cylinder-set/f4e1035e-f36e-4056-9a1b-5925a3c5793e',
         method: 'PATCH',
