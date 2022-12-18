@@ -21,7 +21,7 @@ describe('create cylinder set', () => {
 
   test('it responds with 201 and proper body if creation was successful', async () => {
     const payload = {
-      owner: '1',
+      owner: 'd57ff56c-7ed5-11ed-a20a-27a77b2da7d7',
       name: 'bottle',
       cylinders: [
         {
@@ -59,7 +59,7 @@ describe('create cylinder set', () => {
 
   test('it responds with 201 and proper body if creation of multiple cylinder set was successful', async () => {
     const payload = {
-      owner: '1',
+      owner: 'd57ff56c-7ed5-11ed-a20a-27a77b2da7d7',
       name: 'bottle0.1',
       cylinders: [
         {
@@ -114,7 +114,7 @@ describe('create cylinder set', () => {
     const date = new Date();
     date.setUTCFullYear(date.getUTCFullYear() + 2);
     const payload = {
-      owner: '1',
+      owner: 'd57ff56c-7ed5-11ed-a20a-27a77b2da7d7',
       name: 'bottle2',
       cylinders: [
         {
@@ -141,7 +141,7 @@ describe('create cylinder set', () => {
 
   test('it responds with 409 if same user tries to create 2 cylinder sets with the same name', async () => {
     const payload1 = {
-      owner: '1',
+      owner: 'd57ff56c-7ed5-11ed-a20a-27a77b2da7d7',
       name: 'bottle3',
       cylinders: [
         {
@@ -155,7 +155,7 @@ describe('create cylinder set', () => {
     };
 
     const payload2 = {
-      owner: '1',
+      owner: 'd57ff56c-7ed5-11ed-a20a-27a77b2da7d7',
       name: 'bottle3',
       cylinders: [
         {
@@ -188,7 +188,7 @@ describe('create cylinder set', () => {
 
   test('it responds with 400 if user does not exists', async () => {
     const payload = {
-      owner: '0', // not in user.csv
+      owner: '3bd0b342-7ed6-11ed-8627-376b0bc3e6be', // not in user.csv
       name: 'bottle4',
       cylinders: [
         {
@@ -213,7 +213,7 @@ describe('create cylinder set', () => {
 
   test('it responds with 400 if some cylinder has invalid value for volume', async () => {
     const payload = {
-      owner: '1',
+      owner: 'd57ff56c-7ed5-11ed-a20a-27a77b2da7d7',
       name: 'bottle5',
       cylinders: [
         {
@@ -237,7 +237,7 @@ describe('create cylinder set', () => {
 
   test('it responds with 400 if some cylinder has invalid value for pressure', async () => {
     const payload = {
-      owner: '1',
+      owner: 'd57ff56c-7ed5-11ed-a20a-27a77b2da7d7',
       name: 'bottle6',
       cylinders: [
         {
@@ -261,7 +261,7 @@ describe('create cylinder set', () => {
 
   test('it responds with 400 if set does not have cylinders', async () => {
     const payload = {
-      owner: '1',
+      owner: 'd57ff56c-7ed5-11ed-a20a-27a77b2da7d7',
       name: 'bottle7',
       cylinders: [],
     };
@@ -277,7 +277,7 @@ describe('create cylinder set', () => {
 
   test('it responds with 400 if set name is too long', async () => {
     const payload = {
-      owner: '1',
+      owner: 'd57ff56c-7ed5-11ed-a20a-27a77b2da7d7',
       name: 'bottle88888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888',
       cylinders: [
         {
