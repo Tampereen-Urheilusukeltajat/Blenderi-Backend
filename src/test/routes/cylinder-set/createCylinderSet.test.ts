@@ -1,4 +1,11 @@
-import { describe, test, expect, beforeAll, afterAll } from '@jest/globals';
+import {
+  describe,
+  test,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} from '@jest/globals';
 import { FastifyInstance } from 'fastify';
 import { createTestDatabase, dropTestDatabase } from '../../../lib/testUtils';
 import { knexController } from '../../../database/database';
@@ -19,6 +26,22 @@ describe('create cylinder set', () => {
     await knexController.destroy();
   });
 
+  let server;
+  let headers: object;
+  beforeEach(async () => {
+    server = await getTestInstance();
+    const res = await server.inject({
+      url: '/api/login',
+      method: 'POST',
+      payload: {
+        email: 'user@taursu.fi',
+        password: 'salasana',
+      },
+    });
+    const tokens = JSON.parse(res.body);
+    headers = { Authorization: 'Bearer ' + String(tokens.accessToken) };
+  });
+
   test('it responds with 201 and proper body if creation was successful', async () => {
     const payload = {
       owner: 'd57ff56c-7ed5-11ed-a20a-27a77b2da7d7',
@@ -34,10 +57,10 @@ describe('create cylinder set', () => {
       ],
     };
 
-    const server = await getTestInstance();
     const res = await server.inject({
       url: 'api/cylinder-set',
       method: 'POST',
+      headers,
       payload,
     });
 
@@ -79,10 +102,10 @@ describe('create cylinder set', () => {
       ],
     };
 
-    const server = await getTestInstance();
     const res = await server.inject({
       url: 'api/cylinder-set',
       method: 'POST',
+      headers,
       payload,
     });
 
@@ -108,6 +131,8 @@ describe('create cylinder set', () => {
 
     expect(responseBody.owner).toEqual(payload.owner);
     expect(responseBody.name).toEqual(payload.name);
+    const tokens = JSON.parse(res.body);
+    headers = { Authorization: 'Bearer ' + String(tokens.accessToken) };
   });
 
   test('it responds with 400 if one of those cylinder inspection date are in the future', async () => {
@@ -126,10 +151,11 @@ describe('create cylinder set', () => {
         },
       ],
     };
-    const server = await getTestInstance();
+
     const res = await server.inject({
       url: 'api/cylinder-set',
       method: 'POST',
+      headers,
       payload,
     });
 
@@ -168,10 +194,10 @@ describe('create cylinder set', () => {
       ],
     };
 
-    const server = await getTestInstance();
     const res = await server.inject({
       url: 'api/cylinder-set',
       method: 'POST',
+      headers,
       payload: payload1,
     });
 
@@ -180,6 +206,7 @@ describe('create cylinder set', () => {
     const res2 = await server.inject({
       url: 'api/cylinder-set',
       method: 'POST',
+      headers,
       payload: payload2,
     });
 
@@ -200,10 +227,10 @@ describe('create cylinder set', () => {
         },
       ],
     };
-    const server = await getTestInstance();
     const res = await server.inject({
       url: 'api/cylinder-set',
       method: 'POST',
+      headers,
       payload,
     });
 
@@ -225,10 +252,10 @@ describe('create cylinder set', () => {
         },
       ],
     };
-    const server = await getTestInstance();
     const res = await server.inject({
       url: 'api/cylinder-set',
       method: 'POST',
+      headers,
       payload,
     });
 
@@ -249,10 +276,10 @@ describe('create cylinder set', () => {
         },
       ],
     };
-    const server = await getTestInstance();
     const res = await server.inject({
       url: 'api/cylinder-set',
       method: 'POST',
+      headers,
       payload,
     });
 
@@ -265,10 +292,10 @@ describe('create cylinder set', () => {
       name: 'bottle7',
       cylinders: [],
     };
-    const server = await getTestInstance();
     const res = await server.inject({
       url: 'api/cylinder-set',
       method: 'POST',
+      headers,
       payload,
     });
 
@@ -290,10 +317,10 @@ describe('create cylinder set', () => {
       ],
     };
 
-    const server = await getTestInstance();
     const res = await server.inject({
       url: 'api/cylinder-set',
       method: 'POST',
+      headers,
       payload,
     });
 
@@ -315,10 +342,10 @@ describe('create cylinder set', () => {
       ],
     };
 
-    const server = await getTestInstance();
     const res = await server.inject({
       url: 'api/cylinder-set',
       method: 'POST',
+      headers,
       payload,
     });
 

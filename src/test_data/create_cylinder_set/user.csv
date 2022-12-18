@@ -1,2 +1,2 @@
 id;email;phone;forename;surname;is_admin;is_blender;salt;password_hash;archived_at;deleted_at;created_at;updated_at;
-d57ff56c-7ed5-11ed-a20a-27a77b2da7d7;user@taursu.fi;020202;petri;penettäjä;0;1;salt;password_hash;;;2020-01-19 03:14:07;2020-01-19 03:14:07;
+d57ff56c-7ed5-11ed-a20a-27a77b2da7d7;user@taursu.fi;020202;petri;penettäjä;0;1;$2b$10$yvxdminZIQNbFGMkA1NIA.;$2b$10$yvxdminZIQNbFGMkA1NIA.NU6xO6SzrnLqm5eB3nCS5TYXpH1tfFy;;;2020-01-19 03:14:07;2020-01-19 03:14:07;
