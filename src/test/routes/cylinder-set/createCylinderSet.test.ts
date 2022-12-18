@@ -370,7 +370,6 @@ describe('create cylinder set', () => {
       ],
     };
 
-    const server = await getTestInstance();
     const res = await server.inject({
       url: 'api/cylinder-set',
       method: 'POST',
