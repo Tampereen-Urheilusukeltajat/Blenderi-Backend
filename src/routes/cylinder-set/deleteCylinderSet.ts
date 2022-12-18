@@ -50,6 +50,7 @@ export default async (fastify: FastifyInstance): Promise<void> => {
   fastify.route({
     method: 'DELETE',
     url: '/:cylinderSetId',
+    preValidation: [fastify['authenticate']],
     handler,
     schema,
   });
