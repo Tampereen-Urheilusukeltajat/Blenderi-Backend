@@ -59,4 +59,19 @@ describe('select cylinder set', () => {
     const reply: CylinderSet[] = res.json();
     expect(reply.length === 0).toBeTruthy();
   });
+
+  test('it responds with 401 if request is unauthenticated', async () => {
+    const owner = 'a59faf66-4f75-11ed-98ae-77941df77788';
+    const server = await getTestInstance();
+
+    const res = await server.inject({
+      url: `api/cylinder-set/${owner}`,
+      method: 'GET',
+    });
+
+    expect(res.statusCode).toEqual(401);
+    const responseBody = JSON.parse(res.body);
+
+    expect(responseBody).toEqual({ statusCode: 401, error: 'Unauthorized' });
+  });
 });

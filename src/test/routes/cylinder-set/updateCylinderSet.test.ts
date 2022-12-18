@@ -126,5 +126,25 @@ describe('update cylinder set', () => {
 
       expect(res.statusCode).toEqual(400);
     });
+
+    test('it responds with 401 if request is unauthenticated', async () => {
+      const payload = {
+        owner: 'a59faf66-4f75-11ed-98ae-77941df77788',
+        name: 'bottleagain',
+      };
+
+      const server = await getTestInstance();
+      const res = await server.inject({
+        url: 'api/cylinder-set/f4e1035e-f36e-4056-9a1b-5925a3c5793e',
+        method: 'PATCH',
+        payload,
+        headers: { Authorization: 'Bearer definitely not valid jwt token' },
+      });
+
+      expect(res.statusCode).toEqual(401);
+      const responseBody = JSON.parse(res.body);
+
+      expect(responseBody).toEqual({ statusCode: 401, error: 'Unauthorized' });
+    });
   });
 });
