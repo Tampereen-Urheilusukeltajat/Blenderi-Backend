@@ -8,7 +8,7 @@ import {
 import { deleteCylinderSet } from '../../lib/deleteCylinderSet';
 
 const deleteSetReply = Type.Object({
-  setID: Type.String(),
+  setID: Type.String({ format: 'uuid' }),
   message: Type.String(),
 });
 

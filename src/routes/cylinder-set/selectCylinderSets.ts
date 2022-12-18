@@ -5,6 +5,7 @@ import { Type } from '@sinclair/typebox';
 import {
   CylinderSet,
   cylinderSet,
+  cylinderSetOwnerParamsPayload,
   CylinderSetOwnerParamsPayload,
 } from '../../types/cylinderSet.types';
 import selectCylinderSets from '../../lib/selectCylinderSets';
@@ -22,6 +23,7 @@ const schema = {
 const schemaSetOwner = {
   description: 'Selects a diving cylinder set by given owner.',
   tags: ['Cylinder set'],
+  params: cylinderSetOwnerParamsPayload,
   response: {
     200: Type.Array(cylinderSet),
     401: { $ref: 'error' },
