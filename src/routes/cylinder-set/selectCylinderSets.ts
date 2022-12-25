@@ -56,12 +56,14 @@ export default async (fastify: FastifyInstance): Promise<void> => {
   fastify.route({
     method: 'GET',
     url: '/',
+    preValidation: [fastify['authenticate']],
     handler,
     schema,
   });
   fastify.route({
     method: 'GET',
     url: '/:cylinderSetOwner',
+    preValidation: [fastify['authenticate']],
     handler,
     schema: schemaSetOwner,
   });
