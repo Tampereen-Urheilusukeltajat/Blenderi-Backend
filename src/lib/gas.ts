@@ -1,6 +1,7 @@
 import { Knex } from 'knex';
 import { knexController } from '../database/database';
-import { CreateGasPrice, EnrichedGas, Gas } from '../types/gas.types';
+import { CreateGasPriceBody, EnrichedGas, Gas } from '../types/gas.types';
+import { convertDateToMariaDBDateTime } from './dateTime';
 
 export const getGases = async (trx?: Knex.Transaction): Promise<Gas[]> => {
   const transaction = trx ?? knexController;
@@ -9,7 +10,7 @@ export const getGases = async (trx?: Knex.Transaction): Promise<Gas[]> => {
 };
 
 export const getGasById = async (
-  gasId: number,
+  gasId: string,
   trx?: Knex.Transaction
 ): Promise<Gas | undefined> => {
   const transaction = trx ?? knexController;
@@ -18,7 +19,7 @@ export const getGasById = async (
 };
 
 export const getEnrichedGasWithPriceId = async (
-  gasPriceId: number,
+  gasPriceId: string,
   trx?: Knex.Transaction
 ): Promise<EnrichedGas | undefined> => {
   const transaction = trx ?? knexController;
@@ -35,13 +36,19 @@ export const getEnrichedGasWithPriceId = async (
       gas g
     JOIN
       gas_price gp ON g.id = gp.gas_id AND
-      gp.id = :gasPriceId      
+      gp.id = :gasPriceId;
   `;
   const params = {
     gasPriceId,
   };
 
-  return transaction.raw(sql, params);
+  const response = await transaction.raw<EnrichedGas[][]>(sql, params);
+
+  if (response[0].length > 1) {
+    throw new Error('There can be only one active gas price at the given time');
+  }
+
+  return response[0][0];
 };
 
 /**
@@ -55,6 +62,7 @@ export const getEnrichedGasWithPriceId = async (
  */
 export const getEnrichedGasWithActiveFrom = async (
   activeFrom: string,
+  gasId: string,
   trx?: Knex.Transaction
 ): Promise<EnrichedGas | undefined> => {
   const transaction = trx ?? knexController;
@@ -73,53 +81,65 @@ export const getEnrichedGasWithActiveFrom = async (
     gas_price gp ON g.id = gp.gas_id
   WHERE
     gp.active_from <= :activeFrom AND
-    gp.active_to > :activeFrom
+    gp.active_to > :activeFrom AND
+    g.id = :gasId;
   `;
-  const params = {};
+  const params = {
+    activeFrom,
+    gasId,
+  };
 
-  return transaction.raw(sql, params);
+  const response = await transaction.raw<EnrichedGas[][]>(sql, params);
+
+  if (response[0].length > 1) {
+    throw new Error('There can be only one active gas price at the given time');
+  }
+
+  return response[0][0];
 };
 
 export const createGasPrice = async (
-  { activeFrom, gasId, priceEurCents }: CreateGasPrice,
+  { activeFrom, gasId, priceEurCents }: CreateGasPriceBody,
   trx?: Knex.Transaction
 ): Promise<EnrichedGas> => {
   const transaction = trx ?? (await knexController.transaction());
 
-  // MVP default
-  // In the future we might support creating gas price for certain time period
-  const activeTo = '9999-01-01 00:00:00';
-
   // Find the current active price and update activeTo
   const activePrice = await getEnrichedGasWithActiveFrom(
     activeFrom,
+    gasId,
     transaction
   );
+
   if (activePrice) {
     await transaction.raw(
       `
       UPDATE gas_price
-      SET active_to = DATEADD(ss, -1, :activeTo)
+      SET active_to = :activeTo
       WHERE id = :id
     `,
       {
-        activeTo: activeFrom,
+        activeTo: convertDateToMariaDBDateTime(new Date(activeFrom)),
         id: activePrice.gasPriceId,
       }
     );
   }
 
   const insertSql = `
-    INSERT INTO gas_price (gas_id, price_eur_cents, active_from, active_to)
-    VALUES (:gasId, :priceEurCents, :activeFrom, :activeTo)
+    INSERT INTO gas_price (gas_id, price_eur_cents, active_from)
+    VALUES (:gasId, :priceEurCents, :activeFrom)
   `;
-  const insertParams = [gasId, priceEurCents, activeFrom, activeTo];
+  const insertParams = {
+    gasId,
+    priceEurCents,
+    activeFrom: convertDateToMariaDBDateTime(new Date(activeFrom)),
+  };
 
-  const res = await transaction.raw<Array<Array<{ id: number }>>>(
+  const res = await transaction.raw<Array<{ insertId: string }>>(
     insertSql,
     insertParams
   );
-  const [[{ id: insertedGasPriceId }]] = res;
+  const [{ insertId: insertedGasPriceId }] = res;
 
   const insertedEnrichedGas = await getEnrichedGasWithPriceId(
     insertedGasPriceId,

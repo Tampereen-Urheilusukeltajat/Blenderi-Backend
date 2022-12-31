@@ -1,14 +1,16 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import { errorHandler } from '../../lib/errorHandler';
+import { createGasPrice, getGasById } from '../../lib/gas';
 import {
-  CreateGasPrice,
-  createGasPrice,
+  createGasPriceBody,
+  CreateGasPriceBody,
   enrichedGas,
-} from '../../../types/gas.types';
+} from '../../types/gas.types';
 
 const schema = {
   desription: 'Create gas price',
   tags: ['gas price'],
-  body: createGasPrice,
+  body: createGasPriceBody,
   response: {
     201: enrichedGas,
     400: { $ref: 'error' },
@@ -21,19 +23,22 @@ const schema = {
 
 const handler = async (
   request: FastifyRequest<{
-    Body: CreateGasPrice;
+    Body: CreateGasPriceBody;
   }>,
   reply: FastifyReply
 ): Promise<void> => {
-  // TODO
+  const gasExists = await getGasById(request.body.gasId);
+  if (!gasExists) return errorHandler(reply, 400, 'Gas does not exist');
 
-  return reply.send({});
+  const enrichedGas = await createGasPrice(request.body);
+
+  return reply.code(201).send(enrichedGas);
 };
 
 export default async (fastify: FastifyInstance): Promise<void> => {
   fastify.route({
     method: 'POST',
-    url: '/',
+    url: '/price',
     // TODO Only admin users can create gas prices
     preValidation: [fastify['authenticate']],
     handler,

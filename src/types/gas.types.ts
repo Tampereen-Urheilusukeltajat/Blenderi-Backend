@@ -16,26 +16,26 @@ export type Gas = Static<typeof gas>;
 export const enrichedGas = Type.Object({
   activeFrom: Type.String({ format: 'date-time' }),
   activeTo: Type.Optional(Type.String({ format: 'date-time' })),
-  gasId: Type.Integer(),
-  gasPriceId: Type.Integer(),
+  gasId: Type.String(),
+  gasPriceId: Type.String(),
   gasName: Type.String(),
   priceEurCents: Type.Integer({ minimum: 0 }),
 });
 
 export type EnrichedGas = Static<typeof enrichedGas>;
 
-export const createGasPrice = Type.Object({
-  gasId: Type.Integer(),
+export const createGasPriceBody = Type.Object({
+  gasId: Type.String(),
   priceEurCents: Type.Integer({ minimum: 0 }),
   activeFrom: Type.String({ format: 'date-time' }),
   activeTo: Type.Optional(Type.String({ format: 'date-time' })),
 });
 
-export type CreateGasPrice = Static<typeof createGasPrice>;
+export type CreateGasPriceBody = Static<typeof createGasPriceBody>;
 
 export const gasPrice = Type.Intersect([
   Type.Object({ id: Type.String() }),
-  createGasPrice,
+  createGasPriceBody,
 ]);
 
 export type GasPrice = Static<typeof gasPrice>;
