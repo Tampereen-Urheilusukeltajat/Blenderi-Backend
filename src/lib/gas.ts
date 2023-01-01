@@ -3,6 +3,15 @@ import { knexController } from '../database/database';
 import { CreateGasPriceBody, EnrichedGas, Gas } from '../types/gas.types';
 import { convertDateToMariaDBDateTime } from './dateTime';
 
+const ENRICHED_GAS_COLUMNS = [
+  'g.id AS gasId',
+  'g.name AS gasName',
+  'gp.id AS gasPriceId',
+  'gp.price_eur_cents AS priceEurCents',
+  'gp.active_from AS activeFrom',
+  'gp.active_to AS activeTo',
+];
+
 export const getGases = async (trx?: Knex.Transaction): Promise<Gas[]> => {
   const transaction = trx ?? knexController;
 
@@ -26,12 +35,7 @@ export const getEnrichedGasWithPriceId = async (
 
   const sql = `
     SELECT
-      g.id AS gasId,
-      g.name AS gasName,
-      gp.id AS gasPriceId,
-      gp.price_eur_cents AS priceEurCents,
-      gp.active_from AS activeFrom,
-      gp.active_to AS activeTo
+      ${ENRICHED_GAS_COLUMNS.join(',')}
     FROM
       gas g
     JOIN
@@ -69,12 +73,7 @@ export const getEnrichedGasWithActiveFrom = async (
 
   const sql = `
   SELECT
-    g.id AS gasId,
-    g.name AS gasName,
-    gp.id AS gasPriceId,
-    gp.price_eur_cents AS priceEurCents,
-    gp.active_from AS activeFrom,
-    gp.active_to AS activeTo
+    ${ENRICHED_GAS_COLUMNS.join(',')}
   FROM
     gas g
   JOIN
@@ -150,4 +149,32 @@ export const createGasPrice = async (
   await transaction.commit();
 
   return insertedEnrichedGas;
+};
+
+export const getEnrichedGases = async (
+  trx?: Knex.Transaction
+): Promise<EnrichedGas[]> => {
+  const transaction = trx ?? knexController;
+
+  // Date.now is not necessary, but it makes testing easier as you can only
+  // mock that function and not the whole Date constructor
+  const now = new Date(Date.now());
+
+  const sql = `
+    SELECT
+      ${ENRICHED_GAS_COLUMNS.join(',')}
+    FROM gas g
+    LEFT JOIN
+      gas_price gp ON g.id = gp.gas_id AND
+      gp.active_from <= :now AND
+      gp.active_to > :now
+  `;
+
+  const params = {
+    now,
+  };
+
+  const res = await transaction.raw<EnrichedGas[][]>(sql, params);
+
+  return res[0] ?? [];
 };

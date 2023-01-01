@@ -1,4 +1,5 @@
 import {
+  jest,
   describe,
   test,
   expect,
@@ -20,6 +21,7 @@ describe('Get enriched gases', () => {
 
   beforeAll(async () => {
     await createTestDatabase('get_enriched_gas');
+    Date.now = jest.fn(() => +new Date('2022-01-05'));
   });
 
   afterAll(async () => {
@@ -54,7 +56,50 @@ describe('Get enriched gases', () => {
       expect(res.statusCode).toEqual(200);
       const body: StorageCylinder = JSON.parse(res.body);
 
-      expect(body).toMatchInlineSnapshot();
+      expect(body).toMatchInlineSnapshot(`
+        [
+          {
+            "activeFrom": "2020-01-01T00:00:00.000Z",
+            "activeTo": "9999-12-31T23:59:59.000Z",
+            "gasId": 2,
+            "gasName": "Helium",
+            "gasPriceId": 1,
+            "priceEurCents": 5,
+          },
+          {
+            "activeFrom": "2022-01-01T00:00:00.000Z",
+            "activeTo": "2023-01-01T00:00:00.000Z",
+            "gasId": 3,
+            "gasName": "Oxygen",
+            "gasPriceId": 3,
+            "priceEurCents": 5,
+          },
+          {
+            "activeFrom": null,
+            "activeTo": null,
+            "gasId": 1,
+            "gasName": "Air",
+            "gasPriceId": null,
+            "priceEurCents": null,
+          },
+          {
+            "activeFrom": null,
+            "activeTo": null,
+            "gasId": 4,
+            "gasName": "Argon",
+            "gasPriceId": null,
+            "priceEurCents": null,
+          },
+          {
+            "activeFrom": null,
+            "activeTo": null,
+            "gasId": 5,
+            "gasName": "Diluent",
+            "gasPriceId": null,
+            "priceEurCents": null,
+          },
+        ]
+      `);
     });
   });
 
