@@ -2,17 +2,17 @@ import bcrypt from 'bcrypt';
 
 const SALT_ROUNDS = 10;
 
-export const hashPassword = async (
+export const hashPassword = (
   password: string
-): Promise<{ hash: string; salt: string }> => {
+): { hash: string; salt: string } => {
   const salt = bcrypt.genSaltSync(SALT_ROUNDS);
   const hash = bcrypt.hashSync(password, salt);
 
   return { hash, salt };
 };
 
-export const passwordIsValid = async (
+export const passwordIsValid = (
   password: string,
   expectedHash: string,
   salt: string
-): Promise<boolean> => bcrypt.hashSync(password, salt) === expectedHash;
+): boolean => bcrypt.hashSync(password, salt) === expectedHash;

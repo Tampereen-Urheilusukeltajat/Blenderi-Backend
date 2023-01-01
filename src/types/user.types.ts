@@ -17,16 +17,19 @@ export const user = Type.Object({
 
 export type User = Static<typeof user>;
 
-export const updateUserBody = Type.Object({
-  email: Type.Optional(Type.String()),
-  phone: Type.Optional(Type.String()),
-  forename: Type.Optional(Type.String()),
-  surname: Type.Optional(Type.String()),
-  isAdmin: Type.Optional(Type.Boolean()),
-  isBlender: Type.Optional(Type.Boolean()),
-  password: Type.Optional(Type.String()),
-  archive: Type.Optional(Type.Boolean()),
-});
+export const updateUserBody = Type.Partial(
+  Type.Object({
+    email: Type.String(),
+    phone: Type.String(),
+    forename: Type.String(),
+    surname: Type.String(),
+    isAdmin: Type.Boolean(),
+    isBlender: Type.Boolean(),
+    password: Type.String(),
+    archive: Type.Boolean(),
+  }),
+  { minProperties: 1 }
+);
 
 export type UpdateUserBody = Static<typeof updateUserBody>;
 

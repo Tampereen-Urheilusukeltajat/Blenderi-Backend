@@ -33,7 +33,7 @@ describe('update user', () => {
       const server = await getTestInstance();
       const id = '1be5abcd-53d4-11ed-9342-0242ac120002';
       const res = await server.inject({
-        url: `api/user/${id}/`,
+        url: `api/user/${id}`,
         payload: updatedUser,
         method: 'PATCH',
         headers: { 'content-type': 'application/json' },
