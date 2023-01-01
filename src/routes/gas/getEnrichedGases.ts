@@ -1,17 +1,16 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { enrichedGas } from '../../types/gas.types';
+import { gasWithPricing } from '../../types/gas.types';
 import { Type } from '@sinclair/typebox';
 import { getEnrichedGases } from '../../lib/gas';
 
 const schema = {
-  description: 'Get enriched gases',
-  tags: ['gas price'],
+  desription: 'Get enriched gases',
+  tags: ['gas'],
   response: {
-    201: Type.Array(enrichedGas),
+    201: Type.Array(gasWithPricing),
     400: { $ref: 'error' },
     401: { $ref: 'error' },
     403: { $ref: 'error' },
-    409: { $ref: 'error' },
     500: { $ref: 'error' },
   },
 };
