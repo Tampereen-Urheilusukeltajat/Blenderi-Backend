@@ -3,6 +3,7 @@ import { FastifyInstance } from 'fastify';
 import { knexController } from '../../../database/database';
 import { buildServer } from '../../../server';
 import { createTestDatabase, dropTestDatabase } from '../../../lib/testUtils';
+import bcrypt from 'bcrypt';
 
 describe('update user', () => {
   const getTestInstance = async (): Promise<FastifyInstance> =>
@@ -12,6 +13,8 @@ describe('update user', () => {
 
   beforeAll(async () => {
     await createTestDatabase('update_user');
+
+    // jest.spyOn(bcrypt, 'hashSync').mockImplementation(() => 'hash!"#€');
   });
 
   afterAll(async () => {
@@ -83,6 +86,29 @@ describe('update user', () => {
 
       expect(res.statusCode).toEqual(200);
       expect(resBody.archivedAt).not.toEqual('');
+    });
+
+    test('it allows updating password and does not store plain text password to db.', async () => {
+      const server = await getTestInstance();
+
+      const password = 'plainpassword';
+      const res = await server.inject({
+        url: 'api/user/1be5abcd-53d4-11ed-9342-0242ac120002/',
+        payload: { password },
+        method: 'PATCH',
+        headers: { 'content-type': 'application/json' },
+      });
+
+      expect(res.statusCode).toEqual(200);
+
+      const response = await knexController
+        .select(['password_hash', 'salt'])
+        .from('user');
+
+      expect(response[0].password_hash).not.toEqual(password);
+      expect(
+        bcrypt.compareSync(password, response[0].password_hash)
+      ).toBeTruthy();
     });
   });
 
@@ -202,25 +228,17 @@ describe('update user', () => {
       expect(resBody).toHaveProperty('error');
       expect(resBody).toHaveProperty('message');
     });
-  });
-  test('password is not stored as plain text to db.', async () => {
-    const server = await getTestInstance();
 
-    const pass = 'plainpassword';
-
-    const res = await server.inject({
-      url: 'api/user/1be5abcd-53d4-11ed-9342-0242ac120002/',
-      // incorrect payload type
-
-      payload: { password: pass },
-      method: 'PATCH',
-      headers: { 'content-type': 'application/json' },
+    test('it returns 400 if user tries to update password without giving the current password', async () => {
+      //
     });
 
-    expect(res.statusCode).toEqual(200);
+    test('it returns 400 if user tries to update email without giving the current password', async () => {
+      //
+    });
 
-    const passHash = knexController.select('password_hash').from('user');
-
-    expect(passHash).not.toEqual(pass);
+    test('it returns 400 if user gives wrong current password', async () => {
+      //
+    });
   });
 });

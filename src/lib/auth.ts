@@ -13,6 +13,5 @@ export const hashPassword = (
 
 export const passwordIsValid = (
   password: string,
-  expectedHash: string,
-  salt: string
-): boolean => bcrypt.hashSync(password, salt) === expectedHash;
+  expectedHash: string
+): boolean => bcrypt.compareSync(password, expectedHash);
