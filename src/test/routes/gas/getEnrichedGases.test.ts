@@ -12,14 +12,14 @@ import { knexController } from '../../../database/database';
 import { buildServer } from '../../../server';
 import { StorageCylinder } from '../../../types/storageCylinder.types';
 
-describe('Get storage cylinders', () => {
+describe('Get enriched gases', () => {
   const getTestInstance = async (): Promise<FastifyInstance> =>
     buildServer({
       routePrefix: 'api',
     });
 
   beforeAll(async () => {
-    await createTestDatabase('get_storage_cylinder');
+    await createTestDatabase('get_enriched_gas');
   });
 
   afterAll(async () => {
@@ -44,48 +44,17 @@ describe('Get storage cylinders', () => {
   });
 
   describe('Happy path', () => {
-    test('responds with the storage cylinders and with the 200 status', async () => {
+    test('responds with enriched gases and 200 status', async () => {
       const res = await server.inject({
         headers,
         method: 'GET',
-        url: 'api/storage-cylinder',
+        url: 'api/gas',
       });
 
       expect(res.statusCode).toEqual(200);
       const body: StorageCylinder = JSON.parse(res.body);
 
-      expect(body).toMatchInlineSnapshot(`
-        [
-          {
-            "gasId": "2",
-            "id": "1",
-            "maxPressure": 200,
-            "name": "1",
-            "volume": 50,
-          },
-          {
-            "gasId": "3",
-            "id": "2",
-            "maxPressure": 200,
-            "name": "1",
-            "volume": 50,
-          },
-          {
-            "gasId": "4",
-            "id": "3",
-            "maxPressure": 200,
-            "name": "1",
-            "volume": 50,
-          },
-          {
-            "gasId": "5",
-            "id": "4",
-            "maxPressure": 200,
-            "name": "1",
-            "volume": 24,
-          },
-        ]
-      `);
+      expect(body).toMatchInlineSnapshot();
     });
   });
 
@@ -93,7 +62,7 @@ describe('Get storage cylinders', () => {
     test('responds 401 if authentication header was not provided', async () => {
       const res = await server.inject({
         method: 'GET',
-        url: 'api/storage-cylinder',
+        url: 'api/gas',
       });
 
       expect(res.statusCode).toEqual(401);
