@@ -1,4 +1,5 @@
 import {
+  jest,
   describe,
   test,
   expect,
@@ -12,14 +13,15 @@ import { knexController } from '../../../database/database';
 import { buildServer } from '../../../server';
 import { StorageCylinder } from '../../../types/storageCylinder.types';
 
-describe('Get storage cylinders', () => {
+describe('Get enriched gases', () => {
   const getTestInstance = async (): Promise<FastifyInstance> =>
     buildServer({
       routePrefix: 'api',
     });
 
   beforeAll(async () => {
-    await createTestDatabase('get_storage_cylinder');
+    await createTestDatabase('get_enriched_gas');
+    Date.now = jest.fn(() => +new Date('2022-01-05'));
   });
 
   afterAll(async () => {
@@ -44,11 +46,11 @@ describe('Get storage cylinders', () => {
   });
 
   describe('Happy path', () => {
-    test('responds with the storage cylinders and with the 200 status', async () => {
+    test('responds with enriched gases and 200 status', async () => {
       const res = await server.inject({
         headers,
         method: 'GET',
-        url: 'api/storage-cylinder',
+        url: 'api/gas',
       });
 
       expect(res.statusCode).toEqual(200);
@@ -57,32 +59,44 @@ describe('Get storage cylinders', () => {
       expect(body).toMatchInlineSnapshot(`
         [
           {
-            "gasId": "2",
-            "id": "1",
-            "maxPressure": 200,
-            "name": "1",
-            "volume": 50,
+            "activeFrom": "2020-01-01T00:00:00.000Z",
+            "activeTo": "9999-12-31T23:59:59.000Z",
+            "gasId": 2,
+            "gasName": "Helium",
+            "gasPriceId": 1,
+            "priceEurCents": 5,
           },
           {
-            "gasId": "3",
-            "id": "2",
-            "maxPressure": 200,
-            "name": "1",
-            "volume": 50,
+            "activeFrom": "2022-01-01T00:00:00.000Z",
+            "activeTo": "2023-01-01T00:00:00.000Z",
+            "gasId": 3,
+            "gasName": "Oxygen",
+            "gasPriceId": 3,
+            "priceEurCents": 5,
           },
           {
-            "gasId": "4",
-            "id": "3",
-            "maxPressure": 200,
-            "name": "1",
-            "volume": 50,
+            "activeFrom": null,
+            "activeTo": null,
+            "gasId": 1,
+            "gasName": "Air",
+            "gasPriceId": null,
+            "priceEurCents": null,
           },
           {
-            "gasId": "5",
-            "id": "4",
-            "maxPressure": 200,
-            "name": "1",
-            "volume": 24,
+            "activeFrom": null,
+            "activeTo": null,
+            "gasId": 4,
+            "gasName": "Argon",
+            "gasPriceId": null,
+            "priceEurCents": null,
+          },
+          {
+            "activeFrom": null,
+            "activeTo": null,
+            "gasId": 5,
+            "gasName": "Diluent",
+            "gasPriceId": null,
+            "priceEurCents": null,
           },
         ]
       `);
@@ -93,7 +107,7 @@ describe('Get storage cylinders', () => {
     test('responds 401 if authentication header was not provided', async () => {
       const res = await server.inject({
         method: 'GET',
-        url: 'api/storage-cylinder',
+        url: 'api/gas',
       });
 
       expect(res.statusCode).toEqual(401);
