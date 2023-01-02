@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { knexController } from '../../database/database';
-import { hashPassword } from '../../lib/auth';
+import { hashPassword, passwordIsValid } from '../../lib/auth';
 import { errorHandler } from '../../lib/errorHandler';
 import { log } from '../../lib/log';
 import {
@@ -32,7 +32,7 @@ const editUserSchema = {
     409: { $ref: 'error' },
   },
 };
-// TODO: Put archiving here
+
 const handler = async (
   req: FastifyRequest<{
     Body: UpdateUserBody;
@@ -43,6 +43,7 @@ const handler = async (
   const { userId } = req.params;
   const {
     archive,
+    currentPassword,
     email,
     forename,
     isAdmin,
@@ -53,14 +54,21 @@ const handler = async (
   } = req.body;
 
   // If no user found with given id or user deleted.
-  const foundUsers: number = await knexController('user')
-    .count('id')
-    .where({ id: userId, deleted_at: null })
-    .first()
-    .then((row: { 'count(`id`)': number }) => Number(row['count(`id`)']));
+  const response = await knexController('user')
+    .select('id', 'password_hash')
+    .where({ id: userId, deleted_at: null });
 
-  if (foundUsers !== 1) {
+  if (!response || response.length !== 1) {
     return errorHandler(reply, 404, 'User not found.');
+  }
+
+  // If user is updating email or password, require current password
+  if (email !== undefined || password !== undefined) {
+    if (currentPassword === undefined)
+      return errorHandler(reply, 400, 'Current password is required');
+
+    if (!(await passwordIsValid(currentPassword, response[0].password_hash)))
+      return errorHandler(reply, 400, 'Invalid current password');
   }
 
   if (email !== undefined) {
@@ -82,7 +90,7 @@ const handler = async (
   let hashObj: HashObj | undefined;
   // If no password given as parameter, no need to hash.
   if (password !== undefined) {
-    hashObj = hashPassword(password);
+    hashObj = await hashPassword(password);
   }
 
   const editedUser = await updateUser(userId, {

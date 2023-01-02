@@ -53,7 +53,7 @@ const handler = async function (
     return errorHandler(reply, 401);
   }
 
-  const isPasswordValid = passwordIsValid(
+  const isPasswordValid = await passwordIsValid(
     request.body.password,
     userInfo.password_hash
   );

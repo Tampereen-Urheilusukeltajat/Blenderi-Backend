@@ -26,6 +26,7 @@ export const updateUserBody = Type.Partial(
     isAdmin: Type.Boolean(),
     isBlender: Type.Boolean(),
     password: Type.String(),
+    currentPassword: Type.String(),
     archive: Type.Boolean(),
   }),
   { minProperties: 1 }
