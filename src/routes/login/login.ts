@@ -75,10 +75,11 @@ const handler = async function (
     return errorHandler(reply, 401);
   }
 
+  // !! converts database bit to boolean value
   const tokenPayload = {
     id: userInfo.id,
-    isAdmin: userInfo.isAdmin,
-    isBlender: userInfo.isBlender,
+    isAdmin: !!userInfo.isAdmin,
+    isBlender: !!userInfo.isBlender,
   };
 
   const accessToken = this.jwt.sign(tokenPayload, {
