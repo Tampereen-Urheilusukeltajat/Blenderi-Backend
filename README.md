@@ -41,12 +41,3 @@ To create a test data, create a new folder with a relevant name to the `test_dat
 The `tableNameHere.csv` MUST USE ; as the delimeter between the columns!
 
 When new tables are added, they must be added to the `TABLE_READ_ORDER` constant!
-
-## Project team
-
-- Akseli Kolari
-- Ilmari Marttila
-- Henri Kiiski
-- Jaakko Kääriäinen
-- Kimi Porthan
-- Aurora Kaaja

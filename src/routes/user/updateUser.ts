@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { knexController } from '../../database/database';
-import { hashPassword } from '../../lib/auth';
+import { hashPassword, passwordIsValid } from '../../lib/auth';
 import { errorHandler } from '../../lib/errorHandler';
 import { log } from '../../lib/log';
 import {
@@ -10,18 +10,17 @@ import {
   HashObj,
   userResponse,
   userIdParamsPayload,
-  UserResponse,
-  User,
 } from '../../types/user.types';
 import {
   phoneAlreadyExists,
   emailAlreadyExists,
 } from '../../lib/collisionChecks';
-import { allMembersUndefined } from '../../lib/empty';
+import { updateUser } from '../../lib/user';
+import { convertDateToMariaDBDateTime } from '../../lib/dateTime';
 
 const editUserSchema = {
-  description: 'Edit data of already existing user or archived user.',
-  summary: 'Edit user',
+  description: 'Update existing or archived user.',
+  summary: 'Update user',
   tags: ['User'],
   params: userIdParamsPayload,
   body: updateUserBody,
@@ -33,47 +32,55 @@ const editUserSchema = {
     409: { $ref: 'error' },
   },
 };
-// TODO: laita arkistointi tänne
-const editUserHandler = async (
+
+const handler = async (
   req: FastifyRequest<{
     Body: UpdateUserBody;
     Params: UserIdParamsPayload;
   }>,
   reply: FastifyReply
 ): Promise<void> => {
-  const updateBody: UpdateUserBody = req.body;
-
-  let archiveUser = false;
-  if (updateBody.archive !== undefined && updateBody.archive) {
-    archiveUser = true;
-  }
-
-  if (allMembersUndefined(updateBody) && !archiveUser) {
-    return errorHandler(reply, 400, 'Empty body.');
-  }
-
-  const userId = req.params.userId;
+  const { userId } = req.params;
+  const {
+    archive,
+    currentPassword,
+    email,
+    forename,
+    isAdmin,
+    isBlender,
+    password,
+    phone,
+    surname,
+  } = req.body;
 
   // If no user found with given id or user deleted.
-  const foundUsers: number = await knexController<User>('user')
-    .count('id')
-    .where('id', userId)
-    .first()
-    .then((row: { 'count(`id`)': number }) => Number(row['count(`id`)']));
-  if (foundUsers !== 1) {
+  const response = await knexController('user')
+    .select('id', 'password_hash')
+    .where({ id: userId, deleted_at: null });
+
+  if (!response || response.length !== 1) {
     return errorHandler(reply, 404, 'User not found.');
   }
 
-  if (updateBody.email !== undefined) {
-    if (await emailAlreadyExists(updateBody.email, userId)) {
+  // If user is updating email or password, require current password
+  if (email !== undefined || password !== undefined) {
+    if (currentPassword === undefined)
+      return errorHandler(reply, 400, 'Current password is required');
+
+    if (!(await passwordIsValid(currentPassword, response[0].password_hash)))
+      return errorHandler(reply, 400, 'Invalid current password');
+  }
+
+  if (email !== undefined) {
+    if (await emailAlreadyExists(email, userId)) {
       const msg = 'Tried to update user with duplicate email';
       log.debug(msg);
       return errorHandler(reply, 409, msg);
     }
   }
 
-  if (updateBody.phone !== undefined) {
-    if (await phoneAlreadyExists(updateBody.phone, userId)) {
+  if (phone !== undefined) {
+    if (await phoneAlreadyExists(phone, userId)) {
       const msg = 'Tried to update user with duplicate phone number';
       log.debug(msg);
       return errorHandler(reply, 409, msg);
@@ -82,52 +89,32 @@ const editUserHandler = async (
 
   let hashObj: HashObj | undefined;
   // If no password given as parameter, no need to hash.
-  if (updateBody.password !== undefined) {
-    hashObj = await hashPassword(updateBody.password);
+  if (password !== undefined) {
+    hashObj = await hashPassword(password);
   }
 
-  // edit user
-  const usersResponse = await knexController('user')
-    .where({ id: userId, deleted_at: null })
-    .update({
-      email: updateBody.email,
-      phone: updateBody.phone,
-      forename: updateBody.forename,
-      surname: updateBody.surname,
-      is_admin: updateBody.isAdmin,
-      is_blender: updateBody.isBlender,
-      password_hash: hashObj !== undefined ? hashObj.hash : undefined,
-      salt: hashObj !== undefined ? hashObj.salt : undefined,
-      archived_at: archiveUser ? knexController.fn.now() : null,
-    });
+  const editedUser = await updateUser(userId, {
+    email,
+    phone,
+    forename,
+    surname,
+    isAdmin,
+    isBlender,
+    passwordHash: hashObj ? hashObj.hash : undefined,
+    salt: hashObj ? hashObj.salt : undefined,
+    archivedAt: archive
+      ? convertDateToMariaDBDateTime(new Date(Date.now()))
+      : undefined,
+  });
 
-  if (usersResponse === 0) {
-    return errorHandler(reply, 404, 'User not found.');
-  }
-
-  // get edited user
-  const editedUser = await knexController
-    .select(
-      'id',
-      'email',
-      'phone',
-      'forename',
-      'surname',
-      'is_admin as isAdmin',
-      'is_blender as isBlender',
-      'archived_at as archivedAt'
-    )
-    .from<UserResponse>('user')
-    .where({ id: userId });
-
-  await reply.send(...editedUser);
+  await reply.send(editedUser);
 };
 
 export default async (fastify: FastifyInstance): Promise<void> => {
   fastify.route({
     method: 'PATCH',
     url: '/:userId',
-    handler: editUserHandler,
+    handler,
     schema: editUserSchema,
   });
 };

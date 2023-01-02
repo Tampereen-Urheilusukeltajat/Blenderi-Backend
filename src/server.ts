@@ -137,7 +137,13 @@ export const buildServer = async (opts: {
 
       await errorHandler(reply, error.statusCode, error.message);
     })
-    .withTypeProvider<TypeBoxTypeProvider>();
+    .withTypeProvider<TypeBoxTypeProvider>()
+    // For some reason AJV counts additional properties to minProperties
+    // This hook makes sure, that empty bodies do not pass to handler
+    .addHook('preHandler', async (request, reply) => {
+      if (request.method === 'PATCH' && JSON.stringify(request.body) === '{}')
+        await errorHandler(reply, 400, 'Additional properties are not allowed');
+    });
 
   return server;
 };

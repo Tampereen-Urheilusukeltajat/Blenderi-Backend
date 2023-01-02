@@ -37,12 +37,11 @@ const handler = async function (
 ): Promise<void> {
   const userInfo: {
     id: 'String';
-    salt: 'String';
     password_hash: 'String';
     archivedAt: string | null;
   } = await knexController('user')
     .where('email', request.body.email)
-    .first('id', 'salt', 'password_hash', 'archived_at as archivedAt');
+    .first('id', 'password_hash', 'archived_at as archivedAt');
 
   if (userInfo === undefined) {
     // This means that user doesn't exist, we are not going to tell that to the client.
@@ -56,8 +55,7 @@ const handler = async function (
 
   const isPasswordValid = await passwordIsValid(
     request.body.password,
-    userInfo.password_hash,
-    userInfo.salt
+    userInfo.password_hash
   );
 
   if (!isPasswordValid) {
