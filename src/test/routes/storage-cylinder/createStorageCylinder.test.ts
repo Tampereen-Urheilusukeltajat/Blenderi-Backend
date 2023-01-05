@@ -16,20 +16,20 @@ import {
 } from '../../../types/storageCylinder.types';
 
 const VALID_PAYLOAD: CreateStorageCylinderBody = {
-  gasId: 1,
+  gasId: '1',
   maxPressure: 200,
   name: '1',
   volume: 50,
 };
 
 const INVALID_PAYLOAD: Partial<CreateStorageCylinderBody> = {
-  gasId: 1,
+  gasId: '1',
   name: '1',
   volume: 50,
 };
 
 const INVALID_PAYLOAD_NON_EXISTENT_GAS: CreateStorageCylinderBody = {
-  gasId: 42,
+  gasId: '42',
   maxPressure: 200,
   name: '1',
   volume: 50,
@@ -80,7 +80,7 @@ describe('Create storage cylinder', () => {
 
       expect(body).toMatchInlineSnapshot(`
         {
-          "gasId": 1,
+          "gasId": "1",
           "id": "1",
           "maxPressure": 200,
           "name": "1",

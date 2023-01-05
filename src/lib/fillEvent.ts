@@ -1,8 +1,6 @@
 import { knexController } from '../database/database';
 import {
   CreateFillEventBody,
-  GasPrice,
-  Gas,
   FillEventGasFill,
 } from '../types/fillEvent.types';
 import { AuthUser } from '../types/auth.types';
@@ -11,10 +9,11 @@ import selectCylinderSet from './selectCylinderSet';
 import { log } from './log';
 import { Knex } from 'knex';
 import { getStorageCylinder } from './storageCylinder';
+import { Gas, GasPrice } from '../types/gas.types';
 
 const getActivePriceId = async (
   trx: Knex.Transaction,
-  gasId: number
+  gasId: string
 ): Promise<number> => {
   const prices: GasPrice[] = await trx<GasPrice>('gas_price')
     .where('gas_id', gasId)
@@ -35,8 +34,8 @@ const getActivePriceId = async (
   return pricesArr[0].id;
 };
 
-const getAirGasId = async (trx: Knex.Transaction): Promise<number> => {
-  const air: Gas = await trx<Gas>('gas').where('name', 'Air').first('id');
+const getAirGasId = async (trx: Knex.Transaction): Promise<string> => {
+  const air = await trx<Gas>('gas').where('name', 'Air').first('id');
 
   if (air === undefined) {
     log.error('Gas id was not found for air');

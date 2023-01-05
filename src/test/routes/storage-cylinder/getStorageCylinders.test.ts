@@ -57,28 +57,28 @@ describe('Create storage cylinder', () => {
       expect(body).toMatchInlineSnapshot(`
         [
           {
-            "gasId": 2,
+            "gasId": "2",
             "id": "1",
             "maxPressure": 200,
             "name": "1",
             "volume": 50,
           },
           {
-            "gasId": 3,
+            "gasId": "3",
             "id": "2",
             "maxPressure": 200,
             "name": "1",
             "volume": 50,
           },
           {
-            "gasId": 4,
+            "gasId": "4",
             "id": "3",
             "maxPressure": 200,
             "name": "1",
             "volume": 50,
           },
           {
-            "gasId": 5,
+            "gasId": "5",
             "id": "4",
             "maxPressure": 200,
             "name": "1",

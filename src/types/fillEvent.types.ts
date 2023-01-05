@@ -12,23 +12,6 @@ export const fillEvent = Type.Object({
 
 export type FillEvent = Static<typeof fillEvent>;
 
-export const gas = Type.Object({
-  id: Type.Integer({ minimum: 0 }),
-  name: Type.String({ maxLength: 128 }),
-});
-
-export type Gas = Static<typeof gas>;
-
-export const gasPrice = Type.Object({
-  id: Type.Integer({ minimum: 0 }),
-  gasId: Type.Integer({ minimum: 0 }),
-  priceEurCents: Type.Integer({ minimum: 0 }),
-  activeFrom: Type.String({ format: 'date-time' }),
-  activeTo: Type.String({ format: 'date-time' }),
-});
-
-export type GasPrice = Static<typeof gasPrice>;
-
 export const createFillEventBody = Type.Object({
   cylinderSetId: Type.String({ format: 'uuid' }),
   gasMixture: Type.String({ maxLength: 124 }),
