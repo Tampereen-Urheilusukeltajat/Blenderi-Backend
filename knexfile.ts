@@ -2,7 +2,7 @@ import 'dotenv/config';
 import path from 'path';
 import { log } from './src/lib/log';
 
-export const TEST_DATABASE = 'test_db';
+export const TEST_DATABASE = process.env.TEST_DATABASE;
 const DB = process.env.MYSQL_DATABASE ?? 'db';
 if (DB === TEST_DATABASE)
   throw new Error(
