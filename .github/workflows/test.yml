@@ -17,6 +17,8 @@ env:
   REDIS_PORT: 6379
   REDIS_USER: blenderi
   REDIS_PASSWORD: pass
+  SENDGRID_API_KEY: test-key
+  SENDGRID_FROM_EMAIL: no-reply@tayttopaikka.fi
 
 jobs:
   test:
