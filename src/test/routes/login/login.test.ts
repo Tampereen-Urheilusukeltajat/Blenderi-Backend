@@ -46,6 +46,36 @@ describe('Login', () => {
       expect(resBody).toHaveProperty('accessToken');
       expect(resBody).toHaveProperty('refreshToken');
     });
+
+    test('It returns correct roles inside the JWT token', async () => {
+      const res = await server.inject({
+        url: '/api/login',
+        method: 'POST',
+        payload: {
+          email: 'user@example.com',
+          password: 'password',
+        },
+      });
+      expect(res.statusCode).toEqual(200);
+      const resBody = JSON.parse(res.body);
+      const tokenPayload = JSON.parse(
+        Buffer.from(resBody.accessToken.split('.')[1], 'base64').toString()
+      );
+
+      expect(tokenPayload).toHaveProperty('iat');
+      delete tokenPayload.iat;
+
+      expect(tokenPayload).toHaveProperty('exp');
+      delete tokenPayload.exp;
+
+      expect(tokenPayload).toMatchInlineSnapshot(`
+        {
+          "id": "1be5abcd-53d4-11ed-9342-0242ac120002",
+          "isAdmin": false,
+          "isBlender": true,
+        }
+      `);
+    });
   });
   describe('Unhappy path', () => {
     test('It returns 401 if user is not found', async () => {
