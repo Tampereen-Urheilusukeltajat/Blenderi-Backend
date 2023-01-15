@@ -5,7 +5,7 @@ import { getEnrichedGases } from '../../lib/gas';
 
 const schema = {
   desription: 'Get enriched gases',
-  tags: ['gas'],
+  tags: ['gas price'],
   response: {
     201: Type.Array(enrichedGas),
     400: { $ref: 'error' },
