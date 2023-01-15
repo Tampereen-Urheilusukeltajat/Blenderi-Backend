@@ -4,7 +4,7 @@ import { createGasPrice, getGasById } from '../../lib/gas';
 import {
   createGasPriceBody,
   CreateGasPriceBody,
-  enrichedGas,
+  gasWithPricing,
 } from '../../types/gas.types';
 
 const schema = {
@@ -12,11 +12,10 @@ const schema = {
   tags: ['gas price'],
   body: createGasPriceBody,
   response: {
-    201: enrichedGas,
+    201: gasWithPricing,
     400: { $ref: 'error' },
     401: { $ref: 'error' },
     403: { $ref: 'error' },
-    409: { $ref: 'error' },
     500: { $ref: 'error' },
   },
 };
@@ -30,9 +29,9 @@ const handler = async (
   const gasExists = await getGasById(request.body.gasId);
   if (!gasExists) return errorHandler(reply, 400, 'Gas does not exist');
 
-  const enrichedGas = await createGasPrice(request.body);
+  const gasWithPricing = await createGasPrice(request.body);
 
-  return reply.code(201).send(enrichedGas);
+  return reply.code(201).send(gasWithPricing);
 };
 
 export default async (fastify: FastifyInstance): Promise<void> => {
