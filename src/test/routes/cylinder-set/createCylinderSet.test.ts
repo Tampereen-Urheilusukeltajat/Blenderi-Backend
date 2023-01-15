@@ -1,4 +1,11 @@
-import { describe, test, expect, beforeAll, afterAll } from '@jest/globals';
+import {
+  describe,
+  test,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} from '@jest/globals';
 import { FastifyInstance } from 'fastify';
 import { createTestDatabase, dropTestDatabase } from '../../../lib/testUtils';
 import { knexController } from '../../../database/database';
@@ -19,9 +26,25 @@ describe('create cylinder set', () => {
     await knexController.destroy();
   });
 
+  let server;
+  let headers: object;
+  beforeEach(async () => {
+    server = await getTestInstance();
+    const res = await server.inject({
+      url: '/api/login',
+      method: 'POST',
+      payload: {
+        email: 'user@taursu.fi',
+        password: 'salasana',
+      },
+    });
+    const tokens = JSON.parse(res.body);
+    headers = { Authorization: 'Bearer ' + String(tokens.accessToken) };
+  });
+
   test('it responds with 201 and proper body if creation was successful', async () => {
     const payload = {
-      owner: '1',
+      owner: 'd57ff56c-7ed5-11ed-a20a-27a77b2da7d7',
       name: 'bottle',
       cylinders: [
         {
@@ -34,10 +57,10 @@ describe('create cylinder set', () => {
       ],
     };
 
-    const server = await getTestInstance();
     const res = await server.inject({
       url: 'api/cylinder-set',
       method: 'POST',
+      headers,
       payload,
     });
 
@@ -59,7 +82,7 @@ describe('create cylinder set', () => {
 
   test('it responds with 201 and proper body if creation of multiple cylinder set was successful', async () => {
     const payload = {
-      owner: '1',
+      owner: 'd57ff56c-7ed5-11ed-a20a-27a77b2da7d7',
       name: 'bottle0.1',
       cylinders: [
         {
@@ -79,10 +102,10 @@ describe('create cylinder set', () => {
       ],
     };
 
-    const server = await getTestInstance();
     const res = await server.inject({
       url: 'api/cylinder-set',
       method: 'POST',
+      headers,
       payload,
     });
 
@@ -108,13 +131,15 @@ describe('create cylinder set', () => {
 
     expect(responseBody.owner).toEqual(payload.owner);
     expect(responseBody.name).toEqual(payload.name);
+    const tokens = JSON.parse(res.body);
+    headers = { Authorization: 'Bearer ' + String(tokens.accessToken) };
   });
 
   test('it responds with 400 if one of those cylinder inspection date are in the future', async () => {
     const date = new Date();
     date.setUTCFullYear(date.getUTCFullYear() + 2);
     const payload = {
-      owner: '1',
+      owner: 'd57ff56c-7ed5-11ed-a20a-27a77b2da7d7',
       name: 'bottle2',
       cylinders: [
         {
@@ -126,10 +151,11 @@ describe('create cylinder set', () => {
         },
       ],
     };
-    const server = await getTestInstance();
+
     const res = await server.inject({
       url: 'api/cylinder-set',
       method: 'POST',
+      headers,
       payload,
     });
 
@@ -141,7 +167,7 @@ describe('create cylinder set', () => {
 
   test('it responds with 409 if same user tries to create 2 cylinder sets with the same name', async () => {
     const payload1 = {
-      owner: '1',
+      owner: 'd57ff56c-7ed5-11ed-a20a-27a77b2da7d7',
       name: 'bottle3',
       cylinders: [
         {
@@ -155,7 +181,7 @@ describe('create cylinder set', () => {
     };
 
     const payload2 = {
-      owner: '1',
+      owner: 'd57ff56c-7ed5-11ed-a20a-27a77b2da7d7',
       name: 'bottle3',
       cylinders: [
         {
@@ -168,10 +194,10 @@ describe('create cylinder set', () => {
       ],
     };
 
-    const server = await getTestInstance();
     const res = await server.inject({
       url: 'api/cylinder-set',
       method: 'POST',
+      headers,
       payload: payload1,
     });
 
@@ -180,6 +206,7 @@ describe('create cylinder set', () => {
     const res2 = await server.inject({
       url: 'api/cylinder-set',
       method: 'POST',
+      headers,
       payload: payload2,
     });
 
@@ -188,7 +215,7 @@ describe('create cylinder set', () => {
 
   test('it responds with 400 if user does not exists', async () => {
     const payload = {
-      owner: '0', // not in user.csv
+      owner: '3bd0b342-7ed6-11ed-8627-376b0bc3e6be', // not in user.csv
       name: 'bottle4',
       cylinders: [
         {
@@ -200,10 +227,10 @@ describe('create cylinder set', () => {
         },
       ],
     };
-    const server = await getTestInstance();
     const res = await server.inject({
       url: 'api/cylinder-set',
       method: 'POST',
+      headers,
       payload,
     });
 
@@ -213,7 +240,7 @@ describe('create cylinder set', () => {
 
   test('it responds with 400 if some cylinder has invalid value for volume', async () => {
     const payload = {
-      owner: '1',
+      owner: 'd57ff56c-7ed5-11ed-a20a-27a77b2da7d7',
       name: 'bottle5',
       cylinders: [
         {
@@ -225,10 +252,10 @@ describe('create cylinder set', () => {
         },
       ],
     };
-    const server = await getTestInstance();
     const res = await server.inject({
       url: 'api/cylinder-set',
       method: 'POST',
+      headers,
       payload,
     });
 
@@ -237,7 +264,7 @@ describe('create cylinder set', () => {
 
   test('it responds with 400 if some cylinder has invalid value for pressure', async () => {
     const payload = {
-      owner: '1',
+      owner: 'd57ff56c-7ed5-11ed-a20a-27a77b2da7d7',
       name: 'bottle6',
       cylinders: [
         {
@@ -249,10 +276,10 @@ describe('create cylinder set', () => {
         },
       ],
     };
-    const server = await getTestInstance();
     const res = await server.inject({
       url: 'api/cylinder-set',
       method: 'POST',
+      headers,
       payload,
     });
 
@@ -261,14 +288,14 @@ describe('create cylinder set', () => {
 
   test('it responds with 400 if set does not have cylinders', async () => {
     const payload = {
-      owner: '1',
+      owner: 'd57ff56c-7ed5-11ed-a20a-27a77b2da7d7',
       name: 'bottle7',
       cylinders: [],
     };
-    const server = await getTestInstance();
     const res = await server.inject({
       url: 'api/cylinder-set',
       method: 'POST',
+      headers,
       payload,
     });
 
@@ -277,7 +304,7 @@ describe('create cylinder set', () => {
 
   test('it responds with 400 if set name is too long', async () => {
     const payload = {
-      owner: '1',
+      owner: 'd57ff56c-7ed5-11ed-a20a-27a77b2da7d7',
       name: 'bottle88888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888',
       cylinders: [
         {
@@ -290,13 +317,69 @@ describe('create cylinder set', () => {
       ],
     };
 
-    const server = await getTestInstance();
     const res = await server.inject({
       url: 'api/cylinder-set',
       method: 'POST',
+      headers,
       payload,
     });
 
     expect(res.statusCode).toEqual(400);
+  });
+
+  test('it responds with 400 if owner id is not in uuid format', async () => {
+    const payload = {
+      owner: '123403984525',
+      name: 'validBotleName',
+      cylinders: [
+        {
+          volume: 15,
+          pressure: 200,
+          material: 'steel',
+          serialNumber: '3540965436löj564',
+          inspection: '2020-01-01',
+        },
+      ],
+    };
+
+    const res = await server.inject({
+      url: 'api/cylinder-set',
+      method: 'POST',
+      headers,
+      payload,
+    });
+
+    expect(res.statusCode).toEqual(400);
+
+    const responseBody = JSON.parse(res.body);
+    expect(responseBody.message).toEqual('body/owner must match format "uuid"');
+  });
+
+  test('it responds with 401 if request is unauthenticated', async () => {
+    const payload = {
+      owner: 'd57ff56c-7ed5-11ed-a20a-27a77b2da7d7',
+      name: 'bottleagain',
+      cylinders: [
+        {
+          volume: 15,
+          pressure: 200,
+          material: 'steel',
+          serialNumber: '3540965436löj564',
+          inspection: '2020-01-01',
+        },
+      ],
+    };
+
+    const res = await server.inject({
+      url: 'api/cylinder-set',
+      method: 'POST',
+      payload,
+      headers: { Authorization: 'Bearer definitely not valid jwt token' },
+    });
+
+    expect(res.statusCode).toEqual(401);
+    const responseBody = JSON.parse(res.body);
+
+    expect(responseBody).toEqual({ statusCode: 401, error: 'Unauthorized' });
   });
 });

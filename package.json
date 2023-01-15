@@ -5,7 +5,8 @@
     "@fastify/helmet": "^10.0.0",
     "@fastify/jwt": "^6.3.2",
     "@fastify/swagger": "^7.5.1",
-    "@fastify/type-provider-typebox": "^2.3.0",
+    "@fastify/type-provider-typebox": "^2.4.0",
+    "@sendgrid/mail": "^7.7.0",
     "@types/bcrypt": "^5.0.0",
     "bcrypt": "^5.0.1",
     "dotenv": "^16.0.2",
@@ -13,6 +14,7 @@
     "knex": "^2.3.0",
     "mysql": "^2.18.1",
     "redis": "^4.4.0",
+    "snakecase-keys": "^5.4.4",
     "uuid": "^9.0.0",
     "winston": "^3.8.2"
   },
@@ -45,7 +47,7 @@
   },
   "scripts": {
     "start-dev": "nodemon",
-    "test": "jest -w 1",
+    "test": "jest",
     "prepare": "husky install",
     "enforce-style": "npx eslint src --max-warnings 0 && npx prettier -c ."
   },

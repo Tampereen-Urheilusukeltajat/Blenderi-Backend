@@ -105,6 +105,7 @@ export default async (fastify: FastifyInstance): Promise<void> => {
   fastify.route({
     method: 'POST',
     url: '/',
+    preValidation: [fastify['authenticate']],
     handler,
     schema,
   });

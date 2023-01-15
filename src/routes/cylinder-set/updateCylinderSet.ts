@@ -114,6 +114,7 @@ export default async (fastify: FastifyInstance): Promise<void> => {
   fastify.route({
     method: 'PATCH',
     url: '/:cylinderSetId',
+    preValidation: [fastify['authenticate']],
     handler,
     schema,
   });
