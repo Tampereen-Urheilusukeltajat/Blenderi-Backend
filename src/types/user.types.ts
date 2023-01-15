@@ -2,7 +2,7 @@ import { Type, Static } from '@sinclair/typebox';
 import { FastifyRequest } from 'fastify';
 
 export const user = Type.Object({
-  id: Type.String(),
+  id: Type.String({ format: 'uuid' }),
   email: Type.String(),
   phone: Type.String(),
   forename: Type.String(),
@@ -35,7 +35,7 @@ export const updateUserBody = Type.Partial(
 export type UpdateUserBody = Static<typeof updateUserBody>;
 
 export const userResponse = Type.Object({
-  id: Type.String(),
+  id: Type.String({ format: 'uuid' }),
   email: Type.String(),
   phone: Type.String(),
   forename: Type.String(),
