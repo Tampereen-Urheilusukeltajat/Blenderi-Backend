@@ -48,7 +48,6 @@ const handler = async function (
     .where('email', request.body.email)
     .first(
       'id',
-      'salt',
       'password_hash AS passwordHash',
       'archived_at as archivedAt',
       'is_admin AS isAdmin',
@@ -67,8 +66,7 @@ const handler = async function (
 
   const isPasswordValid = await passwordIsValid(
     request.body.password,
-    userInfo.passwordHash,
-    userInfo.salt
+    userInfo.passwordHash
   );
 
   if (!isPasswordValid) {
