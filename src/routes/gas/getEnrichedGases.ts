@@ -1,7 +1,7 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { gasWithPricing } from '../../types/gas.types';
 import { Type } from '@sinclair/typebox';
-import { getEnrichedGases } from '../../lib/gas';
+import { getGasesWithPricing } from '../../lib/gas';
 
 const schema = {
   desription: 'Get enriched gases',
@@ -19,9 +19,9 @@ const handler = async (
   request: FastifyRequest,
   reply: FastifyReply
 ): Promise<void> => {
-  const enrichedGases = await getEnrichedGases();
+  const gasesWithPricing = await getGasesWithPricing();
 
-  return reply.send(enrichedGases);
+  return reply.send(gasesWithPricing);
 };
 
 export default async (fastify: FastifyInstance): Promise<void> => {

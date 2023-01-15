@@ -3,20 +3,14 @@ import { knexController } from '../database/database';
 import { CreateGasPriceBody, Gas, GasWithPricing } from '../types/gas.types';
 import { convertDateToMariaDBDateTime } from './dateTime';
 
-const ENRICHED_GAS_COLUMNS = [
+const GAS_WITH_PRICING_COLUMNS = [
   'g.id AS gasId',
   'g.name AS gasName',
   'gp.id AS gasPriceId',
   'gp.price_eur_cents AS priceEurCents',
   'gp.active_from AS activeFrom',
   'gp.active_to AS activeTo',
-];
-
-export const getGases = async (trx?: Knex.Transaction): Promise<Gas[]> => {
-  const transaction = trx ?? knexController;
-
-  return transaction('gas').select<Gas[]>(['id', 'name']);
-};
+].join(',');
 
 export const getGasById = async (
   gasId: string,
@@ -35,7 +29,7 @@ export const getGasWithPricingWithPriceId = async (
 
   const sql = `
     SELECT
-      ${ENRICHED_GAS_COLUMNS.join(',')}
+      ${GAS_WITH_PRICING_COLUMNS}
     FROM
       gas g
     JOIN
@@ -73,7 +67,7 @@ export const getGasWithPricingWithActiveFrom = async (
 
   const sql = `
   SELECT
-    ${ENRICHED_GAS_COLUMNS.join(',')}
+    ${GAS_WITH_PRICING_COLUMNS}
   FROM
     gas g
   JOIN
@@ -151,9 +145,9 @@ export const createGasPrice = async (
   return insertedGasWithPricing;
 };
 
-export const getEnrichedGases = async (
+export const getGasesWithPricing = async (
   trx?: Knex.Transaction
-): Promise<EnrichedGas[]> => {
+): Promise<GasWithPricing[]> => {
   const transaction = trx ?? knexController;
 
   // Date.now is not necessary, but it makes testing easier as you can only
@@ -162,7 +156,7 @@ export const getEnrichedGases = async (
 
   const sql = `
     SELECT
-      ${ENRICHED_GAS_COLUMNS.join(',')}
+      ${GAS_WITH_PRICING_COLUMNS}
     FROM gas g
     LEFT JOIN
       gas_price gp ON g.id = gp.gas_id AND
@@ -174,7 +168,7 @@ export const getEnrichedGases = async (
     now,
   };
 
-  const res = await transaction.raw<EnrichedGas[][]>(sql, params);
+  const res = await transaction.raw<GasWithPricing[][]>(sql, params);
 
   return res[0] ?? [];
 };
