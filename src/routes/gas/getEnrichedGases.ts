@@ -4,7 +4,7 @@ import { Type } from '@sinclair/typebox';
 import { getEnrichedGases } from '../../lib/gas';
 
 const schema = {
-  desription: 'Get enriched gases',
+  description: 'Get enriched gases',
   tags: ['gas price'],
   response: {
     201: Type.Array(enrichedGas),
