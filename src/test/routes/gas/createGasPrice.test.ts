@@ -9,7 +9,7 @@ import {
 import { FastifyInstance } from 'fastify';
 import { createTestDatabase, dropTestDatabase } from '../../../lib/testUtils';
 import { knexController } from '../../../database/database';
-import { CreateGasPriceBody, EnrichedGas } from '../../../types/gas.types';
+import { CreateGasPriceBody, GasWithPricing } from '../../../types/gas.types';
 import { buildServer } from '../../../server';
 
 const VALID_PAYLOAD: CreateGasPriceBody = {
@@ -79,7 +79,7 @@ describe('Create gas price', () => {
       });
 
       expect(res.statusCode).toEqual(201);
-      const body: EnrichedGas = JSON.parse(res.body);
+      const body: GasWithPricing = JSON.parse(res.body);
 
       expect(body).toMatchInlineSnapshot(`
         {
@@ -125,7 +125,7 @@ describe('Create gas price', () => {
       });
 
       expect(res.statusCode).toEqual(201);
-      const body: EnrichedGas = JSON.parse(res.body);
+      const body: GasWithPricing = JSON.parse(res.body);
 
       expect(body).toMatchInlineSnapshot(`
         {

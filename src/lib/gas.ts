@@ -1,6 +1,6 @@
 import { Knex } from 'knex';
 import { knexController } from '../database/database';
-import { CreateGasPriceBody, EnrichedGas, Gas } from '../types/gas.types';
+import { CreateGasPriceBody, Gas, GasWithPricing } from '../types/gas.types';
 import { convertDateToMariaDBDateTime } from './dateTime';
 
 const ENRICHED_GAS_COLUMNS = [
@@ -27,10 +27,10 @@ export const getGasById = async (
   return transaction('gas').where('id', gasId).first('id', 'name');
 };
 
-export const getEnrichedGasWithPriceId = async (
+export const getGasWithPricingWithPriceId = async (
   gasPriceId: string,
   trx?: Knex.Transaction
-): Promise<EnrichedGas | undefined> => {
+): Promise<GasWithPricing | undefined> => {
   const transaction = trx ?? knexController;
 
   const sql = `
@@ -46,7 +46,7 @@ export const getEnrichedGasWithPriceId = async (
     gasPriceId,
   };
 
-  const response = await transaction.raw<EnrichedGas[][]>(sql, params);
+  const response = await transaction.raw<GasWithPricing[][]>(sql, params);
 
   if (response[0].length > 1) {
     throw new Error('There can be only one active gas price at the given time');
@@ -64,11 +64,11 @@ export const getEnrichedGasWithPriceId = async (
  * This function MUST be modified when the application starts to support
  * creating dynamic price ranges
  */
-export const getEnrichedGasWithActiveFrom = async (
+export const getGasWithPricingWithActiveFrom = async (
   activeFrom: string,
   gasId: string,
   trx?: Knex.Transaction
-): Promise<EnrichedGas | undefined> => {
+): Promise<GasWithPricing | undefined> => {
   const transaction = trx ?? knexController;
 
   const sql = `
@@ -88,7 +88,7 @@ export const getEnrichedGasWithActiveFrom = async (
     gasId,
   };
 
-  const response = await transaction.raw<EnrichedGas[][]>(sql, params);
+  const response = await transaction.raw<GasWithPricing[][]>(sql, params);
 
   if (response[0].length > 1) {
     throw new Error('There can be only one active gas price at the given time');
@@ -100,11 +100,11 @@ export const getEnrichedGasWithActiveFrom = async (
 export const createGasPrice = async (
   { activeFrom, gasId, priceEurCents }: CreateGasPriceBody,
   trx?: Knex.Transaction
-): Promise<EnrichedGas> => {
+): Promise<GasWithPricing> => {
   const transaction = trx ?? (await knexController.transaction());
 
   // Find the current active price and update activeTo
-  const activePrice = await getEnrichedGasWithActiveFrom(
+  const activePrice = await getGasWithPricingWithActiveFrom(
     activeFrom,
     gasId,
     transaction
@@ -140,15 +140,15 @@ export const createGasPrice = async (
   );
   const [{ insertId: insertedGasPriceId }] = res;
 
-  const insertedEnrichedGas = await getEnrichedGasWithPriceId(
+  const insertedGasWithPricing = await getGasWithPricingWithPriceId(
     insertedGasPriceId,
     transaction
   );
-  if (!insertedEnrichedGas) throw new Error('Gas price creation failed');
+  if (!insertedGasWithPricing) throw new Error('Gas price creation failed');
 
   await transaction.commit();
 
-  return insertedEnrichedGas;
+  return insertedGasWithPricing;
 };
 
 export const getEnrichedGases = async (

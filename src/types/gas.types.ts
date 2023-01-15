@@ -13,7 +13,7 @@ export const gas = Type.Intersect([
 
 export type Gas = Static<typeof gas>;
 
-export const enrichedGas = Type.Object({
+export const gasWithPricing = Type.Object({
   activeFrom: Type.String({ format: 'date-time' }),
   activeTo: Type.Optional(Type.String({ format: 'date-time' })),
   gasId: Type.String(),
@@ -22,7 +22,7 @@ export const enrichedGas = Type.Object({
   priceEurCents: Type.Integer({ minimum: 0 }),
 });
 
-export type EnrichedGas = Static<typeof enrichedGas>;
+export type GasWithPricing = Static<typeof gasWithPricing>;
 
 export const createGasPriceBody = Type.Object({
   gasId: Type.String(),
