@@ -9,9 +9,9 @@ import {
   TEST_DATABASE,
   TEST_USER,
   TEST_USER_PASSWORD,
-} from '../../knexfile';
+} from '../../../knexfile';
 import { readdir, readFile } from 'fs/promises';
-import { knexController } from '../database/database';
+import { knexController } from '../../database/database';
 
 const MYSQL_ROOT_PASSWORD = process.env.MYSQL_ROOT_PASSWORD;
 

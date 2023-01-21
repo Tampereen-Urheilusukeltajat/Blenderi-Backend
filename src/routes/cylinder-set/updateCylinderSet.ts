@@ -1,7 +1,7 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { knexController } from '../../database/database';
-import { errorHandler } from '../../lib/errorHandler';
-import selectCylinderSet from '../../lib/selectCylinderSet';
+import { errorHandler } from '../../lib/utils/errorHandler';
+import { selectCylinderSet } from '../../lib/queries/divingCylinderSet';
 import {
   cylinderSet,
   CylinderSet,
@@ -62,7 +62,8 @@ const handler = async (
           name: request.body.name,
           updated_at: trx.fn.now(),
         });
-      if (updateResult === 0) {
+
+      if (!updateResult) {
         await errorHandler(reply, 404, 'Cylinder set not found');
         return;
       }

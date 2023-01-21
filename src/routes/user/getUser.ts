@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { knexController } from '../../database/database';
-import { errorHandler } from '../../lib/errorHandler';
+import { errorHandler } from '../../lib/utils/errorHandler';
 import {
   userResponse,
   User,

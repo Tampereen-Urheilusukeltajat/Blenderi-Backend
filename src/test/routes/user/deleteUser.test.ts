@@ -9,7 +9,10 @@ import {
 import { FastifyInstance } from 'fastify';
 import { knexController } from '../../../database/database';
 import { buildServer } from '../../../server';
-import { createTestDatabase, dropTestDatabase } from '../../../lib/testUtils';
+import {
+  createTestDatabase,
+  dropTestDatabase,
+} from '../../../lib/utils/testUtils';
 
 describe('Delete user', () => {
   const getTestInstance = async (): Promise<FastifyInstance> =>

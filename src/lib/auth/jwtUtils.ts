@@ -1,5 +1,5 @@
 import { createClient } from 'redis';
-import { log } from './log';
+import { log } from '../utils/log';
 
 // Expire times in seconds
 export const REFRESH_TOKEN_EXPIRE_TIME = 2678400; // ~month

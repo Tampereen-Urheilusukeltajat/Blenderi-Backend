@@ -1,10 +1,10 @@
 import { Knex } from 'knex';
-import { knexController } from '../database/database';
+import { knexController } from '../../database/database';
 import {
   CreateStorageCylinderBody,
   StorageCylinder,
-} from '../types/storageCylinder.types';
-import { log } from './log';
+} from '../../types/storageCylinder.types';
+import { log } from '../utils/log';
 
 export const getStorageCylinder = async (
   trx: Knex.Transaction,

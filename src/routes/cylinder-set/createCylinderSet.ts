@@ -2,8 +2,8 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { v4 as uuid } from 'uuid';
 
 import { knexController } from '../../database/database';
-import { errorHandler } from '../../lib/errorHandler';
-import selectCylinderSet from '../../lib/selectCylinderSet';
+import { errorHandler } from '../../lib/utils/errorHandler';
+import { selectCylinderSet } from '../../lib/queries/divingCylinderSet';
 import {
   Cylinder,
   cylinderSet,

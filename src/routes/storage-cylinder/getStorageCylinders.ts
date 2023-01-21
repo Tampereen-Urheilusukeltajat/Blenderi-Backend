@@ -1,5 +1,5 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { getStorageCylinders } from '../../lib/storageCylinder';
+import { getStorageCylinders } from '../../lib/queries/storageCylinder';
 import { storageCylinder } from '../../types/storageCylinder.types';
 import { Type } from '@sinclair/typebox';
 

@@ -1,11 +1,11 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { knexController } from '../../database/database';
+import { deleteCylinderSet } from '../../lib/queries/divingCylinderSet';
 import {
   userIdParamsPayload,
   UserIdParamsPayload,
   deleteUserReply,
 } from '../../types/user.types';
-import { deleteCylinderSet } from '../../lib/deleteCylinderSet';
 
 const schema = {
   description:

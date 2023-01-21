@@ -1,5 +1,5 @@
 import sgMail from '@sendgrid/mail';
-import { emailMsg } from '../types/email.types';
+import { emailMsg } from '../../types/email.types';
 
 const API_KEY: string | undefined = process.env.SENDGRID_API_KEY;
 const FROM_EMAIL: string | undefined = process.env.SENDGRID_FROM_EMAIL;
@@ -10,7 +10,7 @@ if (API_KEY === undefined || FROM_EMAIL === undefined) {
 
 sgMail.setApiKey(API_KEY);
 
-const sendEmail = async (msg: emailMsg): Promise<void> => {
+export const sendEmail = async (msg: emailMsg): Promise<void> => {
   try {
     const requestEmailBody = {
       ...msg,
@@ -33,5 +33,3 @@ const sendEmail = async (msg: emailMsg): Promise<void> => {
     throw new Error(`Error when sending email. Error: ${message}`);
   }
 };
-
-export default sendEmail;

@@ -5,7 +5,7 @@ dotenv.config();
 
 import { knexController } from './database/database';
 
-import { log } from './lib/log';
+import { log } from './lib/utils/log';
 import { buildServer } from './server';
 
 const APPLICATION_HOST: string = process.env.APPLICATION_HOST as string;

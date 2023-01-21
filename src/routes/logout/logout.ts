@@ -1,7 +1,7 @@
 import { FastifyInstance, FastifyReply } from 'fastify';
-import { log } from '../../lib/log';
-import { errorHandler } from '../../lib/errorHandler';
-import { invalidate, EXAMPLE_JWT } from '../../lib/jwtUtils';
+import { log } from '../../lib/utils/log';
+import { errorHandler } from '../../lib/utils/errorHandler';
+import { invalidate, EXAMPLE_JWT } from '../../lib/auth/jwtUtils';
 import {
   logoutRequestBody,
   LogoutRequest,

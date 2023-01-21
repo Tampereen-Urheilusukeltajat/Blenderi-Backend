@@ -1,7 +1,7 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { errorHandler } from '../../lib/errorHandler';
-import { getGasById } from '../../lib/gas';
-import { createStorageCylinder } from '../../lib/storageCylinder';
+import { errorHandler } from '../../lib/utils/errorHandler';
+import { getGasById } from '../../lib/queries/gas';
+import { createStorageCylinder } from '../../lib/queries/storageCylinder';
 import {
   CreateStorageCylinderBody,
   createStorageCylinderBody,

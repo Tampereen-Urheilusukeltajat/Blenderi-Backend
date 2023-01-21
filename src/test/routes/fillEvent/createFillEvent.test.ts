@@ -8,7 +8,10 @@ import {
   afterEach,
 } from '@jest/globals';
 import { FastifyInstance } from 'fastify';
-import { createTestDatabase, dropTestDatabase } from '../../../lib/testUtils';
+import {
+  createTestDatabase,
+  dropTestDatabase,
+} from '../../../lib/utils/testUtils';
 import { knexController } from '../../../database/database';
 import { buildServer } from '../../../server';
 

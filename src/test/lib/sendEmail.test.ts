@@ -1,6 +1,6 @@
-import '../../lib/testUtils';
+import '../../lib/utils/testUtils';
 import { describe, test, expect } from '@jest/globals';
-import sendEmail from '../../lib/sendEmail';
+import sendEmail from '../../lib/utils/sendEmail';
 import { emailMsg } from '../../types/email.types';
 
 describe('send Email', () => {

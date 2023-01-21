@@ -6,13 +6,13 @@ import {
   createUserRequestBody,
   CreateUserRequest,
 } from '../../types/user.types';
-import { hashPassword } from '../../lib/auth';
-import { log } from '../../lib/log';
-import { errorHandler } from '../../lib/errorHandler';
+import { hashPassword } from '../../lib/auth/auth';
+import { log } from '../../lib/utils/log';
+import { errorHandler } from '../../lib/utils/errorHandler';
 import {
   phoneAlreadyExists,
   emailAlreadyExists,
-} from '../../lib/collisionChecks';
+} from '../../lib/utils/collisionChecks';
 
 const schema = {
   description: 'Creates a user',

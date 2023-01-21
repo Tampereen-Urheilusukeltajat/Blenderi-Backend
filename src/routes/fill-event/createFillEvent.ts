@@ -4,8 +4,8 @@ import {
   CreateFillEventBody,
   fillEventResponse,
 } from '../../types/fillEvent.types';
-import { errorHandler } from '../../lib/errorHandler';
-import { createFillEvent } from '../../lib/fillEvent';
+import { errorHandler } from '../../lib/utils/errorHandler';
+import { createFillEvent } from '../../lib/queries/fillEvent';
 
 const schema = {
   description: 'Creates a new fill event',
