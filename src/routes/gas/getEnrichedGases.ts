@@ -1,7 +1,7 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { gasWithPricing } from '../../types/gas.types';
 import { Type } from '@sinclair/typebox';
-import { getGasesWithPricing } from '../../lib/gas';
+import { getGasesWithPricing } from '../../lib/queries/gas';
 
 const schema = {
   desription: 'Get enriched gases',

@@ -1,8 +1,8 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { knexController } from '../../database/database';
-import { hashPassword, passwordIsValid } from '../../lib/auth';
-import { errorHandler } from '../../lib/errorHandler';
-import { log } from '../../lib/log';
+import { hashPassword, passwordIsValid } from '../../lib/auth/auth';
+import { errorHandler } from '../../lib/utils/errorHandler';
+import { log } from '../../lib/utils/log';
 import {
   updateUserBody,
   UpdateUserBody,
@@ -14,9 +14,9 @@ import {
 import {
   phoneAlreadyExists,
   emailAlreadyExists,
-} from '../../lib/collisionChecks';
-import { updateUser } from '../../lib/user';
-import { convertDateToMariaDBDateTime } from '../../lib/dateTime';
+} from '../../lib/utils/collisionChecks';
+import { updateUser } from '../../lib/queries/user';
+import { convertDateToMariaDBDateTime } from '../../lib/utils/dateTime';
 
 const editUserSchema = {
   description: 'Update existing or archived user.',

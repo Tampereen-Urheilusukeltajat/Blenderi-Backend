@@ -1,5 +1,5 @@
-import { knexController } from '../database/database';
-import { User } from '../types/user.types';
+import { knexController } from '../../database/database';
+import { User } from '../../types/user.types';
 
 /* 
 Return true if given phone number already in database.

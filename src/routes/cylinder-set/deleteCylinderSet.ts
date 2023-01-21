@@ -1,11 +1,11 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { errorHandler } from '../../lib/errorHandler';
+import { errorHandler } from '../../lib/utils/errorHandler';
 import { Type } from '@sinclair/typebox';
 import {
   cylinderSetIdParamsPayload,
   CylinderSetIdParamsPayload,
 } from '../../types/cylinderSet.types';
-import { deleteCylinderSet } from '../../lib/deleteCylinderSet';
+import { deleteCylinderSet } from '../../lib/queries/divingCylinderSet';
 
 const deleteSetReply = Type.Object({
   setID: Type.String({ format: 'uuid' }),

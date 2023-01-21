@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import path from 'path';
-import { log } from './src/lib/log';
+import { log } from './src/lib/utils/log';
 
 export const TEST_DATABASE = process.env.TEST_DATABASE;
 const DB = process.env.MYSQL_DATABASE ?? 'db';

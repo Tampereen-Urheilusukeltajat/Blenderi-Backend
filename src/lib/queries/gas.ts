@@ -1,7 +1,7 @@
 import { Knex } from 'knex';
-import { knexController } from '../database/database';
-import { CreateGasPriceBody, Gas, GasWithPricing } from '../types/gas.types';
-import { convertDateToMariaDBDateTime } from './dateTime';
+import { knexController } from '../../database/database';
+import { CreateGasPriceBody, Gas, GasWithPricing } from '../../types/gas.types';
+import { convertDateToMariaDBDateTime } from '../utils/dateTime';
 
 const GAS_WITH_PRICING_COLUMNS = [
   'g.id AS gasId',

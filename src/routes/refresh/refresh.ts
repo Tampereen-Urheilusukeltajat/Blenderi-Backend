@@ -1,14 +1,14 @@
 import { FastifyInstance, FastifyReply } from 'fastify';
-import { errorHandler } from '../../lib/errorHandler';
+import { errorHandler } from '../../lib/utils/errorHandler';
 import { v4 as uuid } from 'uuid';
-import { log } from '../../lib/log';
+import { log } from '../../lib/utils/log';
 import {
   tokenIsUsable,
   rotate,
   REFRESH_TOKEN_EXPIRE_TIME,
   ACCESS_TOKEN_EXPIRE_TIME,
   EXAMPLE_JWT,
-} from '../../lib/jwtUtils';
+} from '../../lib/auth/jwtUtils';
 import {
   refreshRequestBody,
   RefreshRequest,

@@ -1,14 +1,14 @@
 import { FastifyInstance, FastifyReply } from 'fastify';
 import { knexController } from '../../database/database';
-import { passwordIsValid } from '../../lib/auth';
+import { passwordIsValid } from '../../lib/auth/auth';
 import { v4 as uuid } from 'uuid';
-import { errorHandler } from '../../lib/errorHandler';
+import { errorHandler } from '../../lib/utils/errorHandler';
 import {
   initializeRefreshTokenRotationSession,
   REFRESH_TOKEN_EXPIRE_TIME,
   ACCESS_TOKEN_EXPIRE_TIME,
   EXAMPLE_JWT,
-} from '../../lib/jwtUtils';
+} from '../../lib/auth/jwtUtils';
 import {
   loginRequestBody,
   LoginRequest,

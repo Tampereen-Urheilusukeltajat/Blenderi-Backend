@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { errorHandler } from '../../lib/errorHandler';
-import { createGasPrice, getGasById } from '../../lib/gas';
+import { errorHandler } from '../../lib/utils/errorHandler';
+import { createGasPrice, getGasById } from '../../lib/queries/gas';
 import {
   createGasPriceBody,
   CreateGasPriceBody,

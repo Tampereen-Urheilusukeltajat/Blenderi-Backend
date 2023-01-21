@@ -11,9 +11,9 @@ import { fastifyAutoload } from '@fastify/autoload';
 import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 
 import { v4 as uuid } from 'uuid';
-import { log } from './lib/log';
+import { log } from './lib/utils/log';
 import path from 'path';
-import { errorHandler } from './lib/errorHandler';
+import { errorHandler } from './lib/utils/errorHandler';
 import { AuthUser } from './types/auth.types';
 
 const JWT_SECRET =

@@ -1,7 +1,7 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { Type, Static } from '@sinclair/typebox';
 import { UserResponse, userResponse } from '../../types/user.types';
-import { selectNotArchivedUsers, selectUsers } from '../../lib/selectUsers';
+import { selectNotArchivedUsers, selectUsers } from '../../lib/queries/user';
 
 const includeArchived = Type.Object({
   includeArchived: Type.Boolean({ default: false }),

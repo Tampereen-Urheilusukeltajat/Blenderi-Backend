@@ -1,5 +1,5 @@
 import { describe, test, expect } from '@jest/globals';
-import { hashPassword } from '../../lib/auth';
+import { hashPassword } from '../../lib/auth/auth';
 
 describe('Hash password', () => {
   test('hash is not plain password', async () => {
