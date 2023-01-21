@@ -1,7 +1,7 @@
 import '../../lib/utils/testUtils';
 import { describe, test, expect } from '@jest/globals';
-import sendEmail from '../../lib/utils/sendEmail';
 import { emailMsg } from '../../types/email.types';
+import { sendEmail } from '../../lib/utils/sendEmail';
 
 describe('send Email', () => {
   test('happy path', async () => {
