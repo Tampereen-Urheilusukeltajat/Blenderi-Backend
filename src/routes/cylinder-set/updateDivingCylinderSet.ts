@@ -10,7 +10,7 @@ import {
   UpdateCylinderBody,
   cylinderSetIdParamsPayload,
   CylinderSetIdParamsPayload,
-} from '../../types/cylinderSet.types';
+} from '../../types/divingCylinderSet.types';
 
 const schema = {
   description: 'Updates a diving cylinder set',

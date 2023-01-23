@@ -1,6 +1,7 @@
 import { Knex } from 'knex';
 import { knexController } from '../../database/database';
-import { Cylinder, CylinderSet } from '../../types/cylinderSet.types';
+import { Cylinder, CylinderSet } from '../../types/divingCylinderSet.types';
+import { DBResponse } from '../../types/general.types';
 import { log } from '../utils/log';
 
 export const deleteCylinderSet = async (
@@ -37,6 +38,66 @@ export const deleteCylinderSet = async (
   return knexRes;
 };
 
+type CylinderSetBasicInfo = Omit<CylinderSet, 'cylinders'>;
+type CylinderWithSetId = Cylinder & { cylinderSetId: string };
+
+export const getUsersDivingCylinderSets = async (
+  userId: string,
+  trx?: Knex.Transaction
+): Promise<CylinderSet[]> => {
+  const transaction = trx ?? knexController;
+
+  const [divingCylinderSets] = await transaction.raw<
+    DBResponse<CylinderSetBasicInfo[]>
+  >(
+    `
+    SELECT
+      id,
+      owner,
+      name
+    FROM diving_cylinder_set
+    WHERE
+      owner = :userId
+  `,
+    {
+      userId,
+    }
+  );
+
+  if (divingCylinderSets.length === 0) return [];
+
+  const [divingCylinders] = await transaction.raw<
+    DBResponse<CylinderWithSetId[]>
+  >(
+    `
+    SELECT
+      dc.id,
+      dc.volume,
+      dc.pressure,
+      dc.material,
+      dc.serial_number AS serialNumber,
+      dc.inspection,
+      dcts.cylinder_set AS cylinderSetId
+    FROM diving_cylinder_to_set dcts
+    JOIN diving_cylinder dc ON 
+      dcts.cylinder = dc.id
+    WHERE
+      dcts.cylinder_set IN (${divingCylinderSets.map(() => '?').join(',')})
+  `,
+    [...divingCylinderSets.map((dcs) => dcs.id)]
+  );
+
+  return divingCylinderSets.map((dcts) => ({
+    ...dcts,
+    cylinders: [
+      ...divingCylinders.filter((dc) => dc.cylinderSetId === dcts.id),
+    ],
+  }));
+};
+
+/**
+ * @deprecated
+ */
 const selectSingleCylinderSet = async (
   trx: Knex.Transaction,
   set: CylinderSet,
@@ -60,6 +121,9 @@ const selectSingleCylinderSet = async (
     .where('diving_cylinder_to_set.cylinder_set', id ?? '');
 };
 
+/**
+ * @deprecated
+ */
 export const selectCylinderSet = async (
   trx: Knex.Transaction,
   id: string

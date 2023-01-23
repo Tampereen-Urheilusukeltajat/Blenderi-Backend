@@ -4,7 +4,7 @@ import { Type } from '@sinclair/typebox';
 import {
   cylinderSetIdParamsPayload,
   CylinderSetIdParamsPayload,
-} from '../../types/cylinderSet.types';
+} from '../../types/divingCylinderSet.types';
 import { deleteCylinderSet } from '../../lib/queries/divingCylinderSet';
 
 const deleteSetReply = Type.Object({

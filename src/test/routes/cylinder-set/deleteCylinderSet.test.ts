@@ -13,7 +13,7 @@ import {
 } from '../../../lib/utils/testUtils';
 import { knexController } from '../../../database/database';
 import { buildServer } from '../../../server';
-import { Cylinder, CylinderSet } from '../../../types/cylinderSet.types';
+import { Cylinder, CylinderSet } from '../../../types/divingCylinderSet.types';
 
 describe('delete cylinder set', () => {
   const getTestInstance = async (): Promise<FastifyInstance> =>

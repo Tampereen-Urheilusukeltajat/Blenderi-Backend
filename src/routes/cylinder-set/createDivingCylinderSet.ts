@@ -10,7 +10,7 @@ import {
   CylinderSet,
   createCylinderSet,
   CreateCylinderSet,
-} from '../../types/cylinderSet.types';
+} from '../../types/divingCylinderSet.types';
 
 const schema = {
   description: 'Creates a diving cylinder set',

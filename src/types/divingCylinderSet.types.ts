@@ -60,10 +60,8 @@ export type CylinderSetIdParamsPayload = Static<
   typeof cylinderSetIdParamsPayload
 >;
 
-export const cylinderSetOwnerParamsPayload = Type.Object({
-  cylinderSetOwner: Type.Optional(Type.String({ format: 'uuid' })),
+export const userIdQueryString = Type.Object({
+  userId: Type.String({ format: 'uuid' }),
 });
 
-export type CylinderSetOwnerParamsPayload = Static<
-  typeof cylinderSetOwnerParamsPayload
->;
+export type UserIdQueryString = Static<typeof userIdQueryString>;
