@@ -3,3 +3,5 @@ export type RequestError = {
   error: string;
   message?: string;
 };
+
+export type DBResponse<T> = T[];

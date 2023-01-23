@@ -80,3 +80,9 @@ const hashObj = Type.Object({
 });
 
 export type HashObj = Static<typeof hashObj>;
+
+export const userIdQueryString = Type.Object({
+  userId: Type.String({ format: 'uuid' }),
+});
+
+export type UserIdQueryString = Static<typeof userIdQueryString>;

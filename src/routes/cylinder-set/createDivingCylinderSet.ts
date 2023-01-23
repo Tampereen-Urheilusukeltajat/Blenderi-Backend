@@ -5,19 +5,19 @@ import { knexController } from '../../database/database';
 import { errorHandler } from '../../lib/utils/errorHandler';
 import { selectCylinderSet } from '../../lib/queries/divingCylinderSet';
 import {
-  Cylinder,
-  cylinderSet,
-  CylinderSet,
-  createCylinderSet,
-  CreateCylinderSet,
-} from '../../types/cylinderSet.types';
+  CreateDivingCylinderSet,
+  createDivingCylinderSet,
+  DivingCylinder,
+  DivingCylinderSet,
+  divingCylinderSet,
+} from '../../types/divingCylinderSet.types';
 
 const schema = {
   description: 'Creates a diving cylinder set',
   tags: ['Cylinder set'],
-  body: createCylinderSet,
+  body: createDivingCylinderSet,
   response: {
-    201: cylinderSet,
+    201: divingCylinderSet,
     400: { $ref: 'error' },
     401: { $ref: 'error' },
     403: { $ref: 'error' },
@@ -28,7 +28,7 @@ const schema = {
 
 const handler = async (
   request: FastifyRequest<{
-    Body: CreateCylinderSet;
+    Body: CreateDivingCylinderSet;
   }>,
   reply: FastifyReply
 ): Promise<void> => {
@@ -59,7 +59,7 @@ const handler = async (
         const cylinderId = uuid();
         const inspection = new Date(cylinder.inspection);
 
-        await trx('diving_cylinder').insert<Cylinder>({
+        await trx('diving_cylinder').insert<DivingCylinder>({
           id: cylinderId,
           volume: cylinder.volume,
           pressure: cylinder.pressure,
@@ -74,7 +74,7 @@ const handler = async (
         });
       }
 
-      const resultBody: CylinderSet | undefined = await selectCylinderSet(
+      const resultBody: DivingCylinderSet | undefined = await selectCylinderSet(
         trx,
         setId
       );

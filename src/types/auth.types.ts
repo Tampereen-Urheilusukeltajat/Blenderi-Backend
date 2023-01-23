@@ -31,6 +31,8 @@ export type AuthUser = {
   id: string;
   iat: number;
   exp: number;
+  isAdmin: boolean;
+  isBlender: boolean;
 };
 
 export const logoutRequestBody = Type.Object({

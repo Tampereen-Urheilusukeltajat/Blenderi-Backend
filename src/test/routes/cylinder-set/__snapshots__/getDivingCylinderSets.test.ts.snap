@@ -1,0 +1,59 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`get cylinder sets returns users diving cylinder sets 1`] = `
+[
+  {
+    "cylinders": [
+      {
+        "id": "a62ab1b8-4f88-11ed-aa8f-a7bc5ca309a3",
+        "inspection": "2010-11-11T00:00:00.000Z",
+        "material": "carbon fiber",
+        "pressure": 200,
+        "serialNumber": "aa",
+        "volume": 10,
+      },
+    ],
+    "id": "a4e1035e-f36e-4056-9a1b-5925a3c5793e",
+    "name": "aa",
+    "owner": "a59faf66-4f75-11ed-98ae-77941df77788",
+  },
+  {
+    "cylinders": [
+      {
+        "id": "b62ab1b8-4f88-11ed-aa8f-a7bc5ca309a3",
+        "inspection": "2010-11-11T00:00:00.000Z",
+        "material": "carbon fiber",
+        "pressure": 200,
+        "serialNumber": "bb",
+        "volume": 10,
+      },
+    ],
+    "id": "b4e1035e-f36e-4056-9a1b-5925a3c5793e",
+    "name": "bb",
+    "owner": "a59faf66-4f75-11ed-98ae-77941df77788",
+  },
+  {
+    "cylinders": [
+      {
+        "id": "1e54c95c-c2fe-4d86-9406-c88f45c0bde9",
+        "inspection": "2010-11-11T00:00:00.000Z",
+        "material": "steel",
+        "pressure": 200,
+        "serialNumber": "koodi",
+        "volume": 10,
+      },
+      {
+        "id": "362ab1b8-4f88-11ed-aa8f-a7bc5ca309a3",
+        "inspection": "2010-11-11T00:00:00.000Z",
+        "material": "carbon fiber",
+        "pressure": 200,
+        "serialNumber": "toinenkoodi",
+        "volume": 10,
+      },
+    ],
+    "id": "f4e1035e-f36e-4056-9a1b-5925a3c5793e",
+    "name": "pullonnimi",
+    "owner": "a59faf66-4f75-11ed-98ae-77941df77788",
+  },
+]
+`;
