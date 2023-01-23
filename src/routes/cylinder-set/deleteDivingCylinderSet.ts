@@ -2,8 +2,8 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { errorHandler } from '../../lib/utils/errorHandler';
 import { Type } from '@sinclair/typebox';
 import {
-  cylinderSetIdParamsPayload,
-  CylinderSetIdParamsPayload,
+  DivingCylinderSetIdParamsPayload,
+  divingCylinderSetIdParamsPayload,
 } from '../../types/divingCylinderSet.types';
 import { deleteCylinderSet } from '../../lib/queries/divingCylinderSet';
 
@@ -15,7 +15,7 @@ const deleteSetReply = Type.Object({
 const schema = {
   description: 'Deletes a diving cylinder set',
   tags: ['Cylinder set'],
-  params: cylinderSetIdParamsPayload,
+  params: divingCylinderSetIdParamsPayload,
   response: {
     200: deleteSetReply,
     400: { $ref: 'error' },
@@ -28,13 +28,13 @@ const schema = {
 
 const handler = async (
   request: FastifyRequest<{
-    Params: CylinderSetIdParamsPayload;
+    Params: DivingCylinderSetIdParamsPayload;
   }>,
   reply: FastifyReply
 ): Promise<void> => {
   // TODO: Authorization
 
-  const setID = request.params.cylinderSetId;
+  const setID = request.params.divingCylinderSetId;
 
   // Delete cylinder set.
   const res = await deleteCylinderSet(setID);
@@ -49,7 +49,7 @@ const handler = async (
 export default async (fastify: FastifyInstance): Promise<void> => {
   fastify.route({
     method: 'DELETE',
-    url: '/:cylinderSetId',
+    url: '/:divingCylinderSetId',
     preValidation: [fastify['authenticate']],
     handler,
     schema,

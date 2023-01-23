@@ -1,6 +1,6 @@
 import { Type, Static } from '@sinclair/typebox';
 
-export const createCylinderBody = Type.Object({
+export const createDivingCylinderBody = Type.Object({
   volume: Type.Integer({ exclusiveMinimum: 0, maximum: 100 }),
   pressure: Type.Integer({ exclusiveMinimum: 0, maximum: 500 }),
   material: Type.String(),
@@ -8,16 +8,16 @@ export const createCylinderBody = Type.Object({
   inspection: Type.String(),
 });
 
-export type CreateCylinderBody = Static<typeof createCylinderBody>;
+export type CreateDivingCylinderBody = Static<typeof createDivingCylinderBody>;
 
-export const cylinder = Type.Intersect([
+export const divingCylinder = Type.Intersect([
   Type.Object({ id: Type.String({ format: 'uuid' }) }),
-  createCylinderBody,
+  createDivingCylinderBody,
 ]);
 
-export type Cylinder = Static<typeof cylinder>;
+export type DivingCylinder = Static<typeof divingCylinder>;
 
-export const updateCylinderBody = Type.Object({
+export const updateDivingCylinderBody = Type.Object({
   id: Type.String({ format: 'uuid' }),
   volume: Type.Optional(Type.Integer({ exclusiveMinimum: 0, maximum: 100 })),
   pressure: Type.Optional(Type.Integer({ exclusiveMinimum: 0, maximum: 500 })),
@@ -26,42 +26,41 @@ export const updateCylinderBody = Type.Object({
   inspection: Type.Optional(Type.String({ format: 'date' })),
 });
 
-export type UpdateCylinderBody = Static<typeof updateCylinderBody>;
+export type UpdateDivingCylinderBody = Static<typeof updateDivingCylinderBody>;
 
-export const createCylinderSet = Type.Object({
+export const createDivingCylinderSet = Type.Object({
   owner: Type.String({ format: 'uuid' }),
   name: Type.String({ minLength: 1, maxLength: 255 }),
-  cylinders: Type.Array(createCylinderBody, { minItems: 1 }),
+  cylinders: Type.Array(createDivingCylinderBody, { minItems: 1 }),
 });
 
-export type CreateCylinderSet = Static<typeof createCylinderSet>;
+export type CreateDivingCylinderSet = Static<typeof createDivingCylinderSet>;
 
-export const cylinderSet = Type.Object({
+export const divingCylinderSet = Type.Object({
   id: Type.String({ format: 'uuid' }),
   owner: Type.String({ format: 'uuid' }),
   name: Type.String(),
-  cylinders: Type.Array(cylinder),
+  cylinders: Type.Array(divingCylinder),
 });
 
-export type CylinderSet = Static<typeof cylinderSet>;
+export type DivingCylinderSet = Static<typeof divingCylinderSet>;
 
-export const updateCylinderSet = Type.Object({
+export const updateDivingCylinderSet = Type.Object({
   name: Type.Optional(Type.String({ minLength: 1, maxLength: 255 })),
-  cylinders: Type.Optional(Type.Array(updateCylinderBody)),
+  cylinders: Type.Optional(Type.Array(updateDivingCylinderBody)),
 });
 
-export type UpdateCylinderSet = Static<typeof updateCylinderSet>;
+export type UpdateDivingCylinderSet = Static<typeof updateDivingCylinderSet>;
 
-export const cylinderSetIdParamsPayload = Type.Object({
-  cylinderSetId: Type.String({ format: 'uuid' }),
+export const divingCylinderSetIdParamsPayload = Type.Object({
+  divingCylinderSetId: Type.String({ format: 'uuid' }),
 });
 
-export type CylinderSetIdParamsPayload = Static<
-  typeof cylinderSetIdParamsPayload
+export type DivingCylinderSetIdParamsPayload = Static<
+  typeof divingCylinderSetIdParamsPayload
 >;
 
-export const userIdQueryString = Type.Object({
-  userId: Type.String({ format: 'uuid' }),
-});
-
-export type UserIdQueryString = Static<typeof userIdQueryString>;
+export type DivingCylinderSetBasicInfo = Omit<DivingCylinderSet, 'cylinders'>;
+export type DivingCylinderWithSetId = DivingCylinder & {
+  cylinderSetId: string;
+};

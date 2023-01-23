@@ -13,7 +13,10 @@ import {
 } from '../../../lib/utils/testUtils';
 import { knexController } from '../../../database/database';
 import { buildServer } from '../../../server';
-import { Cylinder, CylinderSet } from '../../../types/divingCylinderSet.types';
+import {
+  DivingCylinder,
+  DivingCylinderSet,
+} from '../../../types/divingCylinderSet.types';
 
 describe('delete cylinder set', () => {
   const getTestInstance = async (): Promise<FastifyInstance> =>
@@ -62,7 +65,7 @@ describe('delete cylinder set', () => {
     // Set is deleted from diving_cylinder_set
     const setResponse = await knexController
       .select('id')
-      .from<CylinderSet>('diving_cylinder_set')
+      .from<DivingCylinderSet>('diving_cylinder_set')
       .where('id', cylinderSetId);
 
     expect(setResponse).toEqual([]);
@@ -84,7 +87,7 @@ describe('delete cylinder set', () => {
     ];
     const cylinderResponse = await knexController
       .select('id')
-      .from<Cylinder>('diving_cylinder')
+      .from<DivingCylinder>('diving_cylinder')
       .whereIn('id', cylinders);
 
     // Before delete there is 4 cylinders and 2 should be deleted.

@@ -3,22 +3,22 @@ import { knexController } from '../../database/database';
 import { errorHandler } from '../../lib/utils/errorHandler';
 import { selectCylinderSet } from '../../lib/queries/divingCylinderSet';
 import {
-  cylinderSet,
-  CylinderSet,
-  updateCylinderSet,
-  UpdateCylinderSet,
-  UpdateCylinderBody,
-  cylinderSetIdParamsPayload,
-  CylinderSetIdParamsPayload,
+  DivingCylinderSet,
+  divingCylinderSet,
+  divingCylinderSetIdParamsPayload,
+  DivingCylinderSetIdParamsPayload,
+  UpdateDivingCylinderBody,
+  updateDivingCylinderSet,
+  UpdateDivingCylinderSet,
 } from '../../types/divingCylinderSet.types';
 
 const schema = {
   description: 'Updates a diving cylinder set',
   tags: ['Cylinder set'],
-  body: updateCylinderSet,
-  params: cylinderSetIdParamsPayload,
+  body: updateDivingCylinderSet,
+  params: divingCylinderSetIdParamsPayload,
   response: {
-    200: cylinderSet,
+    200: divingCylinderSet,
     400: { $ref: 'error' },
     401: { $ref: 'error' },
     403: { $ref: 'error' },
@@ -30,14 +30,14 @@ const schema = {
 
 const handler = async (
   request: FastifyRequest<{
-    Body: UpdateCylinderSet;
-    Params: CylinderSetIdParamsPayload;
+    Body: UpdateDivingCylinderSet;
+    Params: DivingCylinderSetIdParamsPayload;
   }>,
   reply: FastifyReply
 ): Promise<void> => {
   // TODO: Authorization
 
-  const setId = request.params.cylinderSetId;
+  const setId = request.params.divingCylinderSetId;
 
   // validate cylinder data
   if (request.body.cylinders !== undefined) {
@@ -58,7 +58,7 @@ const handler = async (
     .transaction(async (trx) => {
       const updateResult = await trx('diving_cylinder_set')
         .where('id', setId)
-        .update<UpdateCylinderSet>({
+        .update<UpdateDivingCylinderSet>({
           name: request.body.name,
           updated_at: trx.fn.now(),
         });
@@ -78,7 +78,7 @@ const handler = async (
 
           await trx('diving_cylinder')
             .where('id', cylinder.id)
-            .update<UpdateCylinderBody>({
+            .update<UpdateDivingCylinderBody>({
               volume: cylinder.volume,
               pressure: cylinder.pressure,
               material: cylinder.material,
@@ -88,7 +88,7 @@ const handler = async (
         }
       }
 
-      const resultBody: CylinderSet | undefined = await selectCylinderSet(
+      const resultBody: DivingCylinderSet | undefined = await selectCylinderSet(
         trx,
         setId
       );
@@ -114,7 +114,7 @@ const handler = async (
 export default async (fastify: FastifyInstance): Promise<void> => {
   fastify.route({
     method: 'PATCH',
-    url: '/:cylinderSetId',
+    url: '/:divingCylinderSetId',
     preValidation: [fastify['authenticate']],
     handler,
     schema,

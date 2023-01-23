@@ -1,20 +1,17 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { Type } from '@sinclair/typebox';
 
-import {
-  cylinderSet,
-  UserIdQueryString,
-  userIdQueryString,
-} from '../../types/divingCylinderSet.types';
 import { getUsersDivingCylinderSets } from '../../lib/queries/divingCylinderSet';
 import { errorHandler } from '../../lib/utils/errorHandler';
+import { UserIdQueryString, userIdQueryString } from '../../types/user.types';
+import { divingCylinderSet } from '../../types/divingCylinderSet.types';
 
 const schema = {
   description: 'Selects a diving cylinder set by given owner.',
   tags: ['Cylinder set'],
   query: userIdQueryString,
   response: {
-    200: Type.Array(cylinderSet),
+    200: Type.Array(divingCylinderSet),
     401: { $ref: 'error' },
     403: { $ref: 'error' },
   },
