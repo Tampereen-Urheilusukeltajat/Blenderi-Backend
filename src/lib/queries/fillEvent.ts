@@ -2,7 +2,7 @@ import { knexController } from '../../database/database';
 import {
   CreateFillEventBody,
   FillEventGasFill,
-  FillEventResponse,
+  GetFillEventsResponse,
   FillEvent,
 } from '../../types/fillEvent.types';
 import { AuthUser } from '../../types/auth.types';
@@ -49,7 +49,7 @@ const getAirGasId = async (trx: Knex.Transaction): Promise<string> => {
 
 export const getFillEvents = async (
   userId: string
-): Promise<FillEventResponse[]> => {
+): Promise<GetFillEventsResponse[]> => {
   const trx = await knexController.transaction();
 
   const fillQuery = await trx<FillEvent[]>('fill_event')
@@ -63,12 +63,14 @@ export const getFillEvents = async (
     );
 
   const result = await Promise.all(
-    fillQuery.map(async (fillEvent): Promise<FillEventResponse> => {
+    fillQuery.map(async (fillEvent): Promise<GetFillEventsResponse> => {
       const price = await calcTotalCost(trx, fillEvent.id);
 
       return {
-        ...fillEvent,
-        storageCylinderUsageArr: [],
+        userId: fillEvent.userId,
+        cylinderSetId: fillEvent.cylinderSetId,
+        gasMixture: fillEvent.gasMixture,
+        description: fillEvent.description,
         price,
       };
     })
