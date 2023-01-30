@@ -2,6 +2,8 @@ import { knexController } from '../../database/database';
 import {
   CreateFillEventBody,
   FillEventGasFill,
+  FillEventResponse,
+  FillEvent,
 } from '../../types/fillEvent.types';
 import { AuthUser } from '../../types/auth.types';
 import { User } from '../../types/user.types';
@@ -45,6 +47,37 @@ const getAirGasId = async (trx: Knex.Transaction): Promise<string> => {
   return air.id;
 };
 
+export const getFillEvents = async (
+  userId: string
+): Promise<FillEventResponse[]> => {
+  const trx = await knexController.transaction();
+
+  const fillQuery = await trx<FillEvent[]>('fill_event')
+    .where('user_id', userId)
+    .select(
+      'id',
+      'user_id as userId',
+      'cylinder_set_id as cylinderSetId',
+      'gas_mixture as gasMixture',
+      'description'
+    );
+
+  const result = await Promise.all(
+    fillQuery.map(async (fillEvent): Promise<FillEventResponse> => {
+      const price = await calcTotalCost(trx, fillEvent.id);
+
+      return {
+        ...fillEvent,
+        storageCylinderUsageArr: [],
+        price,
+      };
+    })
+  );
+
+  await trx.commit();
+  return result;
+};
+
 export const createFillEvent = async (
   authUser: AuthUser,
   body: CreateFillEventBody
@@ -71,7 +104,7 @@ export const createFillEvent = async (
 
   if (!user.isBlender && storageCylinderUsageArr.length !== 0) {
     await trx.rollback();
-    return { status: 403, message: 'User does not have blender priviledges' };
+    return { status: 403, message: 'User does not have blender privileges' };
   }
 
   const set = await selectCylinderSet(trx, cylinderSetId);
