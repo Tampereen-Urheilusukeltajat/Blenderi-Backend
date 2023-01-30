@@ -220,6 +220,6 @@ export const calcTotalCost = async (
       return fill.volumeLitres * price.priceEurCents;
     })
   );
-  const totalPrice = pricesPerGas.reduce((acc, curValue) => acc + curValue);
+  const totalPrice = pricesPerGas.reduce((acc, curValue) => acc + curValue, 0);
   return totalPrice;
 };
