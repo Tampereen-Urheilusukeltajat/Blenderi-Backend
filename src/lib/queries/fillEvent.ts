@@ -2,6 +2,7 @@ import { knexController } from '../../database/database';
 import {
   CreateFillEventBody,
   FillEventGasFill,
+  GetFillEventsResponse,
 } from '../../types/fillEvent.types';
 import { AuthUser } from '../../types/auth.types';
 import { User } from '../../types/user.types';
@@ -45,6 +46,43 @@ const getAirGasId = async (trx: Knex.Transaction): Promise<string> => {
   return air.id;
 };
 
+export const getFillEvents = async (
+  userId: string
+): Promise<GetFillEventsResponse[]> => {
+  const trx = await knexController.transaction();
+
+  const fillQuery = await trx('fill_event')
+    .where('user_id', userId)
+    .innerJoin(
+      'diving_cylinder_set',
+      'fill_event.cylinder_set_id',
+      'diving_cylinder_set.id'
+    )
+    .select(
+      'fill_event.id',
+      'fill_event.user_id as userId',
+      'diving_cylinder_set.name as cylinderSetName',
+      'diving_cylinder_set.id as cylinderSetId',
+      'fill_event.gas_mixture as gasMixture',
+      'fill_event.description',
+      'fill_event.created_at as createdAt'
+    );
+
+  const result = await Promise.all(
+    fillQuery.map(async (fillEvent): Promise<GetFillEventsResponse> => {
+      const price = await calcTotalCost(trx, fillEvent.id);
+
+      return {
+        ...fillEvent,
+        price,
+      };
+    })
+  );
+
+  await trx.commit();
+  return result;
+};
+
 export const createFillEvent = async (
   authUser: AuthUser,
   body: CreateFillEventBody
@@ -71,7 +109,7 @@ export const createFillEvent = async (
 
   if (!user.isBlender && storageCylinderUsageArr.length !== 0) {
     await trx.rollback();
-    return { status: 403, message: 'User does not have blender priviledges' };
+    return { status: 403, message: 'User does not have blender privileges' };
   }
 
   const set = await selectCylinderSet(trx, cylinderSetId);
@@ -185,6 +223,6 @@ export const calcTotalCost = async (
       return fill.volumeLitres * price.priceEurCents;
     })
   );
-  const totalPrice = pricesPerGas.reduce((acc, curValue) => acc + curValue);
-  return totalPrice;
+
+  return pricesPerGas.reduce((acc, curValue) => acc + curValue, 0);
 };

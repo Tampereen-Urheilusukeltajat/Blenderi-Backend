@@ -43,3 +43,16 @@ export const fillEventGasFill = Type.Object({
 });
 
 export type FillEventGasFill = Static<typeof fillEventGasFill>;
+
+export const getFillEventsResponse = Type.Object({
+  id: Type.String(),
+  userId: Type.String({ format: 'uuid' }),
+  cylinderSetId: Type.String({ format: 'uuid' }),
+  cylinderSetName: Type.String(),
+  gasMixture: Type.String(),
+  description: Type.Optional(Type.String({ maxLength: 1024 })),
+  price: Type.Integer({ minimum: 0 }),
+  createdAt: Type.String({ format: 'date' }),
+});
+
+export type GetFillEventsResponse = Static<typeof getFillEventsResponse>;
