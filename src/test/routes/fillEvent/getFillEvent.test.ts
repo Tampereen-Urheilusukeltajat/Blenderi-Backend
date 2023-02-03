@@ -58,6 +58,7 @@ describe('get fill events of the user', () => {
       expect(resBody).toMatchInlineSnapshot(`
         [
           {
+            "createdAt": "2023-01-30",
             "cylinderSetId": "f4e1035e-f36e-4056-9a1b-5925a3c5793e",
             "cylinderSetName": "pullosetti_1",
             "description": "täyttö sujui hyvin",

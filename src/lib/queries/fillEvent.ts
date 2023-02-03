@@ -64,7 +64,8 @@ export const getFillEvents = async (
       'diving_cylinder_set.name as cylinderSetName',
       'diving_cylinder_set.id as cylinderSetId',
       'fill_event.gas_mixture as gasMixture',
-      'fill_event.description'
+      'fill_event.description',
+      'fill_event.created_at as createdAt'
     );
 
   const result = await Promise.all(
