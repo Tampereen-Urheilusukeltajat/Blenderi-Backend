@@ -45,6 +45,7 @@ export const fillEventGasFill = Type.Object({
 export type FillEventGasFill = Static<typeof fillEventGasFill>;
 
 export const getFillEventsResponse = Type.Object({
+  id: Type.String(),
   userId: Type.String({ format: 'uuid' }),
   cylinderSetId: Type.String({ format: 'uuid' }),
   cylinderSetName: Type.String(),

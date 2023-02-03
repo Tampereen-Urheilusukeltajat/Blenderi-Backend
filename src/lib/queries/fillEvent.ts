@@ -72,11 +72,7 @@ export const getFillEvents = async (
       const price = await calcTotalCost(trx, fillEvent.id);
 
       return {
-        userId: fillEvent.userId,
-        cylinderSetId: fillEvent.cylinderSetId,
-        cylinderSetName: fillEvent.cylinderSetName,
-        gasMixture: fillEvent.gasMixture,
-        description: fillEvent.description,
+        ...fillEvent,
         price,
       };
     })

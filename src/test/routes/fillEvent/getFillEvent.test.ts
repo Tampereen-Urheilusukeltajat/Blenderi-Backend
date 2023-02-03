@@ -62,6 +62,7 @@ describe('get fill events of the user', () => {
             "cylinderSetName": "pullosetti_1",
             "description": "täyttö sujui hyvin",
             "gasMixture": "EAN21",
+            "id": "2",
             "price": 0,
             "userId": "a58fff36-4f75-11ed-96ae-77941df88822",
           },
