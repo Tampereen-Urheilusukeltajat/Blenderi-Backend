@@ -21,7 +21,7 @@ const handler = async (
   reply: FastifyReply
 ): Promise<void> => {
   const fills: GetFillEventsResponse[] = await getFillEvents(req.user.id);
-  await reply.send(fills);
+  return reply.send(fills);
 };
 
 export default async (fastify: FastifyInstance): Promise<void> => {

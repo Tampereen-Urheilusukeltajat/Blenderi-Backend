@@ -3,7 +3,6 @@ import {
   CreateFillEventBody,
   FillEventGasFill,
   GetFillEventsResponse,
-  FillEvent,
 } from '../../types/fillEvent.types';
 import { AuthUser } from '../../types/auth.types';
 import { User } from '../../types/user.types';
@@ -52,14 +51,20 @@ export const getFillEvents = async (
 ): Promise<GetFillEventsResponse[]> => {
   const trx = await knexController.transaction();
 
-  const fillQuery = await trx<FillEvent[]>('fill_event')
+  const fillQuery = await trx('fill_event')
     .where('user_id', userId)
+    .innerJoin(
+      'diving_cylinder_set',
+      'fill_event.cylinder_set_id',
+      'diving_cylinder_set.id'
+    )
     .select(
-      'id',
-      'user_id as userId',
-      'cylinder_set_id as cylinderSetId',
-      'gas_mixture as gasMixture',
-      'description'
+      'fill_event.id',
+      'fill_event.user_id as userId',
+      'diving_cylinder_set.name as cylinderSetName',
+      'diving_cylinder_set.id as cylinderSetId',
+      'fill_event.gas_mixture as gasMixture',
+      'fill_event.description'
     );
 
   const result = await Promise.all(
@@ -69,6 +74,7 @@ export const getFillEvents = async (
       return {
         userId: fillEvent.userId,
         cylinderSetId: fillEvent.cylinderSetId,
+        cylinderSetName: fillEvent.cylinderSetName,
         gasMixture: fillEvent.gasMixture,
         description: fillEvent.description,
         price,
@@ -220,6 +226,6 @@ export const calcTotalCost = async (
       return fill.volumeLitres * price.priceEurCents;
     })
   );
-  const totalPrice = pricesPerGas.reduce((acc, curValue) => acc + curValue, 0);
-  return totalPrice;
+
+  return pricesPerGas.reduce((acc, curValue) => acc + curValue, 0);
 };
