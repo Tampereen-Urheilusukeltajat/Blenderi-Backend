@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { knexController } from '../../database/database';
-import { deleteCylinderSet } from '../../lib/queries/divingCylinderSet';
+import { archiveDivingCylinderSet } from '../../lib/queries/divingCylinderSet';
 import {
   userIdParamsPayload,
   UserIdParamsPayload,
@@ -25,7 +25,6 @@ const handler = async (
   req: FastifyRequest<{ Params: UserIdParamsPayload }>,
   reply: FastifyReply
 ): Promise<void> => {
-  // TODO: Authorization
   const userId: string = req.params.userId;
   const result = await knexController('user').where({ id: userId }).update({
     email: null,
@@ -48,7 +47,7 @@ const handler = async (
     .select('id');
 
   cylinderIds.map(async (dataPacket) => {
-    await deleteCylinderSet(dataPacket.id);
+    await archiveDivingCylinderSet(dataPacket.id);
   });
 
   const user = await knexController('user')
@@ -61,6 +60,7 @@ export default async (fastify: FastifyInstance): Promise<void> => {
   fastify.route({
     method: 'DELETE',
     url: '/:userId',
+    preValidation: [fastify['authenticate']],
     handler,
     schema,
   });
