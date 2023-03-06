@@ -64,9 +64,9 @@ describe('Get enriched gases', () => {
       expect(body[0]).toMatchInlineSnapshot(`
         {
           "activeTo": "9999-12-31T23:59:59.000Z",
-          "gasId": 1,
+          "gasId": "1",
           "gasName": "Air",
-          "gasPriceId": 1,
+          "gasPriceId": "1",
           "priceEurCents": 0,
         }
       `);
