@@ -16,7 +16,6 @@ const schema = {
     400: { $ref: 'error' },
     401: { $ref: 'error' },
     403: { $ref: 'error' },
-    500: { $ref: 'error' },
   },
 };
 
