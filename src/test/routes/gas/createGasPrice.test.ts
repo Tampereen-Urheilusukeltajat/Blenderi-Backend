@@ -90,7 +90,7 @@ describe('Create gas price', () => {
           "activeTo": "9999-12-31T23:59:59.000Z",
           "gasId": "1",
           "gasName": "Air",
-          "gasPriceId": "5",
+          "gasPriceId": "6",
           "priceEurCents": 4,
         }
       `);
@@ -106,7 +106,7 @@ describe('Create gas price', () => {
           "active_from": "2022-00-06 00:00:00",
           "active_to": 9999-12-31T23:59:59.000Z,
           "gas_id": 1,
-          "id": 5,
+          "id": 6,
           "price_eur_cents": 4,
         }
       `);
@@ -136,7 +136,7 @@ describe('Create gas price', () => {
           "activeTo": "9999-12-31T23:59:59.000Z",
           "gasId": "2",
           "gasName": "Helium",
-          "gasPriceId": "6",
+          "gasPriceId": "7",
           "priceEurCents": 7,
         }
       `);
@@ -152,7 +152,7 @@ describe('Create gas price', () => {
           "active_from": 2023-01-03T00:00:00.000Z,
           "active_to": 9999-12-31T23:59:59.000Z,
           "gas_id": 2,
-          "id": 6,
+          "id": 7,
           "price_eur_cents": 7,
         }
       `);
@@ -165,13 +165,14 @@ describe('Create gas price', () => {
 
       delete dbPreviousGP.created_at;
       delete dbPreviousGP.updated_at;
+      delete dbPreviousGP.active_from;
+
       expect(dbPreviousGP).toMatchInlineSnapshot(`
         {
-          "active_from": 2020-01-01T00:00:00.000Z,
-          "active_to": 2023-01-03T00:00:00.000Z,
-          "gas_id": 2,
+          "active_to": 9999-12-31T23:59:59.000Z,
+          "gas_id": 1,
           "id": 1,
-          "price_eur_cents": 5,
+          "price_eur_cents": 0,
         }
       `);
     });

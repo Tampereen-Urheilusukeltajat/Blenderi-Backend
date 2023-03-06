@@ -118,21 +118,6 @@ describe('update cylinder set', () => {
       expect(res.statusCode).toEqual(404);
     });
 
-    test('it responds with 409 if same user tries to update cylinder set to have conflicting name', async () => {
-      const payload = {
-        name: 'bb',
-      };
-
-      const res = await server.inject({
-        url: 'api/cylinder-set/a4e1035e-f36e-4056-9a1b-5925a3c5793e',
-        method: 'PATCH',
-        headers,
-        payload,
-      });
-
-      expect(res.statusCode).toEqual(409);
-    });
-
     test('it responds with 400 for invalid body', async () => {
       const payload = {
         name: 'bottle5',

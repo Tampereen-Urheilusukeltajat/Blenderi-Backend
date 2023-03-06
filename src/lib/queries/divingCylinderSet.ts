@@ -9,38 +9,50 @@ import {
 import { DBResponse } from '../../types/general.types';
 import { log } from '../utils/log';
 
-export const deleteCylinderSet = async (
-  setID: string
-): Promise<{ status: number; message: string }> => {
-  const knexRes = await knexController.transaction(async (trx) => {
-    // Get id's of cylinders that belong to given set.
-    const rowData = await trx
-      .select('cylinder')
-      .from<DivingCylinder>('diving_cylinder_to_set')
-      .where('cylinder_set', setID);
+export const divingCylinderSetExists = async (
+  divingCylinderSetId: string,
+  userId: string,
+  trx?: Knex.Transaction
+): Promise<boolean> => {
+  const transaction = trx ?? knexController;
 
-    if (rowData.length === 0) {
-      return { status: 404, message: 'No set with given id found.' };
+  const [exists] = await transaction.raw<DBResponse<number[]>>(
+    `
+    SELECT
+      1
+    FROM diving_cylinder_set
+    WHERE
+      id = :divingCylinderSetId AND
+      owner = :userId
+  `,
+    {
+      divingCylinderSetId,
+      userId,
     }
+  );
 
-    // Delete cylinders from set.
-    await trx('diving_cylinder_to_set').where('cylinder_set', setID).del();
+  if (exists.length) return true;
 
-    // Delete single cylinders.
-    // Knex queries return RowDataPacket obj's, and can't get them to work with whereIn :)
-    const cylinders: string[] = Object.values(
-      JSON.parse(JSON.stringify(rowData))
-    );
+  return false;
+};
 
-    await trx.from('diving_cylinder').whereIn('id', cylinders).del();
+export const archiveDivingCylinderSet = async (
+  divingCylinderSetId: string,
+  trx?: Knex.Transaction
+): Promise<void> => {
+  const transaction = trx ?? knexController;
 
-    // Delete set.
-    await trx('diving_cylinder_set').where('id', setID).del();
-
-    return { status: 200, message: 'Set deleted successfully.' };
-  });
-
-  return knexRes;
+  await transaction.raw(
+    `
+    UPDATE diving_cylinder_set
+    SET archived = true
+    WHERE
+      id = :divingCylinderSetId
+  `,
+    {
+      divingCylinderSetId,
+    }
+  );
 };
 
 export const getUsersDivingCylinderSets = async (
@@ -59,7 +71,8 @@ export const getUsersDivingCylinderSets = async (
       name
     FROM diving_cylinder_set
     WHERE
-      owner = :userId
+      owner = :userId AND
+      archived = 0
   `,
     {
       userId,
