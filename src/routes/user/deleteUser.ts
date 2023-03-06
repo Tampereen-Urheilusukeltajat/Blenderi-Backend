@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { knexController } from '../../database/database';
-import { deleteCylinderSet } from '../../lib/queries/divingCylinderSet';
+import { archiveDivingCylinderSet } from '../../lib/queries/divingCylinderSet';
 import {
   userIdParamsPayload,
   UserIdParamsPayload,
@@ -25,35 +25,43 @@ const handler = async (
   req: FastifyRequest<{ Params: UserIdParamsPayload }>,
   reply: FastifyReply
 ): Promise<void> => {
-  // TODO: Authorization
-  const userId: string = req.params.userId;
-  const result = await knexController('user').where({ id: userId }).update({
+  const { userId } = req.params;
+
+  const transaction = await knexController.transaction();
+
+  const result = await transaction('user').where({ id: userId }).update({
     email: null,
     phone: null,
     forename: null,
     surname: null,
     is_admin: false,
     is_blender: false,
-    deleted_at: knexController.fn.now(),
+    deleted_at: transaction.fn.now(),
   });
   if (result === 0) {
+    await transaction.rollback();
     return reply.code(404).send({
       statusCode: 404,
       error: 'Not Found',
       message: 'User not found.',
     });
   }
-  const cylinderIds = await knexController('diving_cylinder_set')
+  const cylinderIds = await transaction('diving_cylinder_set')
     .where({ owner: userId })
     .select('id');
 
+  const promises: Array<Promise<void>> = [];
   cylinderIds.map(async (dataPacket) => {
-    await deleteCylinderSet(dataPacket.id);
+    promises.push(archiveDivingCylinderSet(dataPacket.id, transaction));
   });
 
-  const user = await knexController('user')
+  await Promise.all(promises);
+
+  const user = await transaction('user')
     .where({ id: userId })
     .select('id as userId', 'deleted_at as deletedAt');
+
+  await transaction.commit();
   return reply.code(200).send(...user);
 };
 
@@ -61,6 +69,7 @@ export default async (fastify: FastifyInstance): Promise<void> => {
   fastify.route({
     method: 'DELETE',
     url: '/:userId',
+    preValidation: [fastify['authenticate']],
     handler,
     schema,
   });

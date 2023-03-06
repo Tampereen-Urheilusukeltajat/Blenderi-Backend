@@ -1,23 +1,25 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { errorHandler } from '../../lib/utils/errorHandler';
 import { Type } from '@sinclair/typebox';
 import {
   DivingCylinderSetIdParamsPayload,
   divingCylinderSetIdParamsPayload,
 } from '../../types/divingCylinderSet.types';
-import { deleteCylinderSet } from '../../lib/queries/divingCylinderSet';
+import {
+  archiveDivingCylinderSet,
+  divingCylinderSetExists,
+} from '../../lib/queries/divingCylinderSet';
+import { errorHandler } from '../../lib/utils/errorHandler';
 
-const deleteSetReply = Type.Object({
-  setID: Type.String({ format: 'uuid' }),
-  message: Type.String(),
+const archiveDivingCylinderSetReply = Type.Object({
+  divingCylinderSetId: Type.String({ format: 'uuid' }),
 });
 
 const schema = {
-  description: 'Deletes a diving cylinder set',
+  description: 'Archives aka deletes a diving cylinder set',
   tags: ['Cylinder set'],
   params: divingCylinderSetIdParamsPayload,
   response: {
-    200: deleteSetReply,
+    200: archiveDivingCylinderSetReply,
     400: { $ref: 'error' },
     401: { $ref: 'error' },
     404: { $ref: 'error' },
@@ -32,24 +34,27 @@ const handler = async (
   }>,
   reply: FastifyReply
 ): Promise<void> => {
-  // TODO: Authorization
+  const { divingCylinderSetId } = request.params;
+  const { user } = request;
 
-  const setID = request.params.divingCylinderSetId;
+  const dcSetExists = await divingCylinderSetExists(
+    divingCylinderSetId,
+    user.id
+  );
+  if (!dcSetExists) return errorHandler(reply, 404);
 
-  // Delete cylinder set.
-  const res = await deleteCylinderSet(setID);
+  // Archive cylinder set
+  await archiveDivingCylinderSet(divingCylinderSetId);
 
-  if (res.status !== 200) {
-    return errorHandler(reply, res.status, res.message);
-  }
-
-  await reply.code(res.status).send({ setID, message: res.message });
+  return reply.send({
+    divingCylinderSetId,
+  });
 };
 
 export default async (fastify: FastifyInstance): Promise<void> => {
   fastify.route({
-    method: 'DELETE',
-    url: '/:divingCylinderSetId',
+    method: 'PATCH',
+    url: '/:divingCylinderSetId/archive',
     preValidation: [fastify['authenticate']],
     handler,
     schema,

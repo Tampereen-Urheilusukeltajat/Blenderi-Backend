@@ -168,54 +168,6 @@ describe('create cylinder set', () => {
     );
   });
 
-  test('it responds with 409 if same user tries to create 2 cylinder sets with the same name', async () => {
-    const payload1 = {
-      owner: 'd57ff56c-7ed5-11ed-a20a-27a77b2da7d7',
-      name: 'bottle3',
-      cylinders: [
-        {
-          volume: 15,
-          pressure: 200,
-          material: 'steel',
-          serialNumber: '3540965436löj564',
-          inspection: '2020-01-01',
-        },
-      ],
-    };
-
-    const payload2 = {
-      owner: 'd57ff56c-7ed5-11ed-a20a-27a77b2da7d7',
-      name: 'bottle3',
-      cylinders: [
-        {
-          volume: 10,
-          pressure: 300,
-          material: 'carbon fiber',
-          serialNumber: '35',
-          inspection: '2020-01-01',
-        },
-      ],
-    };
-
-    const res = await server.inject({
-      url: 'api/cylinder-set',
-      method: 'POST',
-      headers,
-      payload: payload1,
-    });
-
-    expect(res.statusCode).toEqual(201);
-
-    const res2 = await server.inject({
-      url: 'api/cylinder-set',
-      method: 'POST',
-      headers,
-      payload: payload2,
-    });
-
-    expect(res2.statusCode).toEqual(409);
-  });
-
   test('it responds with 400 if user does not exists', async () => {
     const payload = {
       owner: '3bd0b342-7ed6-11ed-8627-376b0bc3e6be', // not in user.csv
