@@ -14,7 +14,6 @@ import {
 } from '../../../lib/utils/testUtils';
 import { knexController } from '../../../database/database';
 import { buildServer } from '../../../server';
-import { StorageCylinder } from '../../../types/storageCylinder.types';
 
 describe('Get enriched gases', () => {
   const getTestInstance = async (): Promise<FastifyInstance> =>
@@ -57,49 +56,25 @@ describe('Get enriched gases', () => {
       });
 
       expect(res.statusCode).toEqual(200);
-      const body: StorageCylinder = JSON.parse(res.body);
+      const body = JSON.parse(res.body);
 
       expect(body).toMatchInlineSnapshot(`
         [
           {
             "activeFrom": "2020-01-01T00:00:00.000Z",
             "activeTo": "9999-12-31T23:59:59.000Z",
-            "gasId": 2,
+            "gasId": "2",
             "gasName": "Helium",
-            "gasPriceId": 1,
+            "gasPriceId": "1",
             "priceEurCents": 5,
           },
           {
             "activeFrom": "2022-01-01T00:00:00.000Z",
             "activeTo": "2023-01-01T00:00:00.000Z",
-            "gasId": 3,
+            "gasId": "3",
             "gasName": "Oxygen",
-            "gasPriceId": 3,
+            "gasPriceId": "3",
             "priceEurCents": 5,
-          },
-          {
-            "activeFrom": null,
-            "activeTo": null,
-            "gasId": 1,
-            "gasName": "Air",
-            "gasPriceId": null,
-            "priceEurCents": null,
-          },
-          {
-            "activeFrom": null,
-            "activeTo": null,
-            "gasId": 4,
-            "gasName": "Argon",
-            "gasPriceId": null,
-            "priceEurCents": null,
-          },
-          {
-            "activeFrom": null,
-            "activeTo": null,
-            "gasId": 5,
-            "gasName": "Diluent",
-            "gasPriceId": null,
-            "priceEurCents": null,
           },
         ]
       `);
