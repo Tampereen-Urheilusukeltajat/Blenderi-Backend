@@ -7,7 +7,7 @@ const schema = {
   description: 'Get enriched gases',
   tags: ['gas'],
   response: {
-    201: Type.Array(gasWithPricing),
+    200: Type.Array(gasWithPricing),
     400: { $ref: 'error' },
     401: { $ref: 'error' },
     403: { $ref: 'error' },
@@ -21,7 +21,7 @@ const handler = async (
 ): Promise<void> => {
   const gasesWithPricing = await getGasesWithPricing();
 
-  return reply.send(gasesWithPricing);
+  return reply.code(200).send(gasesWithPricing);
 };
 
 export default async (fastify: FastifyInstance): Promise<void> => {
