@@ -158,7 +158,7 @@ export const getGasesWithPricing = async (
     SELECT
       ${GAS_WITH_PRICING_COLUMNS}
     FROM gas g
-    LEFT JOIN
+    INNER JOIN
       gas_price gp ON g.id = gp.gas_id AND
       gp.active_from <= :now AND
       gp.active_to > :now

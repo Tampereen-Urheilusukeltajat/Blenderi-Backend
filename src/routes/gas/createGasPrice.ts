@@ -8,7 +8,7 @@ import {
 } from '../../types/gas.types';
 
 const schema = {
-  desription: 'Create gas price',
+  description: 'Create gas price',
   tags: ['gas price'],
   body: createGasPriceBody,
   response: {
@@ -16,7 +16,6 @@ const schema = {
     400: { $ref: 'error' },
     401: { $ref: 'error' },
     403: { $ref: 'error' },
-    500: { $ref: 'error' },
   },
 };
 
