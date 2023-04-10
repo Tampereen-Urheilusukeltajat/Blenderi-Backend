@@ -64,8 +64,8 @@ const handler = async function (
   const { accessToken, refreshToken, refreshTokenId } = await generateTokens(
     reply,
     userId,
-    false,
-    false
+    oldRefreshTokenDecoded.isAdmin,
+    oldRefreshTokenDecoded.isBlender
   );
 
   await rotate(
