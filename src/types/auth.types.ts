@@ -27,12 +27,18 @@ export type RefreshRequest = FastifyRequest<{
   Body: RefreshRequestBody;
 }>;
 
-export type AuthUser = {
+export type AuthTokens = Static<typeof authResponse>;
+
+export type AuthPayload = {
   id: string;
-  iat: number;
-  exp: number;
   isAdmin: boolean;
   isBlender: boolean;
+  isRefreshToken?: boolean;
+};
+
+export type AuthUser = AuthPayload & {
+  iat: number;
+  exp: number;
 };
 
 export const logoutRequestBody = Type.Object({
