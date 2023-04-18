@@ -18,6 +18,21 @@ export type LoginRequest = FastifyRequest<{
   Body: LoginRequestBody;
 }>;
 
+export const passwordResetRequestBody = Type.Object({ email });
+
+export type PasswordResetRequestBody = Static<typeof passwordResetRequestBody>;
+
+export const passwordResetResponseBody = Type.Object({
+  message: Type.String(),
+});
+
+export const setPasswordBody = Type.Object({
+  token: Type.String({ format: 'uuid' }),
+  password,
+});
+
+export type SetPasswordBody = Static<typeof setPasswordBody>;
+
 export const refreshRequestBody = Type.Object({
   refreshToken: Type.String(),
 });
