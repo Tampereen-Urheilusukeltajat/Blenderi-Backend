@@ -74,6 +74,10 @@ export const invalidate = async (
   await redisClient.disconnect();
 };
 
+/**
+ * @param {FastifyReply} reply is passed as a whole because jwtSign is proper method
+ * that needs `this` from reply.
+ */
 export const generateTokens = async (
   reply: FastifyReply,
   userId: string,
