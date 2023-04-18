@@ -1,5 +1,6 @@
 import { Type, Static } from '@sinclair/typebox';
 import { FastifyRequest } from 'fastify';
+import { password, email } from './user.types';
 
 export const authResponse = Type.Object({
   refreshToken: Type.String(),
@@ -7,8 +8,8 @@ export const authResponse = Type.Object({
 });
 
 export const loginRequestBody = Type.Object({
-  email: Type.String({ minLength: 3, maxLength: 254, pattern: '^.+@....+$' }),
-  password: Type.String({ minLength: 8, maxLength: 1000 }),
+  email,
+  password,
 });
 
 export type LoginRequestBody = Static<typeof loginRequestBody>;
