@@ -1,13 +1,11 @@
 import { FastifyInstance, FastifyReply } from 'fastify';
 import { knexController } from '../../database/database';
 import { passwordIsValid } from '../../lib/auth/auth';
-import { v4 as uuid } from 'uuid';
 import { errorHandler } from '../../lib/utils/errorHandler';
 import {
-  initializeRefreshTokenRotationSession,
-  REFRESH_TOKEN_EXPIRE_TIME,
-  ACCESS_TOKEN_EXPIRE_TIME,
   EXAMPLE_JWT,
+  generateTokens,
+  initializeRefreshTokenRotationSession,
 } from '../../lib/auth/jwtUtils';
 import {
   loginRequestBody,
@@ -40,10 +38,10 @@ type UserInfo = {
   archivedAt: string | null;
 };
 
-const handler = async function (
+const handler = async (
   request: LoginRequest,
   reply: FastifyReply
-): Promise<void> {
+): Promise<void> => {
   const userInfo: UserInfo = await knexController('user')
     .where('email', request.body.email)
     .first(
@@ -64,31 +62,21 @@ const handler = async function (
     return errorHandler(reply, 401);
   }
 
-  const isPasswordValid = await passwordIsValid(
+  const isValidPassword = await passwordIsValid(
     request.body.password,
     userInfo.passwordHash
   );
 
-  if (!isPasswordValid) {
+  if (!isValidPassword) {
     return errorHandler(reply, 401);
   }
 
   // !! converts database bit to boolean value
-  const tokenPayload = {
-    id: userInfo.id,
-    isAdmin: !!userInfo.isAdmin,
-    isBlender: !!userInfo.isBlender,
-  };
-
-  const accessToken = this.jwt.sign(tokenPayload, {
-    expiresIn: ACCESS_TOKEN_EXPIRE_TIME,
-  });
-
-  const refreshTokenId: string = uuid();
-
-  const refreshToken = this.jwt.sign(
-    { ...tokenPayload, isRefreshToken: true },
-    { expiresIn: REFRESH_TOKEN_EXPIRE_TIME, jti: refreshTokenId }
+  const { accessToken, refreshToken, refreshTokenId } = await generateTokens(
+    reply,
+    userInfo.id,
+    !!userInfo.isAdmin,
+    !!userInfo.isBlender
   );
 
   await initializeRefreshTokenRotationSession(

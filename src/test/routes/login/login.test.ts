@@ -76,6 +76,7 @@ describe('Login', () => {
           "id": "1be5abcd-53d4-11ed-9342-0242ac120002",
           "isAdmin": false,
           "isBlender": true,
+          "isRefreshToken": false,
         }
       `);
     });

@@ -1,5 +1,8 @@
 import { createClient } from 'redis';
 import { log } from '../utils/log';
+import { FastifyReply } from 'fastify';
+import { AuthTokens } from '../../types/auth.types';
+import { v4 as uuid } from 'uuid';
 
 // Expire times in seconds
 export const REFRESH_TOKEN_EXPIRE_TIME = 2678400; // ~month
@@ -69,4 +72,39 @@ export const invalidate = async (
   await redisClient.connect();
   await redisClient.del(`${userId}:${tokenId}`);
   await redisClient.disconnect();
+};
+
+/**
+ * @param {FastifyReply} reply is passed as a whole because jwtSign is proper method
+ * that needs `this` from reply.
+ */
+export const generateTokens = async (
+  reply: FastifyReply,
+  userId: string,
+  isAdmin: boolean,
+  isBlender: boolean
+): Promise<AuthTokens & { refreshTokenId: string }> => {
+  const tokenPayload = {
+    id: userId,
+    isAdmin,
+    isBlender,
+    isRefreshToken: false,
+  };
+
+  const accessToken = await reply.jwtSign(tokenPayload, {
+    expiresIn: ACCESS_TOKEN_EXPIRE_TIME,
+  });
+
+  const refreshTokenId = uuid();
+
+  const refreshToken = await reply.jwtSign(
+    { ...tokenPayload, isRefreshToken: true },
+    { expiresIn: REFRESH_TOKEN_EXPIRE_TIME, jti: refreshTokenId }
+  );
+
+  return {
+    accessToken,
+    refreshToken,
+    refreshTokenId,
+  };
 };

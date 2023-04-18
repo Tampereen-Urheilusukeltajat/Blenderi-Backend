@@ -1,13 +1,12 @@
 import { FastifyInstance, FastifyReply } from 'fastify';
 import { errorHandler } from '../../lib/utils/errorHandler';
-import { v4 as uuid } from 'uuid';
 import { log } from '../../lib/utils/log';
 import {
   tokenIsUsable,
   rotate,
   REFRESH_TOKEN_EXPIRE_TIME,
-  ACCESS_TOKEN_EXPIRE_TIME,
   EXAMPLE_JWT,
+  generateTokens,
 } from '../../lib/auth/jwtUtils';
 import {
   refreshRequestBody,
@@ -62,14 +61,11 @@ const handler = async function (
     return errorHandler(reply, 403);
   }
 
-  const refreshTokenId: string = uuid();
-  const refreshToken = this.jwt.sign(
-    { id: userId, isRefreshToken: true },
-    { expiresIn: REFRESH_TOKEN_EXPIRE_TIME, jti: refreshTokenId }
-  );
-  const accessToken: string = this.jwt.sign(
-    { id: userId },
-    { expiresIn: ACCESS_TOKEN_EXPIRE_TIME }
+  const { accessToken, refreshToken, refreshTokenId } = await generateTokens(
+    reply,
+    userId,
+    oldRefreshTokenDecoded.isAdmin,
+    oldRefreshTokenDecoded.isBlender
   );
 
   await rotate(

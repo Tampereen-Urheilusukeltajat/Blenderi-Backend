@@ -14,7 +14,7 @@ import { v4 as uuid } from 'uuid';
 import { log } from './lib/utils/log';
 import path from 'path';
 import { errorHandler } from './lib/utils/errorHandler';
-import { AuthUser } from './types/auth.types';
+import { AuthPayload, AuthUser } from './types/auth.types';
 
 const JWT_SECRET =
   process.env.NODE_ENV === 'development' &&
@@ -25,6 +25,7 @@ const JWT_SECRET =
 declare module '@fastify/jwt' {
   // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
   interface FastifyJWT {
+    payload: AuthPayload;
     user: AuthUser;
   }
 }
@@ -106,10 +107,10 @@ export const buildServer = async (opts: {
       'authenticate',
       async (request: FastifyRequest, reply: FastifyReply) => {
         try {
-          const accessToken: { isRefreshToken?: string } =
+          const accessToken: { isRefreshToken: boolean } =
             await request.jwtVerify();
 
-          if (accessToken.isRefreshToken !== undefined) {
+          if (accessToken.isRefreshToken) {
             return errorHandler(reply, 401);
           }
         } catch (err) {
