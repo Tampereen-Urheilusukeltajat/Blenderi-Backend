@@ -33,7 +33,7 @@ export type AuthPayload = {
   id: string;
   isAdmin: boolean;
   isBlender: boolean;
-  isRefreshToken?: boolean;
+  isRefreshToken: boolean;
 };
 
 export type AuthUser = AuthPayload & {

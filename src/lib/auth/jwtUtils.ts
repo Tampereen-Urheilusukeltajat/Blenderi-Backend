@@ -88,6 +88,7 @@ export const generateTokens = async (
     id: userId,
     isAdmin,
     isBlender,
+    isRefreshToken: false,
   };
 
   const accessToken = await reply.jwtSign(tokenPayload, {
