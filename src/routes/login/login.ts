@@ -1,5 +1,4 @@
 import { FastifyInstance, FastifyReply } from 'fastify';
-import { knexController } from '../../database/database';
 import { passwordIsValid } from '../../lib/auth/auth';
 import { errorHandler } from '../../lib/utils/errorHandler';
 import {
@@ -12,6 +11,7 @@ import {
   LoginRequest,
   authResponse,
 } from '../../types/auth.types';
+import { getUserDetailsForLogin } from '../../lib/queries/user';
 
 const schema = {
   tags: ['Auth'],
@@ -29,36 +29,14 @@ schema.body.properties.password.example = 'rockyou.txt';
 schema.response['200'].properties.accessToken.example = EXAMPLE_JWT;
 schema.response['200'].properties.refreshToken.example = EXAMPLE_JWT;
 
-type UserInfo = {
-  id: string;
-  isAdmin: boolean;
-  isBlender: boolean;
-  salt: string;
-  passwordHash: string;
-  archivedAt: string | null;
-};
-
 const handler = async (
   request: LoginRequest,
   reply: FastifyReply
 ): Promise<void> => {
-  const userInfo: UserInfo = await knexController('user')
-    .where('email', request.body.email)
-    .first(
-      'id',
-      'password_hash AS passwordHash',
-      'archived_at as archivedAt',
-      'is_admin AS isAdmin',
-      'is_blender AS isBlender'
-    );
+  const userInfo = await getUserDetailsForLogin(request.body.email);
 
   if (userInfo === undefined) {
     // This means that user doesn't exist, we are not going to tell that to the client.
-    return errorHandler(reply, 401);
-  }
-
-  if (userInfo.archivedAt !== null) {
-    // User is archived, don't allow login
     return errorHandler(reply, 401);
   }
 

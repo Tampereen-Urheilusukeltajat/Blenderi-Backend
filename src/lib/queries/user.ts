@@ -3,6 +3,18 @@ import snakecaseKeys from 'snakecase-keys';
 import { knexController } from '../../database/database';
 import { User, UserResponse } from '../../types/user.types';
 
+type UserLoginResponse = Pick<
+  User,
+  | 'id'
+  | 'isAdmin'
+  | 'isAdvancedBlender'
+  | 'isBlender'
+  | 'isInstructor'
+  | 'salt'
+  | 'passwordHash'
+  | 'archivedAt'
+>;
+
 const getUsers = async (
   db: Knex | Knex.Transaction,
   onlyActiveUsers: boolean,
@@ -13,15 +25,16 @@ const getUsers = async (
         SELECT
           u.id,
           u.email,
-          u.phone,
+          u.phone_number AS phoneNumber,
           u.forename,
           u.surname,
-          ial.is_admin AS isAdmin,
-          ial.is_advanced_blender AS isAdvancedBlender,
-          ial.is_blender AS isBlender,
-          ial.is_instructior AS isInstructor
+          IF(arl.phone_number IS NULL, 0, 1) AS isMember,
+          arl.is_admin AS isAdmin,
+          arl.is_advanced_blender AS isAdvancedBlender,
+          arl.is_blender AS isBlender,
+          arl.is_instructor AS isInstructor
         FROM user u
-        JOIN access_role_list arl ON u.phone = arl.phone_number
+        LEFT JOIN access_role_list arl ON u.phone_number = arl.phone_number
         WHERE 
         deleted_at IS NULL
         ${onlyActiveUsers ? 'AND archived_at IS NULL' : ''}
@@ -46,9 +59,39 @@ export const getUserWithId = async (
   trx?: Knex.Transaction
 ): Promise<UserResponse | undefined> => {
   const transaction = trx ?? knexController;
-  const res = getUsers(transaction, true, userId);
+  const res = await getUsers(transaction, true, userId);
 
-  return { ...res[0] };
+  return { ...res[0][0] };
+};
+
+export const getUserDetailsForLogin = async (
+  email: string
+): Promise<UserLoginResponse | undefined> => {
+  const res = await knexController.raw<UserLoginResponse[]>(
+    `
+        SELECT
+          u.id,
+          u.salt,
+          u.password_hash AS passwordHash,
+          u.archived_at AS archivedAt,
+          IF(arl.phone_number IS NULL, 0, 1) AS isMember,
+          arl.is_admin AS isAdmin,
+          arl.is_advanced_blender AS isAdvancedBlender,
+          arl.is_blender AS isBlender,
+          arl.is_instructor AS isInstructor
+        FROM user u
+        LEFT JOIN access_role_list arl ON u.phone_number = arl.phone_number
+        WHERE 
+          deleted_at IS NULL AND
+          archived_at IS NULL AND
+          u.email = :email
+    `,
+    {
+      email,
+    }
+  );
+
+  return { ...res[0][0] };
 };
 
 export const updateUser = async (

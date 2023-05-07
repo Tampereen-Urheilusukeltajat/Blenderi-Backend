@@ -4,13 +4,14 @@ import { FastifyRequest } from 'fastify';
 export const user = Type.Object({
   id: Type.String({ format: 'uuid' }),
   email: Type.String(),
-  phone: Type.String(),
+  phoneNumber: Type.String(),
   forename: Type.String(),
   surname: Type.String(),
+  isMember: Type.Boolean(),
   isAdmin: Type.Boolean(),
   isBlender: Type.Boolean(),
   isAdvancedBlender: Type.Boolean(),
-  isInsructor: Type.Boolean(),
+  isInstructor: Type.Boolean(),
   salt: Type.String(),
   passwordHash: Type.String(),
   archivedAt: Type.String(),
@@ -22,7 +23,7 @@ export type User = Static<typeof user>;
 export const updateUserBody = Type.Partial(
   Type.Object({
     email: Type.String(),
-    phone: Type.String(),
+    phoneNumber: Type.String(),
     forename: Type.String(),
     surname: Type.String(),
     isAdmin: Type.Boolean(),
@@ -39,14 +40,14 @@ export type UpdateUserBody = Static<typeof updateUserBody>;
 export const userResponse = Type.Object({
   id: Type.String({ format: 'uuid' }),
   email: Type.String(),
-  phone: Type.String(),
+  phoneNumber: Type.String(),
   forename: Type.String(),
   surname: Type.String(),
+  isMember: Type.Boolean(),
   isAdmin: Type.Boolean(),
   isBlender: Type.Boolean(),
   isAdvancedBlender: Type.Boolean(),
-  isInsructor: Type.Boolean(),
-  archivedAt: Type.String(),
+  isInstructor: Type.Boolean(),
 });
 
 export type UserResponse = Static<typeof userResponse>;

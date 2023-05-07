@@ -49,7 +49,7 @@ const handler = async (
     isAdmin,
     isBlender,
     password,
-    phone,
+    phoneNumber,
     surname,
   } = req.body;
 
@@ -79,8 +79,8 @@ const handler = async (
     }
   }
 
-  if (phone !== undefined) {
-    if (await phoneAlreadyExists(phone, userId)) {
+  if (phoneNumber !== undefined) {
+    if (await phoneAlreadyExists(phoneNumber, userId)) {
       const msg = 'Tried to update user with duplicate phone number';
       log.debug(msg);
       return errorHandler(reply, 409, msg);
@@ -95,7 +95,7 @@ const handler = async (
 
   const editedUser = await updateUser(userId, {
     email,
-    phone,
+    phoneNumber,
     forename,
     surname,
     isAdmin,

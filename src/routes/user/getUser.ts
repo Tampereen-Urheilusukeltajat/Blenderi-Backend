@@ -1,12 +1,11 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { knexController } from '../../database/database';
 import { errorHandler } from '../../lib/utils/errorHandler';
 import {
   userResponse,
-  User,
   userIdParamsPayload,
   UserIdParamsPayload,
 } from '../../types/user.types';
+import { getUserWithId } from '../../lib/queries/user';
 
 const schema = {
   description: 'Get user with given id',
@@ -28,21 +27,7 @@ const handler = async (
   reply: FastifyReply
 ): Promise<void> => {
   const userId = req.params.userId;
-  const user: User = await knexController<User>('user')
-    .where('id', userId)
-    .whereNull('archived_at')
-    .whereNull('deleted_at')
-    .first(
-      'id',
-      'email',
-      'phone',
-      'forename',
-      'surname',
-      'is_admin as isAdmin',
-      'is_blender as isBlender',
-      'archived_at as archivedAt',
-      'deleted_at as deletedAt'
-    );
+  const user = await getUserWithId(userId);
   if (user === undefined) {
     return errorHandler(reply, 404, 'User not found.');
   }
