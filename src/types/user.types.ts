@@ -9,6 +9,8 @@ export const user = Type.Object({
   surname: Type.String(),
   isAdmin: Type.Boolean(),
   isBlender: Type.Boolean(),
+  isAdvancedBlender: Type.Boolean(),
+  isInsructor: Type.Boolean(),
   salt: Type.String(),
   passwordHash: Type.String(),
   archivedAt: Type.String(),
@@ -42,6 +44,8 @@ export const userResponse = Type.Object({
   surname: Type.String(),
   isAdmin: Type.Boolean(),
   isBlender: Type.Boolean(),
+  isAdvancedBlender: Type.Boolean(),
+  isInsructor: Type.Boolean(),
   archivedAt: Type.String(),
 });
 

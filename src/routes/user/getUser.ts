@@ -27,7 +27,6 @@ const handler = async (
   }>,
   reply: FastifyReply
 ): Promise<void> => {
-  // TODO: Authorization check
   const userId = req.params.userId;
   const user: User = await knexController<User>('user')
     .where('id', userId)

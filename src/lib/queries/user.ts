@@ -3,37 +3,42 @@ import snakecaseKeys from 'snakecase-keys';
 import { knexController } from '../../database/database';
 import { User, UserResponse } from '../../types/user.types';
 
+const getUsers = async (
+  db: Knex | Knex.Transaction,
+  onlyActiveUsers: boolean,
+  userId?: string
+): Promise<UserResponse[]> => {
+  return db.raw<UserResponse[]>(
+    `
+        SELECT
+          u.id,
+          u.email,
+          u.phone,
+          u.forename,
+          u.surname,
+          ial.is_admin AS isAdmin,
+          ial.is_advanced_blender AS isAdvancedBlender,
+          ial.is_blender AS isBlender,
+          ial.is_instructior AS isInstructor
+        FROM user u
+        JOIN access_role_list arl ON u.phone = arl.phone_number
+        WHERE 
+        deleted_at IS NULL
+        ${onlyActiveUsers ? 'AND archived_at IS NULL' : ''}
+        ${userId ? 'AND u.id = :userId' : ''}
+    `,
+    {
+      userId,
+    }
+  );
+};
+
 export const selectNotArchivedUsers = async (): Promise<UserResponse[]> => {
-  const users = await knexController<User>('user')
-    .whereNull('deleted_at')
-    .whereNull('archived_at')
-    .select(
-      'id',
-      'email',
-      'phone',
-      'forename',
-      'surname',
-      'is_admin as isAdmin',
-      'is_blender as isBlender',
-      'archived_at as archivedAt'
-    );
-  return users;
+  return getUsers(knexController, false);
 };
 
 export const selectUsers = async (): Promise<UserResponse[]> => {
-  const users = await knexController<User>('user')
-    .whereNull('deleted_at')
-    .select(
-      'id',
-      'email',
-      'phone',
-      'forename',
-      'surname',
-      'is_admin as isAdmin',
-      'is_blender as isBlender',
-      'archived_at as archivedAt'
-    );
-  return users;
+  return getUsers(knexController, true);
 };
 
 export const getUserWithId = async (
@@ -41,19 +46,7 @@ export const getUserWithId = async (
   trx?: Knex.Transaction
 ): Promise<UserResponse | undefined> => {
   const transaction = trx ?? knexController;
-  const res = await transaction
-    .select(
-      'id',
-      'email',
-      'phone',
-      'forename',
-      'surname',
-      'is_admin as isAdmin',
-      'is_blender as isBlender',
-      'archived_at as archivedAt'
-    )
-    .from('user')
-    .where({ id: userId });
+  const res = getUsers(transaction, true, userId);
 
   return { ...res[0] };
 };
