@@ -20,6 +20,7 @@ export const sendEmail = async (msg: emailMsg): Promise<void> => {
 
     const response = await sgMail.send(requestEmailBody);
 
+    // TODO: handle 401 from SendGrid
     if (response[0].statusCode !== 202) {
       throw new Error(
         `SendGrid returned statusCode ${String(response[0].statusCode)}.`

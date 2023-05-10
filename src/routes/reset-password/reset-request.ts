@@ -1,10 +1,10 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { knexController } from '../../database/database';
 import {
   passwordResetRequestBody,
   PasswordResetRequestBody,
   passwordResetResponseBody,
 } from '../../types/auth.types';
+import { handlePasswordResetRequest } from '../../lib/queries/resetRequest';
 
 const schema = {
   tags: ['Auth'],
@@ -18,20 +18,15 @@ const schema = {
 
 schema.body.properties.email.example = 'john.doe@example.com';
 
-const handler = async function (
+const handler = async (
   request: FastifyRequest<{ Body: PasswordResetRequestBody }>,
   reply: FastifyReply
-): Promise<void> {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const userInfo: { id: string; email: string } | undefined =
-    await knexController('user')
-      .where('email', request.body.email)
-      .where('archived_at', null)
-      .first('id', 'email');
-
-  return reply
+): Promise<void> => {
+  await reply
     .code(202)
     .send({ message: 'Password reset email is being sent.' });
+
+  return handlePasswordResetRequest(request.body);
 };
 
 export default async (fastify: FastifyInstance): Promise<void> => {
