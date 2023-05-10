@@ -28,6 +28,7 @@ export const passwordResetResponseBody = Type.Object({
 
 export const setPasswordBody = Type.Object({
   token: Type.String({ format: 'uuid' }),
+  email,
   password,
 });
 
