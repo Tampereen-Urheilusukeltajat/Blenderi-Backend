@@ -12,6 +12,8 @@ import { buildServer } from '../../../server';
 import {
   createTestDatabase,
   dropTestDatabase,
+  startRedisConnection,
+  stopRedisConnection,
 } from '../../../lib/utils/testUtils';
 
 describe('logout', () => {
@@ -22,11 +24,13 @@ describe('logout', () => {
 
   beforeAll(async () => {
     await createTestDatabase('logout');
+    await startRedisConnection();
   });
 
   afterAll(async () => {
     await dropTestDatabase();
     await knexController.destroy();
+    await stopRedisConnection();
   });
 
   let server;

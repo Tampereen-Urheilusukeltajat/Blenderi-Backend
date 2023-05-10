@@ -12,6 +12,8 @@ import { buildServer } from '../../../server';
 import {
   createTestDatabase,
   dropTestDatabase,
+  startRedisConnection,
+  stopRedisConnection,
 } from '../../../lib/utils/testUtils';
 import bcrypt from 'bcrypt';
 
@@ -31,6 +33,7 @@ describe('update user', () => {
 
   beforeAll(async () => {
     await createTestDatabase('update_user');
+    await startRedisConnection();
 
     jest
       .spyOn(bcrypt, 'compare')
@@ -40,6 +43,7 @@ describe('update user', () => {
   afterAll(async () => {
     await dropTestDatabase();
     await knexController.destroy();
+    await stopRedisConnection();
   });
 
   describe('Happy cases', () => {

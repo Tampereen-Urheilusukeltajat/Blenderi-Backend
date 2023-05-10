@@ -10,6 +10,8 @@ import { FastifyInstance } from 'fastify';
 import {
   createTestDatabase,
   dropTestDatabase,
+  startRedisConnection,
+  stopRedisConnection,
 } from '../../../lib/utils/testUtils';
 import { knexController } from '../../../database/database';
 import { buildServer } from '../../../server';
@@ -23,11 +25,13 @@ describe('Get storage cylinders', () => {
 
   beforeAll(async () => {
     await createTestDatabase('get_storage_cylinder');
+    await startRedisConnection();
   });
 
   afterAll(async () => {
     await dropTestDatabase();
     await knexController.destroy();
+    await stopRedisConnection();
   });
 
   let server: FastifyInstance;

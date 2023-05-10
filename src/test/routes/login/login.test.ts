@@ -13,6 +13,8 @@ import { buildServer } from '../../../server';
 import {
   createTestDatabase,
   dropTestDatabase,
+  startRedisConnection,
+  stopRedisConnection,
 } from '../../../lib/utils/testUtils';
 
 describe('Login', () => {
@@ -23,11 +25,13 @@ describe('Login', () => {
 
   beforeAll(async () => {
     await createTestDatabase('auth');
+    await startRedisConnection();
   });
 
   afterAll(async () => {
     await dropTestDatabase();
     await knexController.destroy();
+    await stopRedisConnection();
   });
 
   let server;

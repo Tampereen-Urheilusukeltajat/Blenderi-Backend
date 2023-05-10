@@ -10,6 +10,8 @@ import { FastifyInstance } from 'fastify';
 import {
   createTestDatabase,
   dropTestDatabase,
+  startRedisConnection,
+  stopRedisConnection,
 } from '../../../lib/utils/testUtils';
 import { knexController } from '../../../database/database';
 import { CreateGasPriceBody, GasWithPricing } from '../../../types/gas.types';
@@ -49,11 +51,13 @@ describe('Create gas price', () => {
 
   beforeAll(async () => {
     await createTestDatabase('create_gas_price');
+    await startRedisConnection();
   });
 
   afterAll(async () => {
     await dropTestDatabase();
     await knexController.destroy();
+    await stopRedisConnection();
   });
 
   let server: FastifyInstance;
