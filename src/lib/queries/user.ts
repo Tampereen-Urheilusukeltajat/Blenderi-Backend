@@ -2,6 +2,7 @@ import { Knex } from 'knex';
 import snakecaseKeys from 'snakecase-keys';
 import { knexController } from '../../database/database';
 import { User, UserResponse } from '../../types/user.types';
+import { DBResponse } from '../../types/general.types';
 
 type UserLoginResponse = Pick<
   User,
@@ -20,7 +21,7 @@ const getUsers = async (
   onlyActiveUsers: boolean,
   userId?: string,
   email?: string
-): Promise<UserResponse[]> => {
+): Promise<DBResponse<UserResponse[]>> => {
   const sql = `
     SELECT
       u.id,
@@ -42,18 +43,20 @@ const getUsers = async (
       ${email ? 'AND u.email = :email' : ''}
   `;
 
-  return db.raw<UserResponse[]>(sql, {
+  return db.raw<DBResponse<UserResponse[]>>(sql, {
     userId,
     email,
   });
 };
 
-export const selectNotArchivedUsers = async (): Promise<UserResponse[]> => {
-  return getUsers(knexController, false);
+export const selectActiveUsers = async (): Promise<UserResponse[]> => {
+  const res = await getUsers(knexController, true);
+  return [...res[0]];
 };
 
 export const selectUsers = async (): Promise<UserResponse[]> => {
-  return getUsers(knexController, true);
+  const res = await getUsers(knexController, false);
+  return [...res[0]];
 };
 
 export const getUserWithId = async (
