@@ -1,4 +1,4 @@
-id;email;forename;surname;is_admin;is_blender;salt;password_hash;archived_at;deleted_at;created_at;updated_at;
-a59faf66-4f75-11ed-98ae-77941df77788;user@taursu.fi;petri;penettäjä;0;1;$2b$10$yvxdminZIQNbFGMkA1NIA.;$2b$10$yvxdminZIQNbFGMkA1NIA.NU6xO6SzrnLqm5eB3nCS5TYXpH1tfFy;;;2020-01-19 03:14:07;2020-01-19 03:14:07;
-a59faf66-4f75-11ed-98ae-77941df77789;user2@taursu.fi;petri;kakkonen;0;1;$2b$10$yvxdminZIQNbFGMkA1NIA.;$2b$10$yvxdminZIQNbFGMkA1NIA.NU6xO6SzrnLqm5eB3nCS5TYXpH1tfFy;;;2020-01-19 03:14:07;2020-01-19 03:14:07;
-a59faf66-4f75-11ed-98ae-77941df77790;admin@taursu.fi;ylla;pitaja;1;1;$2b$10$yvxdminZIQNbFGMkA1NIA.;$2b$10$yvxdminZIQNbFGMkA1NIA.NU6xO6SzrnLqm5eB3nCS5TYXpH1tfFy;;;2020-01-19 03:14:07;2020-01-19 03:14:07;
+id;email;phone_number;forename;surname;salt;password_hash;archived_at;deleted_at;created_at;updated_at;
+a59faf66-4f75-11ed-98ae-77941df77788;user@taursu.fi;00001;petri;penettäjä;$2b$10$yvxdminZIQNbFGMkA1NIA.;$2b$10$yvxdminZIQNbFGMkA1NIA.NU6xO6SzrnLqm5eB3nCS5TYXpH1tfFy;;;2020-01-19 03:14:07;2020-01-19 03:14:07;
+a59faf66-4f75-11ed-98ae-77941df77789;user2@taursu.fi;00002;petri;kakkonen;$2b$10$yvxdminZIQNbFGMkA1NIA.;$2b$10$yvxdminZIQNbFGMkA1NIA.NU6xO6SzrnLqm5eB3nCS5TYXpH1tfFy;;;2020-01-19 03:14:07;2020-01-19 03:14:07;
+a59faf66-4f75-11ed-98ae-77941df77790;admin@taursu.fi;00003;ylla;pitaja;$2b$10$yvxdminZIQNbFGMkA1NIA.;$2b$10$yvxdminZIQNbFGMkA1NIA.NU6xO6SzrnLqm5eB3nCS5TYXpH1tfFy;;;2020-01-19 03:14:07;2020-01-19 03:14:07;
