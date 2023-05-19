@@ -26,7 +26,7 @@ const handler = async (
   request: FastifyRequest<{ Body: CreateFillEventBody }>,
   reply: FastifyReply
 ): Promise<void> => {
-  const res = await createFillEvent(request.user, request.body);
+  const res = await createFillEvent(request.user, request.body, reply);
   if (res.fillEventId === undefined) {
     return errorHandler(reply, res.status, res.message);
   }

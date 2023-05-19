@@ -5,12 +5,14 @@ import {
   GetFillEventsResponse,
 } from '../../types/fillEvent.types';
 import { AuthUser } from '../../types/auth.types';
-import { User } from '../../types/user.types';
 import { log } from '../utils/log';
 import { Knex } from 'knex';
 import { getStorageCylinder } from './storageCylinder';
 import { Gas, GasPrice } from '../../types/gas.types';
 import { selectCylinderSet } from './divingCylinderSet';
+import { getUserWithId } from './user';
+import { errorHandler } from '../utils/errorHandler';
+import { FastifyReply } from 'fastify';
 
 const getActivePriceId = async (
   trx: Knex.Transaction,
@@ -85,7 +87,8 @@ export const getFillEvents = async (
 
 export const createFillEvent = async (
   authUser: AuthUser,
-  body: CreateFillEventBody
+  body: CreateFillEventBody,
+  reply: FastifyReply
 ): Promise<{ status: number; message?: string; fillEventId?: number }> => {
   const {
     cylinderSetId,
@@ -101,21 +104,19 @@ export const createFillEvent = async (
   }
 
   const trx = await knexController.transaction();
-  const userQuery = await trx<User>('user')
-    .where('id', authUser.id)
-    .first('id', 'is_blender as isBlender');
+  const user = await getUserWithId(authUser.id, true, trx);
 
-  const user: User = JSON.parse(JSON.stringify(userQuery));
+  if (user === undefined) return errorHandler(reply, 404);
 
   if (!user.isBlender && storageCylinderUsageArr.length !== 0) {
     await trx.rollback();
-    return { status: 403, message: 'User does not have blender privileges' };
+    return errorHandler(reply, 403, 'User does not have blender privileges');
   }
 
   const set = await selectCylinderSet(trx, cylinderSetId);
   if (set === undefined) {
     await trx.rollback();
-    return { status: 400, message: 'Cylinder set was not found' };
+    return errorHandler(reply, 400, 'Cylinder set was not found');
   }
   const params: Array<string | null> = [user.id, cylinderSetId, gasMixture];
   const sql =
@@ -167,25 +168,25 @@ export const createFillEvent = async (
     await trx.rollback();
     switch (e.message) {
       case 'Storage cylinder not found':
-        return { status: 400, message: 'Invalid storage cylinder' };
+        return errorHandler(reply, 400, 'Invalid storage cylinder');
       case 'Price not found':
-        return { status: 500 };
+        return errorHandler(reply, 500);
       case 'Multiple active prices':
-        return { status: 500 };
+        return errorHandler(reply, 500);
       case 'Gas id was not found for air':
-        return { status: 500 };
+        return errorHandler(reply, 500);
       case 'Negative fill pressure':
-        return { status: 400, message: 'Cannot have negative fill pressure' };
+        return errorHandler(reply, 400, 'Cannot have negative fill pressure');
       default:
         log.error(e.message);
-        return { status: 500 };
+        return errorHandler(reply, 500);
     }
   }
   // Check that the price advertised to the user is correct
   const totalCost = await calcTotalCost(trx, fillEventId);
   if (totalCost !== price) {
     await trx.rollback();
-    return { status: 400, message: 'Client price did not match server price' };
+    return errorHandler(reply, 400, 'Client price did not match server price');
   }
   await trx.commit();
   return {
