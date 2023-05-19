@@ -46,8 +46,6 @@ const handler = async (
     currentPassword,
     email,
     forename,
-    isAdmin,
-    isBlender,
     password,
     phoneNumber,
     surname,
@@ -98,8 +96,6 @@ const handler = async (
     phoneNumber,
     forename,
     surname,
-    isAdmin,
-    isBlender,
     passwordHash: hashObj ? hashObj.hash : undefined,
     salt: hashObj ? hashObj.salt : undefined,
     archivedAt: archive

@@ -16,11 +16,9 @@ import {
 import bcrypt from 'bcrypt';
 
 const USER_UPDATE = {
-  phone: '0010',
+  phoneNumber: '00010',
   forename: 'Edited',
   surname: 'Change',
-  isAdmin: true,
-  isBlender: false,
 };
 
 const CURRENT_PASSWORD = 'thisIsMyCurrentPassword';
@@ -59,13 +57,15 @@ describe('update user', () => {
       expect(res.statusCode).toEqual(200);
       expect(resBody).toMatchInlineSnapshot(`
         {
-          "archivedAt": "",
           "email": "test@email.fi",
           "forename": "Edited",
           "id": "1be5abcd-53d4-11ed-9342-0242ac120002",
-          "isAdmin": true,
-          "isBlender": false,
-          "phone": "0010",
+          "isAdmin": false,
+          "isAdvancedBlender": false,
+          "isBlender": true,
+          "isInstructor": false,
+          "isMember": true,
+          "phoneNumber": "00010",
           "surname": "Change",
         }
       `);
@@ -79,7 +79,7 @@ describe('update user', () => {
         payload: {
           ...USER_UPDATE,
           email: 'testi2@email.fi',
-          phone: '002',
+          phoneNumber: '00002',
           currentPassword: CURRENT_PASSWORD,
         },
         method: 'PATCH',
@@ -90,13 +90,15 @@ describe('update user', () => {
       expect(res.statusCode).toEqual(200);
       expect(resBody).toMatchInlineSnapshot(`
         {
-          "archivedAt": "",
           "email": "testi2@email.fi",
           "forename": "Edited",
           "id": "54e3e8b0-53d4-11ed-9342-0242ac120002",
-          "isAdmin": true,
-          "isBlender": false,
-          "phone": "002",
+          "isAdmin": false,
+          "isAdvancedBlender": false,
+          "isBlender": true,
+          "isInstructor": false,
+          "isMember": true,
+          "phoneNumber": "00002",
           "surname": "Change",
         }
       `);
@@ -105,7 +107,7 @@ describe('update user', () => {
     test('it archives user', async () => {
       const server = await getTestInstance();
       const res = await server.inject({
-        url: 'api/user/1be5abcd-53d4-11ed-9342-0242ac120002/',
+        url: 'api/user/1be5abcd-53d4-11ed-9342-0242ac120002',
         payload: {
           archive: true,
         },
@@ -232,7 +234,7 @@ describe('update user', () => {
       const res = await server.inject({
         url: 'api/user/1be5abcd-53d4-11ed-9342-0242ac120002/',
         // incorrect payload type
-        payload: { ...USER_UPDATE, phone: '003' },
+        payload: { ...USER_UPDATE, phoneNumber: '00002' },
         method: 'PATCH',
         headers: { 'content-type': 'application/json' },
       });

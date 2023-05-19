@@ -22,7 +22,7 @@ export const phoneAlreadyExists = async (
       .select('phone_number')
       .where('id', userID);
 
-    if (userPhone[0].phone === newPhone) {
+    if (userPhone[0].phone_number === newPhone) {
       return false;
     }
   }

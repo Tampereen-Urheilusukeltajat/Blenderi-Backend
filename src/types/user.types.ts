@@ -26,8 +26,6 @@ export const updateUserBody = Type.Partial(
     phoneNumber: Type.String(),
     forename: Type.String(),
     surname: Type.String(),
-    isAdmin: Type.Boolean(),
-    isBlender: Type.Boolean(),
     password: Type.String(),
     currentPassword: Type.String(),
     archive: Type.Boolean(),

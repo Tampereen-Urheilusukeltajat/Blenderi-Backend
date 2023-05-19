@@ -20,30 +20,29 @@ const getUsers = async (
   onlyActiveUsers: boolean,
   userId?: string
 ): Promise<UserResponse[]> => {
-  return db.raw<UserResponse[]>(
-    `
-        SELECT
-          u.id,
-          u.email,
-          u.phone_number AS phoneNumber,
-          u.forename,
-          u.surname,
-          IF(arl.phone_number IS NULL, 0, 1) AS isMember,
-          arl.is_admin AS isAdmin,
-          arl.is_advanced_blender AS isAdvancedBlender,
-          arl.is_blender AS isBlender,
-          arl.is_instructor AS isInstructor
-        FROM user u
-        LEFT JOIN access_role_list arl ON u.phone_number = arl.phone_number
-        WHERE 
-        deleted_at IS NULL
-        ${onlyActiveUsers ? 'AND archived_at IS NULL' : ''}
-        ${userId ? 'AND u.id = :userId' : ''}
-    `,
-    {
-      userId,
-    }
-  );
+  const sql = `
+    SELECT
+      u.id,
+      u.email,
+      u.phone_number AS phoneNumber,
+      u.forename,
+      u.surname,
+      IF(arl.phone_number IS NULL, 0, 1) AS isMember,
+      arl.is_admin AS isAdmin,
+      arl.is_advanced_blender AS isAdvancedBlender,
+      arl.is_blender AS isBlender,
+      arl.is_instructor AS isInstructor
+    FROM user u
+    LEFT JOIN access_role_list arl ON u.phone_number = arl.phone_number
+    WHERE 
+      deleted_at IS NULL
+      ${onlyActiveUsers ? 'AND archived_at IS NULL' : ''}
+      ${userId ? 'AND u.id = :userId' : ''}
+  `;
+
+  return db.raw<UserResponse[]>(sql, {
+    userId,
+  });
 };
 
 export const selectNotArchivedUsers = async (): Promise<UserResponse[]> => {
@@ -56,10 +55,11 @@ export const selectUsers = async (): Promise<UserResponse[]> => {
 
 export const getUserWithId = async (
   userId: string,
+  onlyActive = true,
   trx?: Knex.Transaction
 ): Promise<UserResponse | undefined> => {
   const transaction = trx ?? knexController;
-  const res = await getUsers(transaction, true, userId);
+  const res = await getUsers(transaction, onlyActive, userId);
 
   return { ...res[0][0] };
 };
@@ -105,7 +105,7 @@ export const updateUser = async (
     .where({ id: userId, deleted_at: null })
     .update(snakecaseKeys(payload));
 
-  const editedUser = await getUserWithId(userId, transaction);
+  const editedUser = await getUserWithId(userId, false, transaction);
 
   if (!editedUser) throw new Error('Updated user not found');
 
