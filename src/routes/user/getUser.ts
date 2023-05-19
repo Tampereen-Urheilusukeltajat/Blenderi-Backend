@@ -28,7 +28,8 @@ const handler = async (
 ): Promise<void> => {
   const userId = req.params.userId;
   const user = await getUserWithId(userId);
-  if (user === undefined) {
+
+  if (!user || Object.keys(user).length === 0) {
     return errorHandler(reply, 404, 'User not found.');
   }
   await reply.send(user);
