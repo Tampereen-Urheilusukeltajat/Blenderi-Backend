@@ -12,6 +12,7 @@ import {
   authResponse,
 } from '../../types/auth.types';
 import { getUserDetailsForLogin } from '../../lib/queries/user';
+import { isEmptyObject } from '../../lib/utils/empty';
 
 const schema = {
   tags: ['Auth'],
@@ -35,7 +36,7 @@ const handler = async (
 ): Promise<void> => {
   const userInfo = await getUserDetailsForLogin(request.body.email);
 
-  if (userInfo === undefined) {
+  if (userInfo === undefined || isEmptyObject(userInfo)) {
     // This means that user doesn't exist, we are not going to tell that to the client.
     return errorHandler(reply, 401);
   }

@@ -6,6 +6,7 @@ import {
   UserIdParamsPayload,
 } from '../../types/user.types';
 import { getUserWithId } from '../../lib/queries/user';
+import { isEmptyObject } from '../../lib/utils/empty';
 
 const schema = {
   description: 'Get user with given id',
@@ -29,7 +30,7 @@ const handler = async (
   const userId = req.params.userId;
   const user = await getUserWithId(userId);
 
-  if (!user || Object.keys(user).length === 0) {
+  if (!user || isEmptyObject(user)) {
     return errorHandler(reply, 404, 'User not found.');
   }
   await reply.send(user);
