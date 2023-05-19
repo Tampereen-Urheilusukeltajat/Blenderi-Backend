@@ -34,6 +34,10 @@ describe('Delete user', () => {
     server = await getTestInstance();
   });
 
+  /**
+   * @TODO Change tests so that they are independent from each other and can
+   * be run alone
+   */
   describe('successful', () => {
     const delUserId = '1be5abcd-53d4-11ed-9342-0242ac120002';
 
@@ -66,15 +70,13 @@ describe('Delete user', () => {
           'email',
           'forename',
           'surname',
-          'is_admin as isAdmin',
-          'is_blender as isBlender',
+          'phone_number',
           'deleted_at as deletedAt'
         );
       expect(res.email).toBeNull();
       expect(res.forename).toBeNull();
       expect(res.surname).toBeNull();
-      expect(res.isAdmin).toEqual(0);
-      expect(res.isBlender).toEqual(0);
+      expect(res.phone_number).toBeNull();
       expect(res.deletedAt).not.toBeNull();
     });
 
