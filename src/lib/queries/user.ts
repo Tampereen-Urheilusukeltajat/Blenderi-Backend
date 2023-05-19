@@ -18,7 +18,8 @@ type UserLoginResponse = Pick<
 const getUsers = async (
   db: Knex | Knex.Transaction,
   onlyActiveUsers: boolean,
-  userId?: string
+  userId?: string,
+  email?: string
 ): Promise<UserResponse[]> => {
   const sql = `
     SELECT
@@ -38,10 +39,12 @@ const getUsers = async (
       deleted_at IS NULL
       ${onlyActiveUsers ? 'AND archived_at IS NULL' : ''}
       ${userId ? 'AND u.id = :userId' : ''}
+      ${email ? 'AND u.email = :email' : ''}
   `;
 
   return db.raw<UserResponse[]>(sql, {
     userId,
+    email,
   });
 };
 
@@ -60,6 +63,17 @@ export const getUserWithId = async (
 ): Promise<UserResponse | undefined> => {
   const transaction = trx ?? knexController;
   const res = await getUsers(transaction, onlyActive, userId);
+
+  return { ...res[0][0] };
+};
+
+export const getUserWithEmail = async (
+  email: string,
+  onlyActive = true,
+  trx?: Knex.Transaction
+): Promise<UserResponse | undefined> => {
+  const transaction = trx ?? knexController;
+  const res = await getUsers(transaction, onlyActive, undefined, email);
 
   return { ...res[0][0] };
 };
