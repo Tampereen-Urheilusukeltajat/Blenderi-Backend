@@ -57,6 +57,10 @@ const handler = async (
     password_hash: hashObj.hash,
   });
 
+  // This is stupid way to get inserted data.
+  // Too bad that mysql dialect doesn't have RETURNING clause.
+  // Ultimate race condition stuff
+  // TODO: fix
   const createdUser = await getUserWithEmail(request.body.email, false, trx);
 
   await trx.commit();
