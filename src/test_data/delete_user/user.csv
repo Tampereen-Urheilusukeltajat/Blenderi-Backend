@@ -1,4 +1,4 @@
-id;email;phone;forename;surname;is_admin;is_blender;salt;password_hash;archived_at;deleted_at;created_at;updated_at;
-1be5abcd-53d4-11ed-9342-0242ac120002;admin@admin.com;020202;Sakke;Sukeltaja;0;0;yvxdminZIQNbFGMkA1NIA;$2b$10$yvxdminZIQNbFGMkA1NIA.NU6xO6SzrnLqm5eB3nCS5TYXpH1tfFy;;;2020-01-19 03:14:07;;
-54e3e8b0-53d4-11ed-9342-0242ac120002;sakke.sukeltaja@suomi48.fi;0100100;Sakke;Sukeltaja;0;0;salt;password_hash;;;2020-01-19 03:14:07;;
-d57ff56c-7ed5-11ed-a20a-27a77b2da7d7;user@taursu.fi;0400;petri;penettäjä;1;1;$2b$10$yvxdminZIQNbFGMkA1NIA.;$2b$10$yvxdminZIQNbFGMkA1NIA.NU6xO6SzrnLqm5eB3nCS5TYXpH1tfFy;;;2020-01-19 03:14:07;2020-01-19 03:14:07;
+id;email;phone_number;forename;surname;salt;password_hash;archived_at;deleted_at;created_at;updated_at;
+1be5abcd-53d4-11ed-9342-0242ac120002;admin@admin.com;00001;Sakke;Sukeltaja;$2b$10$yvxdminZIQNbFGMkA1NIA;$2b$10$yvxdminZIQNbFGMkA1NIA.NU6xO6SzrnLqm5eB3nCS5TYXpH1tfFy;;;2020-01-19 03:14:07;;
+54e3e8b0-53d4-11ed-9342-0242ac120002;sakke.sukeltaja@suomi48.fi;00002;Sakke;Sukeltaja;salt;password_hash;;;2020-01-19 03:14:07;;
+d57ff56c-7ed5-11ed-a20a-27a77b2da7d7;user@taursu.fi;00003;petri;penettäjä;$2b$10$yvxdminZIQNbFGMkA1NIA.;$2b$10$yvxdminZIQNbFGMkA1NIA.NU6xO6SzrnLqm5eB3nCS5TYXpH1tfFy;;;2020-01-19 03:14:07;2020-01-19 03:14:07;

@@ -2,7 +2,6 @@ import { FastifyInstance, FastifyReply } from 'fastify';
 import { knexController } from '../../database/database';
 import {
   userResponse,
-  UserResponse,
   createUserRequestBody,
   CreateUserRequest,
 } from '../../types/user.types';
@@ -13,6 +12,7 @@ import {
   phoneAlreadyExists,
   emailAlreadyExists,
 } from '../../lib/utils/collisionChecks';
+import { getUserWithEmail } from '../../lib/queries/user';
 
 const schema = {
   description: 'Creates a user',
@@ -38,7 +38,7 @@ const handler = async (
     return errorHandler(reply, 409, msg);
   }
 
-  if (await phoneAlreadyExists(request.body.phone)) {
+  if (await phoneAlreadyExists(request.body.phoneNumber)) {
     const msg = 'Tried to create user with duplicate phone number';
     log.debug(msg);
     return errorHandler(reply, 409, msg);
@@ -46,13 +46,13 @@ const handler = async (
 
   const hashObj = await hashPassword(request.body.password);
 
-  await knexController('user').insert({
+  const trx = await knexController.transaction();
+
+  await trx('user').insert({
     email: request.body.email,
-    phone: request.body.phone,
+    phone_number: request.body.phoneNumber,
     forename: request.body.forename,
     surname: request.body.surname,
-    is_admin: false,
-    is_blender: false,
     salt: hashObj.salt,
     password_hash: hashObj.hash,
   });
@@ -61,20 +61,9 @@ const handler = async (
   // Too bad that mysql dialect doesn't have RETURNING clause.
   // Ultimate race condition stuff
   // TODO: fix
-  const createdUser = await knexController('user')
-    .select<UserResponse[]>(
-      'id',
-      'email',
-      'phone',
-      'forename',
-      'surname',
-      'is_admin as isAdmin',
-      'is_blender as isBlender',
-      'archived_at as archivedAt'
-    )
-    .where({ email: request.body.email })
-    .first();
+  const createdUser = await getUserWithEmail(request.body.email, false, trx);
 
+  await trx.commit();
   return reply.code(201).send(createdUser);
 };
 

@@ -1,4 +1,4 @@
-id;email;phone;forename;surname;is_admin;is_blender;salt;password_hash;archived_at;deleted_at;created_at;updated_at;
-a58fff36-4f75-11ed-96ae-77941df88822;test@email.fi;1234567890;Sauli;Sukeltaja;0;1;$2b$10$ikF8ObO.XnH2ItBkKcMZau;$2b$10$ikF8ObO.XnH2ItBkKcMZaufzOadky6bRVfQ7.JOOoGo3o8xBWadYy;;;2020-01-20 03:17:07;2020-01-20 03:17:07;
-f03b9a1b-65d6-11ed-8432-0242ac120002;oujeaasd@XD.fi;1234567891;testijäbä;asd;0;0;$2b$10$ikF8ObO.XnH2ItBkKcMZau;$2b$10$ikF8ObO.XnH2ItBkKcMZaufzOadky6bRVfQ7.JOOoGo3o8xBWadYy;;;2020-01-20 03:17:07;2020-01-20 03:17:07;
-f03b9a1b-65d6-11ed-8432-0242ac120069;admin@XD.fi;1236767891;testijäbä;asd;1;1;$2b$10$ikF8ObO.XnH2ItBkKcMZau;$2b$10$ikF8ObO.XnH2ItBkKcMZaufzOadky6bRVfQ7.JOOoGo3o8xBWadYy;;;2020-01-20 03:17:07;2020-01-20 03:17:07;
+id;email;phone_number;forename;surname;salt;password_hash;archived_at;deleted_at;created_at;updated_at;
+a58fff36-4f75-11ed-96ae-77941df88822;test@email.fi;00001;Sauli;Sukeltaja;$2b$10$ikF8ObO.XnH2ItBkKcMZau;$2b$10$ikF8ObO.XnH2ItBkKcMZaufzOadky6bRVfQ7.JOOoGo3o8xBWadYy;;;2020-01-20 03:17:07;2020-01-20 03:17:07;
+f03b9a1b-65d6-11ed-8432-0242ac120002;oujeaasd@XD.fi;00002;testijäbä;asd;$2b$10$ikF8ObO.XnH2ItBkKcMZau;$2b$10$ikF8ObO.XnH2ItBkKcMZaufzOadky6bRVfQ7.JOOoGo3o8xBWadYy;;;2020-01-20 03:17:07;2020-01-20 03:17:07;
+f03b9a1b-65d6-11ed-8432-0242ac120069;admin@XD.fi;00003;testijäbä;asd;$2b$10$ikF8ObO.XnH2ItBkKcMZau;$2b$10$ikF8ObO.XnH2ItBkKcMZaufzOadky6bRVfQ7.JOOoGo3o8xBWadYy;;;2020-01-20 03:17:07;2020-01-20 03:17:07;

@@ -16,16 +16,16 @@ export const getGasById = async (
   gasId: string,
   trx?: Knex.Transaction
 ): Promise<Gas | undefined> => {
-  const transaction = trx ?? knexController;
+  const db = trx ?? knexController;
 
-  return transaction('gas').where('id', gasId).first('id', 'name');
+  return db('gas').where('id', gasId).first('id', 'name');
 };
 
 export const getGasWithPricingWithPriceId = async (
   gasPriceId: string,
   trx?: Knex.Transaction
 ): Promise<GasWithPricing | undefined> => {
-  const transaction = trx ?? knexController;
+  const db = trx ?? knexController;
 
   const sql = `
     SELECT
@@ -40,7 +40,7 @@ export const getGasWithPricingWithPriceId = async (
     gasPriceId,
   };
 
-  const response = await transaction.raw<GasWithPricing[][]>(sql, params);
+  const response = await db.raw<GasWithPricing[][]>(sql, params);
 
   if (response[0].length > 1) {
     throw new Error('There can be only one active gas price at the given time');
@@ -63,7 +63,7 @@ export const getGasWithPricingWithActiveFrom = async (
   gasId: string,
   trx?: Knex.Transaction
 ): Promise<GasWithPricing | undefined> => {
-  const transaction = trx ?? knexController;
+  const db = trx ?? knexController;
 
   const sql = `
   SELECT
@@ -82,7 +82,7 @@ export const getGasWithPricingWithActiveFrom = async (
     gasId,
   };
 
-  const response = await transaction.raw<GasWithPricing[][]>(sql, params);
+  const response = await db.raw<GasWithPricing[][]>(sql, params);
 
   if (response[0].length > 1) {
     throw new Error('There can be only one active gas price at the given time');
@@ -95,17 +95,17 @@ export const createGasPrice = async (
   { activeFrom, gasId, priceEurCents }: CreateGasPriceBody,
   trx?: Knex.Transaction
 ): Promise<GasWithPricing> => {
-  const transaction = trx ?? (await knexController.transaction());
+  const db = trx ?? (await knexController.transaction());
 
   // Find the current active price and update activeTo
   const activePrice = await getGasWithPricingWithActiveFrom(
     activeFrom,
     gasId,
-    transaction
+    db
   );
 
   if (activePrice) {
-    await transaction.raw(
+    await db.raw(
       `
       UPDATE gas_price
       SET active_to = :activeTo
@@ -128,7 +128,7 @@ export const createGasPrice = async (
     activeFrom: convertDateToMariaDBDateTime(new Date(activeFrom)),
   };
 
-  const res = await transaction.raw<Array<{ insertId: string }>>(
+  const res = await db.raw<Array<{ insertId: string }>>(
     insertSql,
     insertParams
   );
@@ -136,11 +136,11 @@ export const createGasPrice = async (
 
   const insertedGasWithPricing = await getGasWithPricingWithPriceId(
     insertedGasPriceId,
-    transaction
+    db
   );
   if (!insertedGasWithPricing) throw new Error('Gas price creation failed');
 
-  await transaction.commit();
+  await db.commit();
 
   return insertedGasWithPricing;
 };
@@ -148,7 +148,7 @@ export const createGasPrice = async (
 export const getGasesWithPricing = async (
   trx?: Knex.Transaction
 ): Promise<GasWithPricing[]> => {
-  const transaction = trx ?? knexController;
+  const db = trx ?? knexController;
 
   // Date.now is not necessary, but it makes testing easier as you can only
   // mock that function and not the whole Date constructor
@@ -168,7 +168,7 @@ export const getGasesWithPricing = async (
     now,
   };
 
-  const res = await transaction.raw<GasWithPricing[][]>(sql, params);
+  const res = await db.raw<GasWithPricing[][]>(sql, params);
 
   return res[0] ?? [];
 };

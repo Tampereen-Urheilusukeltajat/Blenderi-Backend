@@ -32,7 +32,7 @@ export const createStorageCylinder = async (
   payload: CreateStorageCylinderBody,
   trx?: Knex.Transaction
 ): Promise<StorageCylinder> => {
-  const transaction = trx ?? (await knexController.transaction());
+  const db = trx ?? (await knexController.transaction());
   const sql =
     'INSERT INTO storage_cylinder (gas_id, max_pressure, name, volume) VALUES (?,?,?,?) RETURNING id';
   const params = [
@@ -43,15 +43,12 @@ export const createStorageCylinder = async (
   ];
 
   // Type source: trust me bro & trial and error
-  const res = await transaction.raw<Array<Array<{ id: number }>>>(sql, params);
+  const res = await db.raw<Array<Array<{ id: number }>>>(sql, params);
   const [[{ id: insertedStorageCylinderId }]] = res;
 
-  const insertedSC = await getStorageCylinder(
-    transaction,
-    insertedStorageCylinderId
-  );
+  const insertedSC = await getStorageCylinder(db, insertedStorageCylinderId);
 
-  await transaction.commit();
+  await db.commit();
 
   return insertedSC;
 };
@@ -59,9 +56,9 @@ export const createStorageCylinder = async (
 export const getStorageCylinders = async (
   trx?: Knex.Transaction
 ): Promise<StorageCylinder[]> => {
-  const transaction = trx ?? knexController;
+  const db = trx ?? knexController;
 
-  return transaction('storage_cylinder').select(
+  return db('storage_cylinder').select(
     'id',
     'gas_id AS gasId',
     'volume',

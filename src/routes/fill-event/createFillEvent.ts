@@ -4,7 +4,6 @@ import {
   CreateFillEventBody,
   fillEventResponse,
 } from '../../types/fillEvent.types';
-import { errorHandler } from '../../lib/utils/errorHandler';
 import { createFillEvent } from '../../lib/queries/fillEvent';
 
 const schema = {
@@ -26,15 +25,7 @@ const handler = async (
   request: FastifyRequest<{ Body: CreateFillEventBody }>,
   reply: FastifyReply
 ): Promise<void> => {
-  const res = await createFillEvent(request.user, request.body);
-  if (res.fillEventId === undefined) {
-    return errorHandler(reply, res.status, res.message);
-  }
-  return reply.code(201).send({
-    id: res.fillEventId,
-    userId: request.user.id,
-    ...request.body,
-  });
+  return createFillEvent(request.user, request.body, reply);
 };
 
 export default async (fastify: FastifyInstance): Promise<void> => {

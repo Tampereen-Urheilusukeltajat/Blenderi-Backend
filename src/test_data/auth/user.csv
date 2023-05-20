@@ -1,4 +1,3 @@
-id;email;forename;surname;is_admin;is_blender;salt;password_hash;archived_at;deleted_at;created_at;updated_at;
-1be5abcd-53d4-11ed-9342-0242ac120002;user@example.com;Tester;Blender;0;1;$2b$10$ikF8ObO.XnH2ItBkKcMZau;$2b$10$ikF8ObO.XnH2ItBkKcMZaufzOadky6bRVfQ7.JOOoGo3o8xBWadYy;;;2020-01-19 03:14:07;2020-01-19 03:14:07;
-54e3e8b0-53d4-11ed-9342-0242ac120002;oujea@XD.fi;testijäbä;asd;0;0;$2b$10$ikF8ObO.XnH2ItBkKcMZau;$2b$10$ikF8ObO.XnH2ItBkKcMZaufzOadky6bRVfQ7.JOOoGo3o8xBWadYy;2022-10-24 19:45;;2020-01-19 03:14:07;2020-01-19 03:14:07;
-
+id;phone_number;email;forename;surname;salt;password_hash;archived_at;deleted_at;created_at;updated_at;
+1be5abcd-53d4-11ed-9342-0242ac120002;00001;user@example.com;Tester;Blender;$2b$10$ikF8ObO.XnH2ItBkKcMZau;$2b$10$ikF8ObO.XnH2ItBkKcMZaufzOadky6bRVfQ7.JOOoGo3o8xBWadYy;;;2020-01-19 03:14:07;2020-01-19 03:14:07;
+54e3e8b0-53d4-11ed-9342-0242ac120002;00002;oujea@XD.fi;testijäbä;asd;$2b$10$ikF8ObO.XnH2ItBkKcMZau;$2b$10$ikF8ObO.XnH2ItBkKcMZaufzOadky6bRVfQ7.JOOoGo3o8xBWadYy;2022-10-24 19:45;;2020-01-19 03:14:07;2020-01-19 03:14:07;

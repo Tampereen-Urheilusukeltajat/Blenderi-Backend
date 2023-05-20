@@ -1,3 +1,3 @@
-id;email;phone;forename;surname;is_admin;is_blender;salt;password_hash;archived_at;deleted_at;created_at;updated_at;
-826934c4-626a-11ed-9292-abf3c530a8c9;admin@admin.com;01001000;Admin;Admin;1;1;salt;password_hash;;;2020-01-19 03:14:07;2020-01-19 03:14:07;
-900c64e8-626a-11ed-a965-7f1f2b1e5ed0;example@example.com;020202;user;user;1;1;salt;password_has;;;2020-01-19 03:14:07;2020-01-19 03:14:07;
+id;email;phone_number;forename;surname;salt;password_hash;archived_at;deleted_at;created_at;updated_at;
+826934c4-626a-11ed-9292-abf3c530a8c9;admin@admin.com;00001;Admin;Admin;salt;password_hash;;;2020-01-19 03:14:07;2020-01-19 03:14:07;
+900c64e8-626a-11ed-a965-7f1f2b1e5ed0;example@example.com;00002;user;user;salt;password_has;;;2020-01-19 03:14:07;2020-01-19 03:14:07;

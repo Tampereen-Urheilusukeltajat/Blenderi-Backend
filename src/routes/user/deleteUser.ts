@@ -37,11 +37,9 @@ const handler = async (
 
   const result = await transaction('user').where({ id: userId }).update({
     email: null,
-    phone: null,
+    phone_number: null,
     forename: null,
     surname: null,
-    is_admin: false,
-    is_blender: false,
     deleted_at: transaction.fn.now(),
   });
   if (result === 0) {

@@ -14,9 +14,9 @@ export const divingCylinderSetExists = async (
   userId: string,
   trx?: Knex.Transaction
 ): Promise<boolean> => {
-  const transaction = trx ?? knexController;
+  const db = trx ?? knexController;
 
-  const [exists] = await transaction.raw<DBResponse<number[]>>(
+  const [exists] = await db.raw<DBResponse<number[]>>(
     `
     SELECT
       1
@@ -40,9 +40,9 @@ export const archiveDivingCylinderSet = async (
   divingCylinderSetId: string,
   trx?: Knex.Transaction
 ): Promise<void> => {
-  const transaction = trx ?? knexController;
+  const db = trx ?? knexController;
 
-  await transaction.raw(
+  await db.raw(
     `
     UPDATE diving_cylinder_set
     SET archived = true
@@ -59,9 +59,9 @@ export const getUsersDivingCylinderSets = async (
   userId: string,
   trx?: Knex.Transaction
 ): Promise<DivingCylinderSet[]> => {
-  const transaction = trx ?? knexController;
+  const db = trx ?? knexController;
 
-  const [divingCylinderSets] = await transaction.raw<
+  const [divingCylinderSets] = await db.raw<
     DBResponse<DivingCylinderSetBasicInfo[]>
   >(
     `
@@ -81,9 +81,7 @@ export const getUsersDivingCylinderSets = async (
 
   if (divingCylinderSets.length === 0) return [];
 
-  const [divingCylinders] = await transaction.raw<
-    DBResponse<DivingCylinderWithSetId[]>
-  >(
+  const [divingCylinders] = await db.raw<DBResponse<DivingCylinderWithSetId[]>>(
     `
     SELECT
       dc.id,

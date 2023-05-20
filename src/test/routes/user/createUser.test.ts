@@ -9,7 +9,7 @@ import { buildServer } from '../../../server';
 
 const USER_PAYLOAD = {
   email: 'erkki@sukeltaja.fi',
-  phone: '123345567',
+  phoneNumber: '00010',
   forename: 'Erkki',
   surname: 'Nitikka',
   password: 'superhyväsalasana',
@@ -30,6 +30,10 @@ describe('create user', () => {
     await knexController.destroy();
   });
 
+  /**
+   * @TODO Modify tests so that they are truly independent (do not depend on
+   * each others results)
+   */
   describe('happy paths', () => {
     test('it responds with 201 if user is created', async () => {
       const server = await getTestInstance();
@@ -44,7 +48,7 @@ describe('create user', () => {
       expect(responseBody.email).toEqual(USER_PAYLOAD.email);
       expect(responseBody.forename).toEqual(USER_PAYLOAD.forename);
       expect(responseBody.surname).toEqual(USER_PAYLOAD.surname);
-      expect(responseBody.phone).toEqual(USER_PAYLOAD.phone);
+      expect(responseBody.phoneNumber).toEqual(USER_PAYLOAD.phoneNumber);
       expect(responseBody).toHaveProperty('id');
       expect(responseBody).not.toHaveProperty('password');
       expect(responseBody).not.toHaveProperty('salt');
@@ -57,7 +61,7 @@ describe('create user', () => {
         method: 'POST',
         payload: {
           email: 'pertti@sukeltaja.fi',
-          phone: '020203',
+          phoneNumber: '00011',
           forename: '🦴',
           surname: '🦴',
           password: '🦴🦴🦴🦴🦴🦴🦴🦴',
@@ -79,7 +83,7 @@ describe('create user', () => {
           payload: {
             ...USER_PAYLOAD,
             email: 'email@[123.123.123.123]',
-            phone: '020204',
+            phoneNumber: '020204',
           },
         });
         expect(res.statusCode).toEqual(201);
@@ -93,7 +97,7 @@ describe('create user', () => {
           payload: {
             ...USER_PAYLOAD,
             email: 'ile+harrastussahkoposti@ilesoft.fi',
-            phone: '020205',
+            phoneNumber: '020205',
           },
         });
         expect(res.statusCode).toEqual(201);
@@ -124,7 +128,7 @@ describe('create user', () => {
         payload: {
           ...USER_PAYLOAD,
           email: 'example@example.com',
-          phone: '020202', // already exists
+          phoneNumber: '00001', // already exists
         },
       });
 

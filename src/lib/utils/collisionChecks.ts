@@ -9,18 +9,20 @@ export const phoneAlreadyExists = async (
   newPhone: string,
   userID?: string
 ): Promise<boolean> => {
-  const count: number = await knexController<User>('user')
-    .count('phone')
-    .where('phone', newPhone)
+  const count: number = await knexController('user')
+    .count('phone_number')
+    .where('phone_number', newPhone)
     .first()
-    .then((row: { 'count(`phone`)': number }) => Number(row['count(`phone`)']));
+    .then((row: { 'count(`phone_number`)': number }) =>
+      Number(row['count(`phone_number`)'])
+    );
 
   if (userID !== undefined) {
     const userPhone = await knexController<User>('user')
-      .select('phone')
+      .select('phone_number')
       .where('id', userID);
 
-    if (userPhone[0].phone === newPhone) {
+    if (userPhone[0].phone_number === newPhone) {
       return false;
     }
   }

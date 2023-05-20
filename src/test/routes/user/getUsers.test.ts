@@ -30,14 +30,26 @@ describe('Get users', () => {
   });
 
   let server;
+  let headers: object;
   beforeEach(async () => {
     server = await getTestInstance();
+    const res = await server.inject({
+      url: '/api/login',
+      method: 'POST',
+      payload: {
+        email: 'test@email.fi',
+        password: 'password',
+      },
+    });
+    const tokens = JSON.parse(res.body);
+    headers = { Authorization: 'Bearer ' + String(tokens.accessToken) };
   });
 
   test('it returns all not archived or deleted users', async () => {
     const res = await server.inject({
       url: '/api/user/',
       method: 'GET',
+      headers,
     });
     const users = await knexController('user')
       .where({ archived_at: null, deleted_at: null })
@@ -51,6 +63,7 @@ describe('Get users', () => {
     const res = await server.inject({
       url: '/api/user?includeArchived=true',
       method: 'GET',
+      headers,
     });
     const users = await knexController('user')
       .whereNull('deleted_at')
@@ -65,6 +78,7 @@ describe('Get users', () => {
     const res = await server.inject({
       url: '/api/user?includeArchived=true',
       method: 'GET',
+      headers,
     });
     const resBody = JSON.parse(res.body);
     expect(res.statusCode).toEqual(200);

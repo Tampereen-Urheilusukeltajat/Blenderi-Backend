@@ -53,7 +53,6 @@ describe('Get user', () => {
       });
       const resBody = JSON.parse(res.body);
       expect(res.statusCode).toEqual(200);
-      expect(resBody.archivedAt).toEqual('');
       expect(resBody).toMatchSnapshot();
     });
   });
