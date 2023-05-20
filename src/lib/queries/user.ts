@@ -64,8 +64,8 @@ export const getUserWithId = async (
   onlyActive = true,
   trx?: Knex.Transaction
 ): Promise<UserResponse | undefined> => {
-  const transaction = trx ?? knexController;
-  const res = await getUsers(transaction, onlyActive, userId);
+  const db = trx ?? knexController;
+  const res = await getUsers(db, onlyActive, userId);
 
   return { ...res[0][0] };
 };
@@ -75,8 +75,8 @@ export const getUserWithEmail = async (
   onlyActive = true,
   trx?: Knex.Transaction
 ): Promise<UserResponse | undefined> => {
-  const transaction = trx ?? knexController;
-  const res = await getUsers(transaction, onlyActive, undefined, email);
+  const db = trx ?? knexController;
+  const res = await getUsers(db, onlyActive, undefined, email);
 
   return { ...res[0][0] };
 };
@@ -116,16 +116,16 @@ export const updateUser = async (
   payload: Partial<User>,
   trx?: Knex.Transaction
 ): Promise<UserResponse> => {
-  const transaction = trx ?? (await knexController.transaction());
+  const db = trx ?? (await knexController.transaction());
 
-  await transaction('user')
+  await db('user')
     .where({ id: userId, deleted_at: null })
     .update(snakecaseKeys(payload));
 
-  const editedUser = await getUserWithId(userId, false, transaction);
+  const editedUser = await getUserWithId(userId, false, db);
 
   if (!editedUser) throw new Error('Updated user not found');
 
-  await transaction.commit();
+  await db.commit();
   return editedUser;
 };

@@ -27,39 +27,39 @@ const handler = async (
 ): Promise<void> => {
   const { userId } = req.params;
 
-  const transaction = await knexController.transaction();
+  const db = await knexController.transaction();
 
-  const result = await transaction('user').where({ id: userId }).update({
+  const result = await db('user').where({ id: userId }).update({
     email: null,
     phone_number: null,
     forename: null,
     surname: null,
-    deleted_at: transaction.fn.now(),
+    deleted_at: db.fn.now(),
   });
   if (result === 0) {
-    await transaction.rollback();
+    await db.rollback();
     return reply.code(404).send({
       statusCode: 404,
       error: 'Not Found',
       message: 'User not found.',
     });
   }
-  const cylinderIds = await transaction('diving_cylinder_set')
+  const cylinderIds = await db('diving_cylinder_set')
     .where({ owner: userId })
     .select('id');
 
   const promises: Array<Promise<void>> = [];
   cylinderIds.map(async (dataPacket) => {
-    promises.push(archiveDivingCylinderSet(dataPacket.id, transaction));
+    promises.push(archiveDivingCylinderSet(dataPacket.id, db));
   });
 
   await Promise.all(promises);
 
-  const user = await transaction('user')
+  const user = await db('user')
     .where({ id: userId })
     .select('id as userId', 'deleted_at as deletedAt');
 
-  await transaction.commit();
+  await db.commit();
   return reply.code(200).send(...user);
 };
 
