@@ -42,7 +42,7 @@ describe('Delete user', () => {
         url: '/api/login',
         method: 'POST',
         payload: {
-          email: 'user@taursu.fi',
+          email: 'admin@admin.com',
           password: 'salasana',
         },
       });
