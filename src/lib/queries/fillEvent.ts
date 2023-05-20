@@ -106,7 +106,7 @@ export const createFillEvent = async (
   const trx = await knexController.transaction();
   const user = await getUserWithId(authUser.id, true, trx);
 
-  if (user === undefined) return errorHandler(reply, 404);
+  if (user === undefined) return errorHandler(reply, 500);
 
   if (!user.isBlender && storageCylinderUsageArr.length !== 0) {
     await trx.rollback();
