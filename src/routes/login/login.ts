@@ -11,7 +11,10 @@ import {
   LoginRequest,
   authResponse,
 } from '../../types/auth.types';
-import { getUserDetailsForLogin } from '../../lib/queries/user';
+import {
+  getUserDetailsForLogin,
+  updateLastLogin,
+} from '../../lib/queries/user';
 import { isEmptyObject } from '../../lib/utils/empty';
 
 const schema = {
@@ -63,6 +66,8 @@ const handler = async (
     refreshTokenId,
     refreshToken
   );
+
+  await updateLastLogin(userInfo.id);
 
   return reply.code(200).send({ accessToken, refreshToken });
 };

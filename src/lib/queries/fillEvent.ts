@@ -108,7 +108,10 @@ export const createFillEvent = async (
 
   if (user === undefined) return errorHandler(reply, 500);
 
-  if (!user.isBlender && storageCylinderUsageArr.length !== 0) {
+  if (
+    !(user.isBlender || user.isAdmin) &&
+    storageCylinderUsageArr.length !== 0
+  ) {
     await trx.rollback();
     return errorHandler(reply, 403, 'User does not have blender privileges');
   }
@@ -122,12 +125,11 @@ export const createFillEvent = async (
   const sql =
     'INSERT INTO fill_event (user_id, cylinder_set_id, gas_mixture, description) VALUES (?,?,?,?) RETURNING id';
 
-  /**
-   * Rule is disabled as all possible falsy (empty string and undefined) values should lead to a null-value
-   * being inserted into the database thus being safe
-   */
-  // eslint-disable-next-line  @typescript-eslint/strict-boolean-expressions
-  description ? params.push(description) : params.push(null);
+  if (description) {
+    params.push(description);
+  } else {
+    params.push(null);
+  }
 
   // Use knex.raw to enable use of RETURNING clause to avoid race conditions
   const res = await trx.raw(sql, params);
