@@ -6,6 +6,7 @@ import {
   UserIdParamsPayload,
   deleteUserReply,
 } from '../../types/user.types';
+import { errorHandler } from '../../lib/utils/errorHandler';
 
 const schema = {
   description:
@@ -26,6 +27,11 @@ const handler = async (
   reply: FastifyReply
 ): Promise<void> => {
   const { userId } = req.params;
+  const { id, isAdmin } = req.user;
+
+  if (id !== userId && !isAdmin) {
+    return errorHandler(reply, 403);
+  }
 
   const transaction = await knexController.transaction();
 
@@ -40,11 +46,7 @@ const handler = async (
   });
   if (result === 0) {
     await transaction.rollback();
-    return reply.code(404).send({
-      statusCode: 404,
-      error: 'Not Found',
-      message: 'User not found.',
-    });
+    return errorHandler(reply, 404, 'User not found');
   }
   const cylinderIds = await transaction('diving_cylinder_set')
     .where({ owner: userId })
