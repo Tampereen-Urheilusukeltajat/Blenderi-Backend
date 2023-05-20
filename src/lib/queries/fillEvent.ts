@@ -89,7 +89,7 @@ export const createFillEvent = async (
   authUser: AuthUser,
   body: CreateFillEventBody,
   reply: FastifyReply
-): Promise<{ status: number; message?: string; fillEventId?: number }> => {
+): Promise<FastifyReply> => {
   const {
     cylinderSetId,
     gasMixture,
@@ -100,13 +100,13 @@ export const createFillEvent = async (
   } = body;
 
   if (!filledAir && storageCylinderUsageArr.length === 0) {
-    return { status: 400, message: 'No gases were given' };
+    return errorHandler(reply, 400, 'No gases were given');
   }
 
   const trx = await knexController.transaction();
   const user = await getUserWithId(authUser.id, true, trx);
 
-  if (user === undefined) return errorHandler(reply, 404);
+  if (user === undefined) return errorHandler(reply, 500);
 
   if (!user.isBlender && storageCylinderUsageArr.length !== 0) {
     await trx.rollback();
@@ -189,11 +189,12 @@ export const createFillEvent = async (
     return errorHandler(reply, 400, 'Client price did not match server price');
   }
   await trx.commit();
-  return {
-    status: 201,
-    message: 'Fill event created successfully',
-    fillEventId,
-  };
+
+  return reply.code(201).send({
+    id: fillEventId,
+    userId: user.id,
+    ...body,
+  });
 };
 
 export const calcTotalCost = async (
