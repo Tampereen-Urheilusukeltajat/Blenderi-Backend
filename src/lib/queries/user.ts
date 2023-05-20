@@ -81,9 +81,9 @@ export const updateLastLogin = async (
   userId: string,
   trx?: Knex.Transaction
 ): Promise<void> => {
-  const transaction = trx ?? knexController;
+  const db = trx ?? knexController;
 
-  const alteredRows = await transaction('user')
+  const alteredRows = await db('user')
     .where({ id: userId })
     .update({ last_login: new Date(Date.now()) });
 
