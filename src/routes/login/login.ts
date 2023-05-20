@@ -12,6 +12,7 @@ import {
   LoginRequest,
   authResponse,
 } from '../../types/auth.types';
+import { updateLastLogin } from '../../lib/queries/user';
 
 const schema = {
   tags: ['Auth'],
@@ -84,6 +85,8 @@ const handler = async (
     refreshTokenId,
     refreshToken
   );
+
+  await updateLastLogin(userInfo.id);
 
   return reply.code(200).send({ accessToken, refreshToken });
 };

@@ -76,3 +76,16 @@ export const updateUser = async (
   await transaction.commit();
   return editedUser;
 };
+
+export const updateLastLogin = async (
+  userId: string,
+  trx?: Knex.Transaction
+): Promise<void> => {
+  const transaction = trx ?? knexController;
+
+  const alteredRows = await transaction('user')
+    .where({ id: userId })
+    .update({ last_login: new Date(Date.now()) });
+
+  if (alteredRows !== 1) throw new Error('Updating last login failed');
+};

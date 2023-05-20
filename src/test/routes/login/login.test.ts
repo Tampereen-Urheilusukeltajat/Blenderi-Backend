@@ -1,4 +1,5 @@
 import {
+  jest,
   describe,
   test,
   expect,
@@ -32,6 +33,7 @@ describe('Login', () => {
   let server;
   beforeEach(async () => {
     server = await getTestInstance();
+    jest.useFakeTimers({ legacyFakeTimers: true });
   });
 
   describe('Happy path', () => {
@@ -77,6 +79,35 @@ describe('Login', () => {
           "isAdmin": false,
           "isBlender": true,
           "isRefreshToken": false,
+        }
+      `);
+    });
+
+    test('It updates last_login', async () => {
+      Date.now = jest.fn(() => new Date('2023-01-01').valueOf());
+
+      const res = await server.inject({
+        url: '/api/login',
+        method: 'POST',
+        payload: {
+          email: 'user@example.com',
+          password: 'password',
+        },
+      });
+      expect(res.statusCode).toEqual(200);
+
+      const dbRes = await knexController.raw(`
+        SELECT
+          email,
+          last_login
+        FROM user
+        WHERE email = 'user@example.com';
+      `);
+
+      expect({ ...dbRes[0][0] }).toMatchInlineSnapshot(`
+        {
+          "email": "user@example.com",
+          "last_login": 2023-01-01T00:00:00.000Z,
         }
       `);
     });
