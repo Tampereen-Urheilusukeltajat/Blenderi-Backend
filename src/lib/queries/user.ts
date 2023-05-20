@@ -81,6 +81,11 @@ export const getUserWithEmail = async (
   return { ...res[0][0] };
 };
 
+/**
+ * Only returns active users (archived_at and deleted_at are null)
+ * @param email
+ * @returns
+ */
 export const getUserDetailsForLogin = async (
   email: string
 ): Promise<UserLoginResponse | undefined> => {
