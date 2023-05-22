@@ -14,7 +14,11 @@ export const sendEmail = async (msg: emailMsg): Promise<void> => {
   try {
     const requestEmailBody = {
       ...msg,
-      from: FROM_EMAIL,
+      from: {
+        email: FROM_EMAIL,
+        name: 'Täyttöpaikka',
+      },
+
       mailSettings: {},
     };
 
