@@ -44,7 +44,7 @@ describe('Set new password', () => {
       method: 'POST',
       payload: {
         token: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
-        email: 'user@example.com',
+        userId: '1be5abcd-53d4-11ed-9342-0242ac120002',
         password: 'rockYou.txt',
       },
     });
@@ -58,7 +58,7 @@ describe('Set new password', () => {
       method: 'POST',
       payload: {
         token: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
-        email: 'nonexistent.user@example.com',
+        userId: '1be5abcd-53d4-11ed-9342-0242ac120009',
         password: 'rockYou.txt',
       },
     });

@@ -16,13 +16,13 @@ export const handlePasswordSetRequest = async (
   body: SetPasswordBody
 ): Promise<void> => {
   const userInfo = await knexController<{ id: string; email: string }>('user')
-    .where('email', body.email)
+    .where('id', body.userId)
     .where('archived_at', null)
     .where('deleted_at', null)
     .first('id', 'email');
 
   if (userInfo === undefined) {
-    log.info('password set request with non existent email');
+    log.info('password set request with non existent user');
     return;
   }
 

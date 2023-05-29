@@ -22,7 +22,7 @@ const handler = async (
   request: FastifyRequest<{ Body: SetPasswordBody }>,
   reply: FastifyReply
 ): Promise<void> => {
-  const rateLimiterKey = `rate-limiter:${request.body.email}`;
+  const rateLimiterKey = `rate-limiter:${request.body.userId}`;
 
   // Limit password resetting attempts to 1 attempt per second
   if ((await redisClient.EXISTS(rateLimiterKey)) !== 0) {
