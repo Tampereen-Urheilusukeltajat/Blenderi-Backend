@@ -6,7 +6,7 @@ describe('Hash password', () => {
     const testPass = 'testpass123';
     const hashObj = await hashPassword(testPass);
 
-    // bcrpyt hash should always 60 characters long.
+    // bcrypt hash should always 60 characters long.
     const hashLength = hashObj.hash.length;
     expect(hashLength).toEqual(60);
 

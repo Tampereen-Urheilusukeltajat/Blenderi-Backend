@@ -10,6 +10,7 @@ const HTTP_ERROR_RESPONSE_STATUS_MESSAGES = {
   405: 'Method Not Allowed',
   409: 'Conflict',
   418: `I'm a teapot`,
+  429: 'Too Many Requests',
   500: 'Internal Server Error',
 };
 

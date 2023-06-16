@@ -1,9 +1,17 @@
 import { Type, Static } from '@sinclair/typebox';
 import { FastifyRequest } from 'fastify';
 
+export const email = Type.String({
+  minLength: 3,
+  maxLength: 254,
+  pattern: '^.+@....+$', // We do not accept hosts without top level domain
+});
+
+export const password = Type.String({ minLength: 8, maxLength: 1000 });
+
 export const user = Type.Object({
   id: Type.String({ format: 'uuid' }),
-  email: Type.String(),
+  email,
   phoneNumber: Type.String(),
   forename: Type.String(),
   surname: Type.String(),
@@ -22,11 +30,11 @@ export type User = Static<typeof user>;
 
 export const updateUserBody = Type.Partial(
   Type.Object({
-    email: Type.String(),
+    email,
     phoneNumber: Type.String(),
     forename: Type.String(),
     surname: Type.String(),
-    password: Type.String(),
+    password,
     currentPassword: Type.String(),
     archive: Type.Boolean(),
   }),
@@ -37,7 +45,7 @@ export type UpdateUserBody = Static<typeof updateUserBody>;
 
 export const userResponse = Type.Object({
   id: Type.String({ format: 'uuid' }),
-  email: Type.String(),
+  email,
   phoneNumber: Type.String(),
   forename: Type.String(),
   surname: Type.String(),
@@ -51,11 +59,11 @@ export const userResponse = Type.Object({
 export type UserResponse = Static<typeof userResponse>;
 
 export const createUserRequestBody = Type.Object({
-  email: Type.String({ minLength: 3, maxLength: 254, pattern: '^.+@....+$' }), // We do not accept hosts without top level domain
+  email,
   phoneNumber: Type.String({ minLength: 3, maxLength: 32 }),
   forename: Type.String({ minLength: 1, maxLength: 255 }),
   surname: Type.String({ minLength: 1, maxLength: 255 }),
-  password: Type.String({ minLength: 8, maxLength: 1000 }),
+  password,
 });
 
 export type CreateUserRequestBody = Static<typeof createUserRequestBody>;

@@ -4,6 +4,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 import { knexController } from './database/database';
+import { connect } from './lib/auth/redis';
 
 import { log } from './lib/utils/log';
 import { buildServer } from './server';
@@ -21,6 +22,14 @@ module.exports = (async () => {
     process.exit(1);
   }
 
+  log.info('Connecting to redis');
+  try {
+    await connect();
+  } catch (error) {
+    log.error('Error connecting redis!', error);
+    process.exit(1);
+  }
+
   log.info('Starting server');
   try {
     const server = await buildServer({
@@ -35,5 +44,5 @@ module.exports = (async () => {
     process.exit(1);
   }
 
-  log.info('Blenderi backend started succesfully');
+  log.info('Blenderi backend started successfully');
 })();

@@ -11,6 +11,8 @@ import { FastifyInstance } from 'fastify';
 import {
   createTestDatabase,
   dropTestDatabase,
+  startRedisConnection,
+  stopRedisConnection,
 } from '../../../lib/utils/testUtils';
 import { knexController } from '../../../database/database';
 import { buildServer } from '../../../server';
@@ -23,11 +25,13 @@ describe('create fill event', () => {
 
   beforeAll(async () => {
     await createTestDatabase('create_fill_event');
+    await startRedisConnection();
   });
 
   afterAll(async () => {
     await dropTestDatabase();
     await knexController.destroy();
+    await stopRedisConnection();
   });
 
   let server;
