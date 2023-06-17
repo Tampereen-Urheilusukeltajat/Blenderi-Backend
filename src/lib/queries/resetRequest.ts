@@ -8,6 +8,12 @@ import crypto from 'crypto';
 
 export const PASSWORD_RESET_TOKEN_EXPIRE_TIME = 600; // ten minutes
 
+const APPLICATION_URI: string | undefined = process.env.APPLICATION_URI;
+
+if (APPLICATION_URI === undefined) {
+  throw new Error('resetRequest function has no application uri!');
+}
+
 export const handlePasswordResetRequest = async (
   body: PasswordResetRequestBody
 ): Promise<void> => {
@@ -46,7 +52,7 @@ export const handlePasswordResetRequest = async (
     to: userInfo.email,
     subject: 'Pyysit salasanan vaihtamista',
     text: `Olet pyytänyt Tampereen Urheilusukeltajien Täyttöpaikka-palvelun salasanan vaihtoa.
-Avaa seuraava linkki selaimessa vaihtaaksesi salasanan. https://tayttopaikka.fi/reset-password?token=${newResetToken}&id=${userInfo.id}&email=${b64Email}
+Avaa seuraava linkki selaimessa vaihtaaksesi salasanan. ${APPLICATION_URI}/reset-password?token=${newResetToken}&id=${userInfo.id}&email=${b64Email}
 
 Mikäli et pyytänyt salasanan vaihtamista, voit jättää tämän sähköpostin huomiotta. Jos saat useamman sähköpostin pyytämättä, ole hyvä ja ota yhteyttä ylläpitoon.`,
   });
