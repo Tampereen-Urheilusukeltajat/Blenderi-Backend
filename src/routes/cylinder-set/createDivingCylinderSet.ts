@@ -1,6 +1,5 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { v4 as uuid } from 'uuid';
-
+import { randomUUID } from 'crypto';
 import { knexController } from '../../database/database';
 import { errorHandler } from '../../lib/utils/errorHandler';
 import { selectCylinderSet } from '../../lib/queries/divingCylinderSet';
@@ -47,7 +46,7 @@ const handler = async (
 
   await knexController
     .transaction(async (trx) => {
-      const setId = uuid();
+      const setId = randomUUID();
 
       await trx('diving_cylinder_set').insert({
         id: setId,
@@ -56,7 +55,7 @@ const handler = async (
       });
 
       for (const cylinder of request.body.cylinders) {
-        const cylinderId = uuid();
+        const cylinderId = randomUUID();
         const inspection = new Date(cylinder.inspection);
 
         await trx('diving_cylinder').insert<DivingCylinder>({

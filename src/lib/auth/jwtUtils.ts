@@ -2,7 +2,7 @@ import { redisClient } from './redis';
 import { log } from '../utils/log';
 import { FastifyReply } from 'fastify';
 import { AuthTokens } from '../../types/auth.types';
-import { v4 as uuid } from 'uuid';
+import { randomUUID } from 'crypto';
 
 // Expire times in seconds
 export const REFRESH_TOKEN_EXPIRE_TIME = 2678400; // ~month
@@ -80,7 +80,7 @@ export const generateTokens = async (
     expiresIn: ACCESS_TOKEN_EXPIRE_TIME,
   });
 
-  const refreshTokenId = uuid();
+  const refreshTokenId = randomUUID();
 
   const refreshToken = await reply.jwtSign(
     { ...tokenPayload, isRefreshToken: true },
