@@ -9,8 +9,7 @@ import fastifyCors from '@fastify/cors';
 import jwt from '@fastify/jwt';
 import { fastifyAutoload } from '@fastify/autoload';
 import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
-
-import { v4 as uuid } from 'uuid';
+import { randomUUID } from 'crypto';
 import { log } from './lib/utils/log';
 import path from 'path';
 import { errorHandler } from './lib/utils/errorHandler';
@@ -20,7 +19,7 @@ const JWT_SECRET =
   process.env.NODE_ENV === 'development' &&
   process.env.DEVELOPMENT_JWT_SECRET !== undefined
     ? process.env.DEVELOPMENT_JWT_SECRET
-    : uuid();
+    : randomUUID();
 
 declare module '@fastify/jwt' {
   // eslint-disable-next-line @typescript-eslint/consistent-type-definitions

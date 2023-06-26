@@ -4,7 +4,7 @@ import { redisClient } from '../auth/redis';
 import { hashPassword } from '../auth/auth';
 import { sendEmail } from '../utils/sendEmail';
 import { PasswordResetRequestBody } from '../../types/auth.types';
-import crypto from 'crypto';
+import { randomUUID } from 'crypto';
 
 export const PASSWORD_RESET_TOKEN_EXPIRE_TIME = 600; // ten minutes
 
@@ -38,7 +38,7 @@ export const handlePasswordResetRequest = async (
     return;
   }
 
-  const newResetToken = crypto.randomUUID();
+  const newResetToken = randomUUID();
   const hashedResetToken = await hashPassword(newResetToken);
 
   await redisClient.SADD(key, [hashedResetToken.hash]);
