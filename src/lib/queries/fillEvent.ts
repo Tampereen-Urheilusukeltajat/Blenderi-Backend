@@ -20,7 +20,7 @@ const getActivePriceId = async (
 ): Promise<number> => {
   const prices: GasPrice[] = await trx<GasPrice>('gas_price')
     .where('gas_id', gasId)
-    .andWhere('active_to', '>', knexController.fn.now())
+    .andWhere('active_to', '>=', knexController.fn.now())
     .andWhere('active_from', '<', knexController.fn.now())
     .select('id');
 
