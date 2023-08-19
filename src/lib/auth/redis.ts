@@ -7,9 +7,6 @@ const REDIS_SETTINGS = {
   }`,
 };
 
-// eslint-disable-next-line no-console
-console.log(REDIS_SETTINGS);
-
 export const redisClient = createClient(REDIS_SETTINGS);
 
 redisClient.on('error', (error) =>
