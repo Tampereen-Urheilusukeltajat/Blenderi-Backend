@@ -1,11 +1,13 @@
 import { createClient } from 'redis';
 import { log } from '../utils/log';
 
-export const redisClient = createClient({
-  url: `${process.env.REDIS_HOST ?? '127.0.0.1'}:${
+const REDIS_SETTINGS = {
+  url: `${process.env.REDIS_HOST ?? 'redis://127.0.0.1'}:${
     process.env.REDIS_PORT ?? '6379'
   }`,
-});
+};
+
+export const redisClient = createClient(REDIS_SETTINGS ?? {});
 
 redisClient.on('error', (error) =>
   log.error('Redis client error event', error)

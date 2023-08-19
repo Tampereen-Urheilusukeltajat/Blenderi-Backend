@@ -15,9 +15,8 @@ import { errorHandler } from './lib/utils/errorHandler';
 import { AuthPayload, AuthUser } from './types/auth.types';
 
 const JWT_SECRET = process.env.JWT_SECRET;
-
 if (JWT_SECRET === undefined) {
-  throw new Error('Missing required env variable: JWT_SECRET!');
+  throw new Error('Missing required env variable: JWT_SECRET');
 }
 
 declare module '@fastify/jwt' {

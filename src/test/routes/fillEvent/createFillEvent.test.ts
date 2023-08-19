@@ -3,8 +3,8 @@ import {
   test,
   expect,
   beforeAll,
-  afterAll,
   beforeEach,
+  afterAll,
   afterEach,
 } from '@jest/globals';
 import { FastifyInstance } from 'fastify';
@@ -58,7 +58,7 @@ describe('create fill event', () => {
     });
 
     test('it creates a new fill event with only compressed air', async () => {
-      const PAYLOAD = {
+      const payload = {
         cylinderSetId: 'a4e1035e-f36e-4056-9a1b-5925a3c5793e', // single cylinder set
         gasMixture: 'Paineilma',
         filledAir: true,
@@ -68,9 +68,10 @@ describe('create fill event', () => {
       const res = await server.inject({
         url: 'api/fill-event',
         method: 'POST',
-        body: PAYLOAD,
+        body: payload,
         headers,
       });
+
       const resBody = JSON.parse(res.body);
       expect(res.statusCode).toEqual(201);
       expect(resBody.price).toEqual(0);
