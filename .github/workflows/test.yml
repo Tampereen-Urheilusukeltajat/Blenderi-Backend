@@ -20,6 +20,7 @@ env:
   SENDGRID_API_KEY: test-key
   SENDGRID_FROM_EMAIL: no-reply@tayttopaikka.fi
   APPLICATION_URI: https://localhost:3000
+  JWT_SECRET: dontuseme
 
 jobs:
   test:
