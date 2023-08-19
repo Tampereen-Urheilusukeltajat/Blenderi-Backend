@@ -47,7 +47,8 @@
     "start-dev": "nodemon",
     "test": "jest",
     "prepare": "husky install",
-    "enforce-style": "npx eslint src --max-warnings 0 && npx prettier -c ."
+    "enforce-style": "npx eslint src --max-warnings 0 && npx prettier -c .",
+    "start": "ts-node --transpile-only ./src/app.ts"
   },
   "repository": {
     "type": "git",

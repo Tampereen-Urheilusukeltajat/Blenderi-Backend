@@ -61,6 +61,7 @@ export default {
       max: 10,
     },
     migrations: {
+      directory: path.join(__dirname, '/src/database/migrations'),
       tableName: 'knex_migrations',
     },
     log: {
