@@ -9,17 +9,15 @@ import fastifyCors from '@fastify/cors';
 import jwt from '@fastify/jwt';
 import { fastifyAutoload } from '@fastify/autoload';
 import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
-import { randomUUID } from 'crypto';
 import { log } from './lib/utils/log';
 import path from 'path';
 import { errorHandler } from './lib/utils/errorHandler';
 import { AuthPayload, AuthUser } from './types/auth.types';
 
-const JWT_SECRET =
-  process.env.NODE_ENV === 'development' &&
-  process.env.DEVELOPMENT_JWT_SECRET !== undefined
-    ? process.env.DEVELOPMENT_JWT_SECRET
-    : randomUUID();
+const JWT_SECRET = process.env.JWT_SECRET;
+if (JWT_SECRET === undefined) {
+  throw new Error('Missing required env variable: JWT_SECRET');
+}
 
 declare module '@fastify/jwt' {
   // eslint-disable-next-line @typescript-eslint/consistent-type-definitions

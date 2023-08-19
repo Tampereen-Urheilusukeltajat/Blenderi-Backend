@@ -120,8 +120,9 @@ describe('Create gas price', () => {
       const [{ ...dbBeforeUpdatePreviousGP }] = await knexController(
         'gas_price'
       ).where('id', '1');
+
       expect(dbBeforeUpdatePreviousGP.active_to).toMatchInlineSnapshot(
-        '9999-12-31T23:59:59.000Z'
+        `"2022-00-06 00:00:00"`
       );
 
       const res = await server.inject({
@@ -173,7 +174,7 @@ describe('Create gas price', () => {
 
       expect(dbPreviousGP).toMatchInlineSnapshot(`
         {
-          "active_to": 9999-12-31T23:59:59.000Z,
+          "active_to": "2022-00-06 00:00:00",
           "gas_id": 1,
           "id": 1,
           "price_eur_cents": 0,
