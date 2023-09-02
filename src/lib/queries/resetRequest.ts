@@ -45,7 +45,8 @@ export const handlePasswordResetRequest = async (
   await redisClient.SADD(key, [hashedResetToken.hash]);
 
   // Set expire time if it is not yet set
-  if ((await redisClient.TTL(key)) === REDIS_NO_ASSOCIATED_EXPIRE) {
+  const tllResult = await redisClient.TTL(key);
+  if (tllResult === REDIS_NO_ASSOCIATED_EXPIRE) {
     await redisClient.EXPIRE(key, PASSWORD_RESET_TOKEN_EXPIRE_TIME);
   }
 
