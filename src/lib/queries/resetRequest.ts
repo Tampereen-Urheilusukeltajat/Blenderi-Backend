@@ -7,6 +7,7 @@ import { PasswordResetRequestBody } from '../../types/auth.types';
 import { randomUUID } from 'crypto';
 
 export const PASSWORD_RESET_TOKEN_EXPIRE_TIME = 600; // ten minutes
+const REDIS_NO_ASSOCIATED_EXPIRE = -1;
 
 const APPLICATION_URI: string | undefined = process.env.APPLICATION_URI;
 
@@ -44,7 +45,9 @@ export const handlePasswordResetRequest = async (
   await redisClient.SADD(key, [hashedResetToken.hash]);
 
   // Set expire time if it is not yet set
-  await redisClient.EXPIRE(key, PASSWORD_RESET_TOKEN_EXPIRE_TIME, 'NX');
+  if ((await redisClient.TTL(key)) === REDIS_NO_ASSOCIATED_EXPIRE) {
+    await redisClient.EXPIRE(key, PASSWORD_RESET_TOKEN_EXPIRE_TIME);
+  }
 
   const b64Email = Buffer.from(userInfo.email).toString('base64');
 
