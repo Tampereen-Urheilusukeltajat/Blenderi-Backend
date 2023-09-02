@@ -1,10 +1,16 @@
 import { createClient } from 'redis';
 import { log } from '../utils/log';
 
+const REDIS_HOST = process.env.REDIS_HOST;
+const REDIS_PORT = process.env.REDIS_PORT;
+if (REDIS_HOST === undefined || REDIS_PORT === undefined) {
+  throw new Error(
+    'REDIS_HOST or REDIS_PORT environment variables not provided.'
+  );
+}
+
 const REDIS_SETTINGS = {
-  url: `${process.env.REDIS_HOST ?? 'redis://127.0.0.1'}:${
-    process.env.REDIS_PORT ?? '6379'
-  }`,
+  url: `${REDIS_HOST}:${REDIS_PORT}`,
 };
 
 export const redisClient = createClient(REDIS_SETTINGS);
