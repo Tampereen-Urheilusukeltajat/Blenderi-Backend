@@ -19,7 +19,7 @@ export const gasWithPricing = Type.Object({
   gasId: Type.String(),
   gasPriceId: Type.String(),
   gasName: Type.String(),
-  priceEurCents: Type.Integer({ minimum: 0 }),
+  priceEurCents: Type.Number({ minimum: 0 }),
 });
 
 export type GasWithPricing = Static<typeof gasWithPricing>;
