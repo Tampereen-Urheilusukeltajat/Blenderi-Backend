@@ -56,7 +56,9 @@ export const handlePasswordResetRequest = async (
     to: userInfo.email,
     subject: 'Pyysit salasanan vaihtamista',
     text: `Olet pyytänyt Tampereen Urheilusukeltajien Täyttöpaikka-palvelun salasanan vaihtoa.
-Avaa seuraava linkki selaimessa vaihtaaksesi salasanan. ${APPLICATION_URI}/reset-password?token=${newResetToken}&id=${userInfo.id}&email=${b64Email}
+Avaa seuraava linkki selaimessa vaihtaaksesi salasanan. ${APPLICATION_URI}/reset-password?token=${newResetToken}&id=${
+      userInfo.id
+    }&email=${b64Email}&timestamp=${new Date().toISOString()}
 
 Mikäli et pyytänyt salasanan vaihtamista, voit jättää tämän sähköpostin huomiotta. Jos saat useamman sähköpostin pyytämättä, ole hyvä ja ota yhteyttä ylläpitoon.`,
   });
