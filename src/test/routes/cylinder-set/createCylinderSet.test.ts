@@ -55,7 +55,7 @@ describe('create cylinder set', () => {
       name: 'bottle',
       cylinders: [
         {
-          volume: 15,
+          volume: 0.5,
           pressure: 200,
           material: 'steel',
           serialNumber: '3540965436löj564',
@@ -130,7 +130,7 @@ describe('create cylinder set', () => {
       const expected =
         cylinder.serialNumber === '3540965436löj564'
           ? payload.cylinders[0]
-          : payload.cylinders[0];
+          : payload.cylinders[1];
       expect(cylinder.volume).toEqual(expected.volume);
       expect(cylinder.pressure).toEqual(expected.pressure);
       expect(cylinder.material).toEqual(expected.material);
