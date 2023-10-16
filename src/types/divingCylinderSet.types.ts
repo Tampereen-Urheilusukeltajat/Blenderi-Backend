@@ -1,7 +1,7 @@
 import { Type, Static } from '@sinclair/typebox';
 
 export const createDivingCylinderBody = Type.Object({
-  volume: Type.Integer({ exclusiveMinimum: 0, maximum: 100 }),
+  volume: Type.Number({ exclusiveMinimum: 0, maximum: 100 }),
   pressure: Type.Integer({ exclusiveMinimum: 0, maximum: 500 }),
   material: Type.String(),
   serialNumber: Type.String(),
@@ -19,7 +19,7 @@ export type DivingCylinder = Static<typeof divingCylinder>;
 
 export const updateDivingCylinderBody = Type.Object({
   id: Type.String({ format: 'uuid' }),
-  volume: Type.Optional(Type.Integer({ exclusiveMinimum: 0, maximum: 100 })),
+  volume: Type.Optional(Type.Number({ exclusiveMinimum: 0, maximum: 100 })),
   pressure: Type.Optional(Type.Integer({ exclusiveMinimum: 0, maximum: 500 })),
   material: Type.Optional(Type.String()),
   serialNumber: Type.Optional(Type.String()),
