@@ -20,7 +20,6 @@ const schema = {
     400: { $ref: 'error' },
     401: { $ref: 'error' },
     403: { $ref: 'error' },
-    409: { $ref: 'error' },
     500: { $ref: 'error' },
   },
 };
@@ -84,14 +83,6 @@ const handler = async (
       await reply.code(201).send(resultBody);
     })
     .catch(async (error) => {
-      if (error?.code === 'ER_DUP_ENTRY') {
-        return errorHandler(
-          reply,
-          409,
-          'Tried to create duplicate diving cylinder set'
-        );
-      }
-
       if (error?.code === 'ER_NO_REFERENCED_ROW_2') {
         return errorHandler(reply, 400, 'User not found');
       }
