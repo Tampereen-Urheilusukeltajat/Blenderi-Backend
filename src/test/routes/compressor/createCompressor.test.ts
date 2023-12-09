@@ -72,6 +72,7 @@ describe('Create compressor', () => {
 
       expect(body.name).toEqual(VALID_PAYLOAD.name);
       expect(body.description).toEqual(VALID_PAYLOAD.description);
+      expect(body.isEnabled).toEqual(true);
     });
   });
 
