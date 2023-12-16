@@ -28,6 +28,7 @@ const TABLE_READ_ORDER = [
   'diving_cylinder',
   'diving_cylinder_set',
   'diving_cylinder_to_set',
+  'compressor',
   'fill_event',
   'gas',
   'gas_price',
