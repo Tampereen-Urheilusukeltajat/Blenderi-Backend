@@ -1,7 +1,7 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { compressor } from '../../types/compressor.types';
 import { Type } from '@sinclair/typebox';
-import { knexController } from '../../database/database';
+import { getCompressors } from '../../lib/queries/compressors';
 
 const schema = {
   description: 'Get compressors',
@@ -18,13 +18,7 @@ const handler = async (
   _request: FastifyRequest,
   reply: FastifyReply
 ): Promise<void> => {
-  const compressors = await knexController('compressor').select(
-    'id',
-    'name',
-    'description',
-    'is_enabled AS isEnabled'
-  );
-
+  const compressors = await getCompressors();
   return reply.code(200).send(compressors);
 };
 

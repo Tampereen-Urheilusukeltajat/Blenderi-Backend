@@ -1,5 +1,4 @@
 import { FastifyInstance, FastifyReply } from 'fastify';
-import { knexController } from '../../database/database';
 import {
   compressor,
   createCompressorRequestBody,
@@ -7,6 +6,7 @@ import {
 } from '../../types/compressor.types';
 import { errorHandler } from '../../lib/utils/errorHandler';
 import { getUserWithId } from '../../lib/queries/user';
+import { createCompressor } from '../../lib/queries/compressors';
 
 const schema = {
   description: 'Creates a user',
@@ -32,23 +32,9 @@ const handler = async (
   if (!user.isAdmin) {
     return errorHandler(reply, 403, 'User is not an admin');
   }
+  const newCompressor = await createCompressor(request);
 
-  const sql =
-    'INSERT INTO compressor (name, description, is_enabled) VALUES (?,?, ?) RETURNING id';
-  const params = [request.body.name, request.body.description, true];
-
-  // Type source: Akzu404
-  const res = await knexController.raw<Array<Array<{ id: number }>>>(
-    sql,
-    params
-  );
-  const [[{ id: insertedCompressorId }]] = res;
-
-  return reply.code(201).send({
-    ...request.body,
-    id: insertedCompressorId,
-    isEnabled: true,
-  });
+  return reply.code(201).send(newCompressor);
 };
 
 export default async (fastify: FastifyInstance): Promise<void> => {
