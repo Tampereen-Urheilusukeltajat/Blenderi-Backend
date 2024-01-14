@@ -49,7 +49,8 @@ const getAirGasId = async (trx: Knex.Transaction): Promise<string> => {
 };
 
 export const getFillEvents = async (
-  userId: string
+  userId: string,
+  paymentStatus?: string
 ): Promise<GetFillEventsResponse[]> => {
   const trx = await knexController.transaction();
 
@@ -137,7 +138,6 @@ export const createFillEvent = async (
 
   try {
     if (filledAir) {
-      // If air is filled, save it
       const airGasId = await getAirGasId(trx);
       const airPriceId = await getActivePriceId(trx, airGasId);
       await trx('fill_event_gas_fill').insert({
@@ -146,7 +146,6 @@ export const createFillEvent = async (
       });
     }
     await Promise.all(
-      // Save gas fills
       storageCylinderUsageArr.map(async (scu): Promise<void> => {
         if (scu.startPressure < scu.endPressure) {
           throw new Error('Negative fill pressure');
