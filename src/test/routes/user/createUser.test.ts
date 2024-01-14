@@ -1,4 +1,11 @@
-import { describe, test, expect, beforeAll, afterAll } from '@jest/globals';
+import {
+  describe,
+  test,
+  expect,
+  beforeAll,
+  afterAll,
+  jest,
+} from '@jest/globals';
 import { FastifyInstance } from 'fastify';
 import {
   createTestDatabase,
@@ -8,6 +15,7 @@ import {
 } from '../../../lib/utils/testUtils';
 import { knexController } from '../../../database/database';
 import { buildServer } from '../../../server';
+import { validateTurnstileToken } from '../../../lib/auth/turnstile';
 
 const USER_PAYLOAD = {
   email: 'erkki@sukeltaja.fi',
@@ -15,7 +23,12 @@ const USER_PAYLOAD = {
   forename: 'Erkki',
   surname: 'Nitikka',
   password: 'superhyväsalasana',
+  turnstileToken:
+    '0H9sCE19DLgiaIBqjC6qTzYQb89Gk06cp60oX6j7K8YCr7mGCo0ddgZOj4J6G225BCjr2CZxfHeC082VUrdJ4fhfdMwfL3aLerRcdmQDuH8ypXeincJa5xWFjdHacljsXbZBUZGMcynpEcPmhtUsNYx7JMXLoyrSV0bYwnAfEUrhqC9NHbaLchQYbQXDrhGmD09ujj0tMARCnEZ0lOmgtHez6WYE9JG1QkJYnRj9CxrPqXItNxkv5uUl7Qel64pvZIW6KhaHjma13IaV5C3sZ5tBHRJRXVOSIpg0Sir1VAE9yNQsF0SJMwB9unOlC6t3Jt1oHy1vBMIjhaMNN1vr0fMsgOih007Ftwa7GZhJK4r69suj1zddggA78tTTE9daEZMeh15yGICPZHBukkJF79gmaiJcf1pQli2eqi8dd20RzZuXQOzhRkYbPTKx2RuWOmd1EXnTjYG6YL7fbIwHxyupNzIq5HNwF5oo4grNkv4XObTgmgfNdGPa79NaidIBPuzNH',
 };
+
+// Mock the fetch function
+jest.mock('../../../lib/auth/turnstile');
 
 describe('create user', () => {
   const getTestInstance = async (): Promise<FastifyInstance> =>
@@ -26,6 +39,8 @@ describe('create user', () => {
   beforeAll(async () => {
     await createTestDatabase('create_user');
     await startRedisConnection();
+    // @ts-expect-error One word: perkele
+    validateTurnstileToken.mockResolvedValue(true);
   });
 
   afterAll(async () => {
@@ -69,6 +84,8 @@ describe('create user', () => {
           forename: '🦴',
           surname: '🦴',
           password: '🦴🦴🦴🦴🦴🦴🦴🦴',
+          turnstileToken:
+            '0H9sCE19DLgiaIBqjC6qTzYQb89Gk06cp60oX6j7K8YCr7mGCo0ddgZOj4J6G225BCjr2CZxfHeC082VUrdJ4fhfdMwfL3aLerRcdmQDuH8ypXeincJa5xWFjdHacljsXbZBUZGMcynpEcPmhtUsNYx7JMXLoyrSV0bYwnAfEUrhqC9NHbaLchQYbQXDrhGmD09ujj0tMARCnEZ0lOmgtHez6WYE9JG1QkJYnRj9CxrPqXItNxkv5uUl7Qel64pvZIW6KhaHjma13IaV5C3sZ5tBHRJRXVOSIpg0Sir1VAE9yNQsF0SJMwB9unOlC6t3Jt1oHy1vBMIjhaMNN1vr0fMsgOih007Ftwa7GZhJK4r69suj1zddggA78tTTE9daEZMeh15yGICPZHBukkJF79gmaiJcf1pQli2eqi8dd20RzZuXQOzhRkYbPTKx2RuWOmd1EXnTjYG6YL7fbIwHxyupNzIq5HNwF5oo4grNkv4XObTgmgfNdGPa79NaidIBPuzNH',
         },
       });
       const responseBody = JSON.parse(res.body);
@@ -183,13 +200,43 @@ describe('create user', () => {
         url: 'api/user',
         method: 'POST',
         payload: {
+          ...USER_PAYLOAD,
           email: 'erkki@sukeltaja.fi',
           surname: 'Nitikka',
           password: 'superhyväsalasana',
+          forename: undefined,
         },
       });
 
       expect(res.statusCode).toEqual(400);
+    });
+
+    test('it responds with 400 if turnstileToken is missing', async () => {
+      const server = await getTestInstance();
+      const res = await server.inject({
+        url: 'api/user',
+        method: 'POST',
+        payload: {
+          ...USER_PAYLOAD,
+          turnstileToken: undefined,
+        },
+      });
+
+      expect(res.statusCode).toEqual(400);
+    });
+
+    test('it responds with 403 if turnstileToken validation fails', async () => {
+      // @ts-expect-error One word: perkele
+      validateTurnstileToken.mockResolvedValue(false);
+
+      const server = await getTestInstance();
+      const res = await server.inject({
+        url: 'api/user',
+        method: 'POST',
+        payload: USER_PAYLOAD,
+      });
+
+      expect(res.statusCode).toEqual(403);
     });
   });
 });
