@@ -5,7 +5,7 @@ on:
       - main
 
 jobs:
-  enforce-style:
+  deploy:
     timeout-minutes: 10
     runs-on: ubuntu-latest
     concurrency: deploy-group
