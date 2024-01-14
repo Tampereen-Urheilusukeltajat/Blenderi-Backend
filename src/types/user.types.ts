@@ -64,6 +64,7 @@ export const createUserRequestBody = Type.Object({
   forename: Type.String({ minLength: 1, maxLength: 255 }),
   surname: Type.String({ minLength: 1, maxLength: 255 }),
   password,
+  turnstileToken: Type.String({ minLength: 517, maxLength: 517 }),
 });
 
 export type CreateUserRequestBody = Static<typeof createUserRequestBody>;
