@@ -1,0 +1,2 @@
+id;payment_event_id;payment_intent_id;amount_eur_cents;client_secret;status;payment_method
+1;100fa428-03ae-4350-8529-3377f5087244;joku_id;3000;joku_salaisuus;processing;

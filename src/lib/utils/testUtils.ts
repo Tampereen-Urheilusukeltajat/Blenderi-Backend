@@ -34,6 +34,10 @@ const TABLE_READ_ORDER = [
   'gas_price',
   'storage_cylinder',
   'fill_event_gas_fill',
+  'payment_event',
+  'fill_event_payment_event',
+  'stripe_payment_intent',
+  'stripe_dispute',
 ];
 
 const deriveReadOrder = (tableNames: string[]): string[] => {
