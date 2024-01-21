@@ -95,7 +95,13 @@ describe('create fill event', () => {
 
       const resBody = JSON.parse(res.body);
       expect(res.statusCode).toEqual(400);
-      expect(resBody).toMatchInlineSnapshot();
+      expect(resBody).toMatchInlineSnapshot(`
+        {
+          "error": "Bad Request",
+          "message": "Nothing due",
+          "statusCode": 400,
+        }
+      `);
     });
   });
 });
