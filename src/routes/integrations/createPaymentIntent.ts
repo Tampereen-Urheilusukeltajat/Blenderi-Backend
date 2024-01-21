@@ -21,7 +21,7 @@ const handler = async (
 export default async (fastify: FastifyInstance): Promise<void> => {
   fastify.route({
     method: 'POST',
-    url: '/',
+    url: '/stripe/payment-intent/',
     handler,
     schema,
   });
