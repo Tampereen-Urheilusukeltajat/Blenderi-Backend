@@ -6,7 +6,9 @@ import { randomUUID } from 'crypto';
 
 // Expire times in seconds
 export const REFRESH_TOKEN_EXPIRE_TIME = 2678400; // ~month
-export const ACCESS_TOKEN_EXPIRE_TIME = 600;
+
+// TOOD CHANGE BACK TO 600
+export const ACCESS_TOKEN_EXPIRE_TIME = 2678400; // 10 minutes
 
 export const EXAMPLE_JWT =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhIjpudWxsfQ.d3KrYIOoi5LIdMEbSpeMj7Hrw26hhBk0s9_FUwNTcoE';

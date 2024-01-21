@@ -1,5 +1,9 @@
 import { knexController } from '../../database/database';
-import { PaymentStatus } from '../../types/payment.types';
+import {
+  ExtendedPaymentEvent,
+  PaymentEvent,
+  PaymentStatus,
+} from '../../types/payment.types';
 import { DBResponse } from '../../types/general.types';
 
 /**
@@ -141,4 +145,56 @@ export const getFillEventsForPaymentEvent = async (
   );
 
   return fillEventIds;
+};
+
+/**
+ * Get payment events for user
+ * @param userId
+ * @returns
+ */
+export const getPaymentEvents = async (
+  userId: string
+): Promise<PaymentEvent[]> => {
+  const [paymentEvents] = await knexController.raw<DBResponse<PaymentEvent[]>>(
+    `
+    SELECT
+      id,
+      user_id AS userId,
+      status,
+      created_at AS createdAt,
+      updated_at AS updatedAt
+    FROM payment_event
+    WHERE user_id = ?
+  `,
+    [userId]
+  );
+
+  return paymentEvents;
+};
+
+export const getPaymentEvent = async (
+  paymentEventId: string,
+  userId: string
+): Promise<ExtendedPaymentEvent | undefined> => {
+  const [paymentEvents] = await knexController.raw<
+    DBResponse<ExtendedPaymentEvent[]>
+  >(
+    `
+    SELECT
+      pe.id,
+      pe.user_id AS userId,
+      pe.status,
+      pe.created_at AS createdAt,
+      pe.updated_at AS updatedAt,
+      spi.payment_method AS stripePaymentMethod,
+      spi.amount_eur_cents AS stripeAmountEurCents,
+      spi.status AS stripePaymentStatus
+    FROM payment_event pe
+    LEFT JOIN stripe_payment_intent spi ON spi.payment_event_id = pe.id
+    WHERE pe.id = ? AND pe.user_id = ?
+  `,
+    [paymentEventId, userId]
+  );
+
+  return paymentEvents[0];
 };
