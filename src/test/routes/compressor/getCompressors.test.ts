@@ -64,12 +64,14 @@ describe('Get compressors', () => {
       expect(body).toMatchInlineSnapshot(`
         [
           {
+            "airOnly": true,
             "description": "se punainen Maijalassa",
             "id": "1be5abcd-53d4-11ed-9342-0242ac120002",
             "isEnabled": true,
             "name": "iso kompura",
           },
           {
+            "airOnly": true,
             "description": "siä takana",
             "id": "54e3e8b0-53d4-11ed-9342-0242ac120002",
             "isEnabled": false,

@@ -23,6 +23,7 @@ import {
 const VALID_PAYLOAD: CreateCompressorRequestBody = {
   name: 'Iso kompura',
   description: 'Maijalan iso kompura, se punainen',
+  airOnly: true,
 };
 
 describe('Create compressor', () => {
@@ -108,6 +109,7 @@ describe('Create compressor', () => {
         payload: {
           name: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
           description: 'describes things',
+          airOnly: false,
         },
         url: 'api/compressor',
       });
