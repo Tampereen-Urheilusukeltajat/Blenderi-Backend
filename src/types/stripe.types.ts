@@ -23,3 +23,20 @@ export const stripeDispute = Type.Object({
 });
 
 export type StripeDispute = Static<typeof stripeDispute>;
+
+export const createPaymentIntentRequest = Type.Object({
+  paymentEventId: Type.String({ format: 'uuid' }),
+});
+
+export type CreatePaymentIntentRequest = Static<
+  typeof createPaymentIntentRequest
+>;
+
+export const createPaymentIntentReply = Type.Object({
+  paymentEventId: Type.String({ format: 'uuid' }),
+  paymentIntentId: Type.String(),
+  amountDueInEurCents: Type.Integer(),
+  clientSecret: Type.Optional(Type.String()),
+});
+
+export type CreatePaymentIntentReply = Static<typeof createPaymentIntentReply>;

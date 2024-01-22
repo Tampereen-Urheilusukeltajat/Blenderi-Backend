@@ -1,5 +1,6 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import {
+  calculateFillEventTotalPrice,
   createPaymentEvent,
   getUnpaidFillEventsForUser,
 } from '../../lib/queries/paymentQueries';
@@ -28,6 +29,10 @@ const handler = async (
   const unpaidFillEvents = await getUnpaidFillEventsForUser(userId);
   if (unpaidFillEvents.length === 0) {
     return errorHandler(reply, 400, 'Nothing due');
+  }
+  const totalCost = await calculateFillEventTotalPrice(unpaidFillEvents);
+  if (totalCost < 50) {
+    return errorHandler(reply, 400, 'Minimium charge amount is 0,50 €');
   }
 
   const paymentEventId = await createPaymentEvent(userId, unpaidFillEvents);

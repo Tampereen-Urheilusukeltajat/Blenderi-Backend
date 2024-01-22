@@ -46,7 +46,7 @@ export const getUnpaidFillEventsForUser = async (
  * @param fillEventIds
  */
 export const calculateFillEventTotalPrice = async (
-  fillEventIds: string[]
+  fillEventIds: number[]
 ): Promise<number> => {
   const [totalPrice] = await knexController.raw<DBResponse<number[]>>(
     `
@@ -133,10 +133,12 @@ export const getFillEventsForPaymentEvent = async (
   paymentEventId: string
 ): Promise<number[]> => {
   // TODO query fill event instead of just the id
-  const [fillEventIds] = await knexController.raw<DBResponse<number[]>>(
+  const [fillEventIds] = await knexController.raw<
+    DBResponse<Array<{ fillEventId: number }>>
+  >(
     `
     SELECT
-      fepe.fill_event_id
+      fepe.fill_event_id as fillEventId
     FROM fill_event_payment_event fepe
     WHERE 
       fepe.payment_event_id = ?
@@ -144,7 +146,7 @@ export const getFillEventsForPaymentEvent = async (
     [paymentEventId]
   );
 
-  return fillEventIds;
+  return fillEventIds.map((fe) => fe.fillEventId);
 };
 
 /**
@@ -172,6 +174,13 @@ export const getPaymentEvents = async (
   return paymentEvents;
 };
 
+/**
+ * Get payment event with id and user id. User id is also included to make sure
+ * user can only query their own events.
+ * @param paymentEventId
+ * @param userId
+ * @returns
+ */
 export const getPaymentEvent = async (
   paymentEventId: string,
   userId: string
