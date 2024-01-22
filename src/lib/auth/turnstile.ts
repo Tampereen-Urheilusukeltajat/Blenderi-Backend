@@ -1,7 +1,10 @@
-const ENDPOINT_URL =
+const VERIFYING_URL =
   'https://challenges.cloudflare.com/turnstile/v0/siteverify';
 
-const SECRET: string = process.env.TURNSTILE_SECRET as string;
+const TURNSTILE_SECRET: string = process.env.TURNSTILE_SECRET as string;
+if (!TURNSTILE_SECRET) {
+  throw new Error('Missing env variable "TURNSTILE_SECRET"');
+}
 
 // https://developers.cloudflare.com/turnstile/get-started/server-side-validation/
 export const validateTurnstileToken = async (
@@ -9,11 +12,11 @@ export const validateTurnstileToken = async (
   ip: string
 ): Promise<boolean> => {
   const formData = new FormData();
-  formData.append('secret', SECRET);
+  formData.append('secret', TURNSTILE_SECRET);
   formData.append('response', token);
   formData.append('remoteip', ip);
 
-  const result = await fetch(ENDPOINT_URL, {
+  const result = await fetch(VERIFYING_URL, {
     body: formData,
     method: 'POST',
   });
