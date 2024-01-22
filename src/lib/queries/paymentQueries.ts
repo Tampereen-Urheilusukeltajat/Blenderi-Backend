@@ -48,10 +48,12 @@ export const getUnpaidFillEventsForUser = async (
 export const calculateFillEventTotalPrice = async (
   fillEventIds: number[]
 ): Promise<number> => {
-  const [totalPrice] = await knexController.raw<DBResponse<number[]>>(
+  const [totalPrice] = await knexController.raw<
+    DBResponse<Array<{ totalPrice: number }>>
+  >(
     `
     SELECT
-      SUM(fegf.volume_litres * gp.price_eur_cents) AS total_price
+      SUM(fegf.volume_litres * gp.price_eur_cents) AS totalPrice
     FROM fill_event fe
     JOIN fill_event_gas_fill fegf ON fegf.fill_event_id = fe.id
     JOIN gas_price gp ON gp.id = fegf.gas_price_id
@@ -62,7 +64,11 @@ export const calculateFillEventTotalPrice = async (
     [...fillEventIds]
   );
 
-  return totalPrice.length !== 0 ? totalPrice[0] : 0;
+  if (!totalPrice || !totalPrice[0] || totalPrice[0].totalPrice === null) {
+    return 0;
+  }
+
+  return totalPrice[0].totalPrice;
 };
 
 /**

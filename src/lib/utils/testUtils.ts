@@ -79,6 +79,11 @@ const readTestDataFolderToDatabase = async (
       )
     ).split('\n');
 
+    // Delete default gas_price entries so that we can insert test data
+    if (tableName === 'gas_price') {
+      await knexController('gas_price').del();
+    }
+
     // Ignore empty or files without columns.
     // There will always be at least one entry to the array
     if (content.length < 2 || content[0] === '') return;
