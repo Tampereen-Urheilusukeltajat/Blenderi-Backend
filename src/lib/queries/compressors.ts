@@ -8,8 +8,13 @@ export const createCompressor = async (
   payload: CreateCompressorRequest
 ): Promise<Compressor> => {
   const sql =
-    'INSERT INTO compressor (name, description, is_enabled) VALUES (?,?, ?) RETURNING id';
-  const params = [payload.body.name, payload.body.description, true];
+    'INSERT INTO compressor (name, description, is_enabled, air_only) VALUES (?,?,?,?) RETURNING id';
+  const params = [
+    payload.body.name,
+    payload.body.description,
+    true,
+    payload.body.airOnly,
+  ];
 
   // Type source: Akzu404
   const res = await knexController.raw<Array<Array<{ id: string }>>>(
@@ -30,6 +35,7 @@ export const getCompressors = async (): Promise<Compressor[]> => {
     'id',
     'name',
     'description',
-    'is_enabled AS isEnabled'
+    'is_enabled AS isEnabled',
+    'air_only AS airOnly'
   );
 };

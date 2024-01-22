@@ -6,6 +6,7 @@ export const compressor = Type.Object({
   name: Type.String(),
   description: Type.String(),
   isEnabled: Type.Boolean(),
+  airOnly: Type.Boolean(),
 });
 
 export type Compressor = Static<typeof compressor>;
@@ -13,6 +14,7 @@ export type Compressor = Static<typeof compressor>;
 export const createCompressorRequestBody = Type.Object({
   name: Type.String({ minLength: 1, maxLength: 32 }),
   description: Type.String({ minLength: 1, maxLength: 128 }),
+  airOnly: Type.Boolean(),
 });
 
 export type CreateCompressorRequestBody = Static<
