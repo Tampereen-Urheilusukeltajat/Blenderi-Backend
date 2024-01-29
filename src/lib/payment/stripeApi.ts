@@ -41,7 +41,6 @@ export const createPaymentIntent = async (
   const paymentIntent = await stripeApi.paymentIntents.create({
     amount: totalCost,
     currency: 'eur',
-    customer: user.id,
     receipt_email: user.email,
   });
 

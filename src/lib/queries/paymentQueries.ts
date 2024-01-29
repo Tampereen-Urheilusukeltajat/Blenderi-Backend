@@ -234,6 +234,7 @@ export const getPaymentEvent = async (
       return {
         ...paymentEvent,
         stripePaymentClientSecret: stripePaymentIntent.client_secret,
+        stripePaymentStatus: stripePaymentIntent.status,
       };
     }
   }

@@ -10,7 +10,7 @@ import { getUserWithId } from '../../lib/queries/user';
 import { errorHandler } from '../../lib/utils/errorHandler';
 
 const schema = {
-  tags: ['Auth'],
+  tags: ['Stripe'],
   body: createPaymentIntentRequest,
   response: {
     201: createPaymentIntentReply,
@@ -47,6 +47,7 @@ export default async (fastify: FastifyInstance): Promise<void> => {
   fastify.route({
     method: 'POST',
     url: '/stripe/payment-intent/',
+    preValidation: [fastify['authenticate']],
     handler,
     schema,
   });
