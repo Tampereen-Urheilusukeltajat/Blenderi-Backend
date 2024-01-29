@@ -5,6 +5,7 @@ import {
   PaymentStatus,
 } from '../../types/payment.types';
 import { DBResponse } from '../../types/general.types';
+import { getPaymentIntent } from '../payment/stripeApi';
 
 /**
  * Get unpaid fill events for user. Fill event is unpaid if it is not linked to
@@ -180,6 +181,13 @@ export const getPaymentEvents = async (
   return paymentEvents;
 };
 
+type ExtendedPaymentEventDbResponse = Omit<
+  ExtendedPaymentEvent,
+  'stripePaymentClientSecret'
+> & {
+  stripePaymentIntentId?: string;
+};
+
 /**
  * Get payment event with id and user id. User id is also included to make sure
  * user can only query their own events.
@@ -192,7 +200,7 @@ export const getPaymentEvent = async (
   userId: string
 ): Promise<ExtendedPaymentEvent | undefined> => {
   const [paymentEvents] = await knexController.raw<
-    DBResponse<ExtendedPaymentEvent[]>
+    DBResponse<ExtendedPaymentEventDbResponse[]>
   >(
     `
     SELECT
@@ -201,6 +209,7 @@ export const getPaymentEvent = async (
       pe.status,
       pe.created_at AS createdAt,
       pe.updated_at AS updatedAt,
+      spi.payment_intent_id AS stripePaymentIntentId,
       spi.payment_method AS stripePaymentMethod,
       spi.amount_eur_cents AS stripeAmountEurCents,
       spi.status AS stripePaymentStatus
@@ -210,6 +219,30 @@ export const getPaymentEvent = async (
   `,
     [paymentEventId, userId]
   );
+  const paymentEvent = paymentEvents[0];
 
-  return paymentEvents[0];
+  if (!paymentEvent) {
+    return undefined;
+  }
+
+  // Query payment event from Stripe to get the client_secret
+  if (paymentEvent.stripePaymentIntentId) {
+    const stripePaymentIntent = await getPaymentIntent(
+      paymentEvent.stripePaymentIntentId
+    );
+    if (stripePaymentIntent?.client_secret) {
+      return {
+        ...paymentEvent,
+        stripePaymentClientSecret: stripePaymentIntent.client_secret,
+      };
+    }
+  }
+
+  return {
+    ...paymentEvent,
+    stripePaymentClientSecret: undefined,
+    stripeAmountEurCents: undefined,
+    stripePaymentMethod: undefined,
+    stripePaymentStatus: undefined,
+  };
 };

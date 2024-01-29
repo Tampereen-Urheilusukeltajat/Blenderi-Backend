@@ -62,3 +62,16 @@ export const createPaymentIntent = async (
 
   return paymentIntent;
 };
+
+export const getPaymentIntent = async (
+  paymentIntentId: string
+): Promise<Stripe.PaymentIntent> => {
+  const paymentIntent = await stripeApi.paymentIntents.retrieve(
+    paymentIntentId
+  );
+
+  if (!paymentIntent)
+    throw new Error(`Payment intent ${paymentIntentId} not found`);
+
+  return paymentIntent;
+};

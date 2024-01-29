@@ -15,26 +15,26 @@ export const createPaymentEventReply = Type.Object({
 
 export type CreatePaymentEventReply = Static<typeof createPaymentEventReply>;
 
-export const paymentEvent = Type.Object({
+const paymentEventFields = {
   id: Type.String({ format: 'uuid' }),
   userId: Type.String({ format: 'uuid' }),
   status: paymentStatus,
   createdAt: Type.String({ format: 'date-time' }),
   updatedAt: Type.String({ format: 'date-time' }),
+};
+export const paymentEvent = Type.Object({
+  ...paymentEventFields,
 });
 
 export type PaymentEvent = Static<typeof paymentEvent>;
 
-export const extendedPaymentEvent = Type.Union([
-  paymentEvent,
-  Type.Partial(
-    Type.Object({
-      stripePaymentMethod: Type.String(),
-      stripeAmountEurCents: Type.String(),
-      stripePaymentStatus: Type.String(),
-    })
-  ),
-]);
+export const extendedPaymentEvent = Type.Object({
+  ...paymentEventFields,
+  stripePaymentMethod: Type.Optional(Type.String()),
+  stripeAmountEurCents: Type.Optional(Type.String()),
+  stripePaymentStatus: Type.Optional(Type.String()),
+  stripePaymentClientSecret: Type.Optional(Type.String()),
+});
 
 export type ExtendedPaymentEvent = Static<typeof extendedPaymentEvent>;
 
