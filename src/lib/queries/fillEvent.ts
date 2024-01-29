@@ -60,6 +60,7 @@ export const getFillEvents = async (
       'fill_event.cylinder_set_id',
       'diving_cylinder_set.id'
     )
+    .leftJoin('compressor', 'fill_event.compressor_id', 'compressor.id')
     .select(
       'fill_event.id',
       'fill_event.user_id as userId',
@@ -67,7 +68,9 @@ export const getFillEvents = async (
       'diving_cylinder_set.id as cylinderSetId',
       'fill_event.gas_mixture as gasMixture',
       'fill_event.description',
-      'fill_event.created_at as createdAt'
+      'fill_event.created_at as createdAt',
+      'compressor.id as compressorId',
+      'compressor.name as compressorName'
     );
 
   const result = await Promise.all(

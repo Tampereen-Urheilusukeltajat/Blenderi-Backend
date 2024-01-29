@@ -55,6 +55,8 @@ export const getFillEventsResponse = Type.Object({
   description: Type.Optional(Type.String({ maxLength: 1024 })),
   price: Type.Integer({ minimum: 0 }),
   createdAt: Type.String({ format: 'date' }),
+  compressorId: Type.Optional(Type.String({ format: 'uuid' })),
+  compressorName: Type.Optional(Type.String()),
 });
 
 export type GetFillEventsResponse = Static<typeof getFillEventsResponse>;
