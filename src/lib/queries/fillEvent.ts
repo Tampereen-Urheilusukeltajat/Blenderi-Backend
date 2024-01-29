@@ -60,6 +60,7 @@ export const getFillEvents = async (
       'fill_event.cylinder_set_id',
       'diving_cylinder_set.id'
     )
+    .leftJoin('compressor', 'fill_event.compressor_id', 'compressor.id')
     .select(
       'fill_event.id',
       'fill_event.user_id as userId',
@@ -67,7 +68,9 @@ export const getFillEvents = async (
       'diving_cylinder_set.id as cylinderSetId',
       'fill_event.gas_mixture as gasMixture',
       'fill_event.description',
-      'fill_event.created_at as createdAt'
+      'fill_event.created_at as createdAt',
+      'compressor.id as compressorId',
+      'compressor.name as compressorName'
     );
 
   const result = await Promise.all(
@@ -97,6 +100,7 @@ export const createFillEvent = async (
     storageCylinderUsageArr,
     description,
     price,
+    compressorId,
   } = body;
 
   if (!filledAir && storageCylinderUsageArr.length === 0) {
@@ -123,13 +127,10 @@ export const createFillEvent = async (
   }
   const params: Array<string | null> = [user.id, cylinderSetId, gasMixture];
   const sql =
-    'INSERT INTO fill_event (user_id, cylinder_set_id, gas_mixture, description) VALUES (?,?,?,?) RETURNING id';
+    'INSERT INTO fill_event (user_id, cylinder_set_id, gas_mixture, compressor_id, description) VALUES (?,?,?,?,?) RETURNING id';
 
-  if (description) {
-    params.push(description);
-  } else {
-    params.push(null);
-  }
+  params.push(compressorId ?? null);
+  params.push(description ?? null);
 
   // Use knex.raw to enable use of RETURNING clause to avoid race conditions
   const res = await trx.raw(sql, params);

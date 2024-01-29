@@ -139,6 +139,37 @@ describe('create fill event', () => {
       expect(fillEvent).toHaveLength(1);
       expect(fillEventGasFills).toHaveLength(2);
     });
+
+    test('it can link compressor to the fill event', async () => {
+      const compressorId = '54e3e8b0-53d4-11ed-9342-0242ac120002';
+
+      const payload = {
+        cylinderSetId: 'a4e1035e-f36e-4056-9a1b-5925a3c5793e', // single cylinder set
+        gasMixture: 'Paineilma',
+        filledAir: true,
+        storageCylinderUsageArr: [],
+        price: 0,
+        compressorId,
+      };
+      const res = await server.inject({
+        url: 'api/fill-event',
+        method: 'POST',
+        body: payload,
+        headers,
+      });
+
+      const resBody = JSON.parse(res.body);
+      expect(res.statusCode).toEqual(201);
+      expect(resBody.price).toEqual(0);
+      expect(resBody.compressorId).toEqual(compressorId);
+
+      const fillEvent = await knexController('fill_event')
+        .where('id', resBody.id)
+        .select();
+
+      expect(fillEvent).toHaveLength(1);
+      expect(fillEvent[0].compressor_id).toEqual(compressorId);
+    });
   });
 
   describe('unsuccessful', () => {
@@ -217,31 +248,31 @@ describe('create fill event', () => {
       expect(body.message).toEqual('Cannot have negative fill pressure');
     });
 
-    // test('it fails when the request price is not right', async () => {
-    //   const PAYLOAD = {
-    //     cylinderSetId: 'f4e1035e-f36e-4056-9a1b-5925a3c5793e',
-    //     filledAir: true,
-    //     gasMixture: 'price=bad',
-    //     storageCylinderUsageArr: [
-    //       {
-    //         storageCylinderId: 1,
-    //         startPressure: 10,
-    //         endPressure: 8,
-    //       },
-    //     ],
-    //     description: 'Tämä on ylimääräistä infoa',
-    //     price: 0,
-    //   };
-    //   const res = await server.inject({
-    //     url: 'api/fill-event',
-    //     method: 'POST',
-    //     body: PAYLOAD,
-    //     headers,
-    //   });
-    //   expect(res.statusCode).toEqual(400);
-    //   const body = JSON.parse(res.body);
-    //   expect(body.message).toEqual('Client price did not match server price');
-    // });
+    test('it fails when the request price is not right', async () => {
+      const PAYLOAD = {
+        cylinderSetId: 'f4e1035e-f36e-4056-9a1b-5925a3c5793e',
+        filledAir: true,
+        gasMixture: 'price=bad',
+        storageCylinderUsageArr: [
+          {
+            storageCylinderId: 1,
+            startPressure: 10,
+            endPressure: 8,
+          },
+        ],
+        description: 'Tämä on ylimääräistä infoa',
+        price: 10,
+      };
+      const res = await server.inject({
+        url: 'api/fill-event',
+        method: 'POST',
+        body: PAYLOAD,
+        headers,
+      });
+      expect(res.statusCode).toEqual(400);
+      const body = JSON.parse(res.body);
+      expect(body.message).toEqual('Client price did not match server price');
+    });
 
     test('it fails if the user does not have blender privileges', async () => {
       const login = await server.inject({
