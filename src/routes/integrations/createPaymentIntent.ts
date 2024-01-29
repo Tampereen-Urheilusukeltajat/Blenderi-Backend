@@ -8,6 +8,7 @@ import {
 } from '../../types/stripe.types';
 import { getUserWithId } from '../../lib/queries/user';
 import { errorHandler } from '../../lib/utils/errorHandler';
+import { getPaymentEvent } from '../../lib/queries/paymentQueries';
 
 const schema = {
   tags: ['Stripe'],
@@ -31,6 +32,16 @@ const handler = async (
   if (!user) {
     return errorHandler(reply, 500);
   }
+
+  const paymentEvent = await getPaymentEvent(paymentEventId, user.id);
+  if (paymentEvent?.stripePaymentClientSecret) {
+    return errorHandler(
+      reply,
+      400,
+      'Payment intent already exists for the payment event'
+    );
+  }
+
   const paymentIntent = await createPaymentIntent(paymentEventId, user);
 
   const payload: CreatePaymentIntentReply = {
