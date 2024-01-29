@@ -97,6 +97,7 @@ export const createFillEvent = async (
     storageCylinderUsageArr,
     description,
     price,
+    compressorId,
   } = body;
 
   if (!filledAir && storageCylinderUsageArr.length === 0) {
@@ -123,13 +124,10 @@ export const createFillEvent = async (
   }
   const params: Array<string | null> = [user.id, cylinderSetId, gasMixture];
   const sql =
-    'INSERT INTO fill_event (user_id, cylinder_set_id, gas_mixture, description) VALUES (?,?,?,?) RETURNING id';
+    'INSERT INTO fill_event (user_id, cylinder_set_id, gas_mixture, compressor_id, description) VALUES (?,?,?,?,?) RETURNING id';
 
-  if (description) {
-    params.push(description);
-  } else {
-    params.push(null);
-  }
+  params.push(compressorId ?? null);
+  params.push(description ?? null);
 
   // Use knex.raw to enable use of RETURNING clause to avoid race conditions
   const res = await trx.raw(sql, params);
