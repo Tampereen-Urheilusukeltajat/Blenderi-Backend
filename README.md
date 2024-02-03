@@ -41,3 +41,16 @@ To create a test data, create a new folder with a relevant name to the `test_dat
 The `tableNameHere.csv` MUST USE ; as the delimiter between the columns!
 
 When new tables are added, they must be added to the `TABLE_READ_ORDER` constant!
+
+### Connecting to the production database
+
+Authorized developers can connect to the production database by following the steps below.
+
+Login to Fly and then open a proxy connection to `tayttopaikka-db`
+
+```bash
+fly proxy <PORT_NUMBER_OF_YOUR_CHOICE> -a tayttopaikka-db
+```
+
+Then take your favourite database tool and connect to `127.0.0.1:<PORT_NUMBER_OF_YOUR_CHOICE>` with
+the production credentials.
