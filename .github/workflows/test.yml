@@ -21,6 +21,7 @@ env:
   SENDGRID_FROM_EMAIL: no-reply@tayttopaikka.fi
   APPLICATION_URI: https://localhost:3000
   JWT_SECRET: dontuseme
+  TURNSTILE_SECRET: jaskajokunen
 
 jobs:
   test:

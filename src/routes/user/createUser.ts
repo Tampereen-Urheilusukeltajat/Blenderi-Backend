@@ -13,6 +13,7 @@ import {
   emailAlreadyExists,
 } from '../../lib/utils/collisionChecks';
 import { getUserWithEmail } from '../../lib/queries/user';
+import { validateTurnstileToken } from '../../lib/auth/turnstile';
 
 const schema = {
   description: 'Creates a user',
@@ -32,6 +33,15 @@ const handler = async (
   request: CreateUserRequest,
   reply: FastifyReply
 ): Promise<void> => {
+  const turnstileValidationSuccess = await validateTurnstileToken(
+    request.body.turnstileToken,
+    request.ip
+  );
+
+  if (!turnstileValidationSuccess) {
+    return errorHandler(reply, 403, 'Turnstile validation failed');
+  }
+
   if (await emailAlreadyExists(request.body.email)) {
     const msg = 'Tried to create user with duplicate email';
     log.debug(msg);
