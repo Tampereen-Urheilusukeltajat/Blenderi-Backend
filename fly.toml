@@ -3,6 +3,8 @@
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
+kill_timeout = 42
+
 app = "tayttopaikka-backend"
 primary_region = "ams"
 
@@ -17,8 +19,11 @@ primary_region = "ams"
   processes = ["app"]
 
 [[http_service.checks]]
-  grace_period = "10s"
+  grace_period = "42s"
   interval = "30s"
   method = "GET"
   timeout = "10s"
   path = "/api/utils/heartbeat"
+
+[deploy]
+  strategy = "canary"
