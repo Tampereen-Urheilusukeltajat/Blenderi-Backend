@@ -11,6 +11,8 @@ import {
 } from '../../lib/queries/paymentQueries';
 import { errorHandler } from '../../lib/utils/errorHandler';
 import { paymentEvent } from '../../types/payment.types';
+import { createPaymentIntent } from '../../lib/payment/stripeApi';
+import { getUserWithId } from '../../lib/queries/user';
 
 const schema = {
   tags: ['Payment'],
@@ -28,6 +30,11 @@ const handler = async (
   reply: FastifyReply
 ): Promise<void> => {
   const { id: userId } = request.user;
+  const user = await getUserWithId(userId);
+
+  if (!user) {
+    return errorHandler(reply, 500);
+  }
 
   // For now automatically just get all unpaid fill events. In the future,
   // we might want to offer the possibility to pay only some events etc
@@ -41,6 +48,10 @@ const handler = async (
   }
 
   const paymentEventId = await createPaymentEvent(userId, unpaidFillEvents);
+
+  // Create Stripe payment intent automatically since it is the only payment
+  // option at this moment.
+  await createPaymentIntent(paymentEventId, user);
 
   const paymentEvent = await getPaymentEvent(paymentEventId, userId);
 

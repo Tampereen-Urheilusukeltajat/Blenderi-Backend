@@ -1,8 +1,12 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import {
+  type FastifyInstance,
+  type FastifyReply,
+  type FastifyRequest,
+} from 'fastify';
 import { createPaymentIntent } from '../../lib/payment/stripeApi';
 import {
-  CreatePaymentIntentReply,
-  CreatePaymentIntentRequest,
+  type CreatePaymentIntentReply,
+  type CreatePaymentIntentRequest,
   createPaymentIntentReply,
   createPaymentIntentRequest,
 } from '../../types/stripe.types';

@@ -1,4 +1,4 @@
-import { UserResponse } from '../../types/user.types';
+import { type UserResponse } from '../../types/user.types';
 import {
   calculateFillEventTotalPrice,
   getFillEventsForPaymentEvent,
@@ -42,6 +42,7 @@ export const createPaymentIntent = async (
     amount: totalCost,
     currency: 'eur',
     receipt_email: user.email,
+    automatic_payment_methods: { enabled: true },
   });
 
   // If inserting payment intent info to database fails, cancel the payment intent
