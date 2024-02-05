@@ -7,7 +7,7 @@ import {
   calculateFillEventTotalPrice,
   createPaymentEvent,
   getPaymentEvent,
-  getUnpaidFillEventsForUser,
+  getUnpaidFillEventIdsForUser,
 } from '../../lib/queries/paymentQueries';
 import { errorHandler } from '../../lib/utils/errorHandler';
 import { paymentEvent } from '../../types/payment.types';
@@ -31,7 +31,7 @@ const handler = async (
 
   // For now automatically just get all unpaid fill events. In the future,
   // we might want to offer the possibility to pay only some events etc
-  const unpaidFillEvents = await getUnpaidFillEventsForUser(userId);
+  const unpaidFillEvents = await getUnpaidFillEventIdsForUser(userId);
   if (unpaidFillEvents.length === 0) {
     return errorHandler(reply, 400, 'Nothing due');
   }

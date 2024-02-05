@@ -13,7 +13,7 @@ import { getPaymentIntent } from '../payment/stripeApi';
  * @param userId
  * @returns
  */
-export const getUnpaidFillEventsForUser = async (
+export const getUnpaidFillEventIdsForUser = async (
   userId: string
 ): Promise<number[]> => {
   const [fillEventIds] = await knexController.raw<

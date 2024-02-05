@@ -1,18 +1,18 @@
 import { knexController } from '../../database/database';
 import {
-  CreateFillEventBody,
-  FillEventGasFill,
-  GetFillEventsResponse,
+  type CreateFillEventBody,
+  type FillEventGasFill,
+  type GetFillEventsResponse,
 } from '../../types/fillEvent.types';
-import { AuthUser } from '../../types/auth.types';
+import { type AuthUser } from '../../types/auth.types';
 import { log } from '../utils/log';
-import { Knex } from 'knex';
+import { type Knex } from 'knex';
 import { getStorageCylinder } from './storageCylinder';
-import { Gas, GasPrice } from '../../types/gas.types';
+import { type Gas, type GasPrice } from '../../types/gas.types';
 import { selectCylinderSet } from './divingCylinderSet';
 import { getUserWithId } from './user';
 import { errorHandler } from '../utils/errorHandler';
-import { FastifyReply } from 'fastify';
+import { type FastifyReply } from 'fastify';
 
 const getActivePriceId = async (
   trx: Knex.Transaction,
@@ -50,29 +50,53 @@ const getAirGasId = async (trx: Knex.Transaction): Promise<string> => {
 
 export const getFillEvents = async (
   userId: string,
-  paymentStatus?: string
+  fillEventIds?: number[]
 ): Promise<GetFillEventsResponse[]> => {
   const trx = await knexController.transaction();
 
-  const fillQuery = await trx('fill_event')
-    .where('user_id', userId)
-    .innerJoin(
-      'diving_cylinder_set',
-      'fill_event.cylinder_set_id',
-      'diving_cylinder_set.id'
-    )
-    .leftJoin('compressor', 'fill_event.compressor_id', 'compressor.id')
-    .select(
-      'fill_event.id',
-      'fill_event.user_id as userId',
-      'diving_cylinder_set.name as cylinderSetName',
-      'diving_cylinder_set.id as cylinderSetId',
-      'fill_event.gas_mixture as gasMixture',
-      'fill_event.description',
-      'fill_event.created_at as createdAt',
-      'compressor.id as compressorId',
-      'compressor.name as compressorName'
-    );
+  let fillQuery: Array<Omit<GetFillEventsResponse, 'price'>>;
+  if (fillEventIds) {
+    fillQuery = await trx('fill_event')
+      .where('user_id', userId)
+      .whereIn('fill_event.id', fillEventIds)
+      .innerJoin(
+        'diving_cylinder_set',
+        'fill_event.cylinder_set_id',
+        'diving_cylinder_set.id'
+      )
+      .leftJoin('compressor', 'fill_event.compressor_id', 'compressor.id')
+      .select(
+        'fill_event.id',
+        'fill_event.user_id as userId',
+        'diving_cylinder_set.name as cylinderSetName',
+        'diving_cylinder_set.id as cylinderSetId',
+        'fill_event.gas_mixture as gasMixture',
+        'fill_event.description',
+        'fill_event.created_at as createdAt',
+        'compressor.id as compressorId',
+        'compressor.name as compressorName'
+      );
+  } else {
+    fillQuery = await trx('fill_event')
+      .where('user_id', userId)
+      .innerJoin(
+        'diving_cylinder_set',
+        'fill_event.cylinder_set_id',
+        'diving_cylinder_set.id'
+      )
+      .leftJoin('compressor', 'fill_event.compressor_id', 'compressor.id')
+      .select(
+        'fill_event.id',
+        'fill_event.user_id as userId',
+        'diving_cylinder_set.name as cylinderSetName',
+        'diving_cylinder_set.id as cylinderSetId',
+        'fill_event.gas_mixture as gasMixture',
+        'fill_event.description',
+        'fill_event.created_at as createdAt',
+        'compressor.id as compressorId',
+        'compressor.name as compressorName'
+      );
+  }
 
   const result = await Promise.all(
     fillQuery.map(async (fillEvent): Promise<GetFillEventsResponse> => {
@@ -135,7 +159,7 @@ export const createFillEvent = async (
 
   // Use knex.raw to enable use of RETURNING clause to avoid race conditions
   const res = await trx.raw(sql, params);
-  const fillEventId = JSON.parse(JSON.stringify(res))[0][0].id;
+  const fillEventId = JSON.parse(JSON.stringify(res))[0][0].id as number;
 
   try {
     if (filledAir) {
@@ -221,7 +245,7 @@ export const calcTotalCost = async (
         return 0;
       }
       const gasPrice: GasPrice = await trx<GasPrice>('gas_price')
-        .where('id', fill.gasPriceId)
+        .where('id', fill.gasPriceId as number)
         .first('price_eur_cents as priceEurCents');
       const price = JSON.parse(JSON.stringify(gasPrice));
       return fill.volumeLitres * price.priceEurCents;
