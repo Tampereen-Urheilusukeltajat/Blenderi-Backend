@@ -1,18 +1,19 @@
 import fastify, {
-  FastifyInstance,
-  FastifyRequest,
-  FastifyReply,
+  type FastifyInstance,
+  type FastifyRequest,
+  type FastifyReply,
 } from 'fastify';
 import { fastifySwagger } from '@fastify/swagger';
 import { fastifyHelmet } from '@fastify/helmet';
 import fastifyCors from '@fastify/cors';
 import jwt from '@fastify/jwt';
 import { fastifyAutoload } from '@fastify/autoload';
-import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
+import { type TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 import { log } from './lib/utils/log';
 import path from 'path';
 import { errorHandler } from './lib/utils/errorHandler';
-import { AuthPayload, AuthUser } from './types/auth.types';
+import { type AuthPayload, type AuthUser } from './types/auth.types';
+import fastifySwaggerUi from '@fastify/swagger-ui';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 if (JWT_SECRET === undefined) {
@@ -57,13 +58,17 @@ export const buildServer = async (opts: {
       },
     })
     .register(fastifySwagger, {
-      routePrefix: `${opts.routePrefix}/documentation`,
       swagger: {
         info: {
           title: 'Blenderi REST API',
           description: 'Documentation for Blenderi REST API',
-          version: '0.0.1',
+          version: '0.1.0',
         },
+        security: [
+          {
+            bearerAuth: [],
+          },
+        ],
         securityDefinitions: {
           bearerAuth: {
             type: 'apiKey',
@@ -71,15 +76,12 @@ export const buildServer = async (opts: {
             in: 'header',
           },
         },
-        security: [
-          {
-            bearerAuth: [],
-          },
-        ],
         consumes: ['application/json'],
         produces: ['application/json'],
       },
-      exposeRoute: true,
+    })
+    .register(fastifySwaggerUi, {
+      prefix: `${opts.routePrefix}/documentation`,
     })
     .register(fastifyHelmet, {
       contentSecurityPolicy: {
