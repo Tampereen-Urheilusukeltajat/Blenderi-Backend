@@ -1,4 +1,4 @@
-import { Type, Static } from '@sinclair/typebox';
+import { Type, type Static } from '@sinclair/typebox';
 
 export enum PaymentStatus {
   created = 'CREATED',
@@ -9,12 +9,6 @@ export enum PaymentStatus {
 
 export const paymentStatus = Type.Enum(PaymentStatus);
 
-export const createPaymentEventReply = Type.Object({
-  paymentEventId: Type.String({ format: 'uuid' }),
-});
-
-export type CreatePaymentEventReply = Static<typeof createPaymentEventReply>;
-
 const paymentEventFields = {
   id: Type.String({ format: 'uuid' }),
   userId: Type.String({ format: 'uuid' }),
@@ -22,6 +16,7 @@ const paymentEventFields = {
   createdAt: Type.String({ format: 'date-time' }),
   updatedAt: Type.String({ format: 'date-time' }),
 };
+
 export const paymentEvent = Type.Object({
   ...paymentEventFields,
 });

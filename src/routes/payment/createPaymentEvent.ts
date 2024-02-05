@@ -1,17 +1,22 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import {
+  type FastifyInstance,
+  type FastifyReply,
+  type FastifyRequest,
+} from 'fastify';
 import {
   calculateFillEventTotalPrice,
   createPaymentEvent,
+  getPaymentEvent,
   getUnpaidFillEventsForUser,
 } from '../../lib/queries/paymentQueries';
-import { createPaymentEventReply } from '../../types/payment.types';
 import { errorHandler } from '../../lib/utils/errorHandler';
+import { paymentEvent } from '../../types/payment.types';
 
 const schema = {
   tags: ['Payment'],
   body: {},
   response: {
-    201: createPaymentEventReply,
+    201: paymentEvent,
     400: { $ref: 'error' },
     401: { $ref: 'error' },
     500: { $ref: 'error' },
@@ -37,9 +42,9 @@ const handler = async (
 
   const paymentEventId = await createPaymentEvent(userId, unpaidFillEvents);
 
-  return reply.code(201).send({
-    paymentEventId,
-  });
+  const paymentEvent = await getPaymentEvent(paymentEventId, userId);
+
+  return reply.code(201).send(paymentEvent);
 };
 
 export default async (fastify: FastifyInstance): Promise<void> => {

@@ -1,10 +1,10 @@
 import { knexController } from '../../database/database';
 import {
-  ExtendedPaymentEvent,
-  PaymentEvent,
+  type ExtendedPaymentEvent,
+  type PaymentEvent,
   PaymentStatus,
 } from '../../types/payment.types';
-import { DBResponse } from '../../types/general.types';
+import { type DBResponse } from '../../types/general.types';
 import { getPaymentIntent } from '../payment/stripeApi';
 
 /**
@@ -65,7 +65,7 @@ export const calculateFillEventTotalPrice = async (
     [...fillEventIds]
   );
 
-  if (!totalPrice || !totalPrice[0] || totalPrice[0].totalPrice === null) {
+  if (totalPrice?.[0]?.totalPrice === null) {
     return 0;
   }
 
