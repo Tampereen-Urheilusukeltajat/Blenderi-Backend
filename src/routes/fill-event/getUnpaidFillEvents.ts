@@ -40,6 +40,14 @@ const handler = async (
 ): Promise<void> => {
   const { id: userId } = request.user;
   const unpaidFillEventIds = await getUnpaidFillEventIdsForUser(userId);
+
+  if (unpaidFillEventIds.length === 0) {
+    return reply.send({
+      fillEvents: [],
+      totalPriceInEurCents: 0,
+    });
+  }
+
   const fillEvents = await getFillEvents(userId, unpaidFillEventIds);
   const totalPrice = await calculateFillEventTotalPrice(unpaidFillEventIds);
 
