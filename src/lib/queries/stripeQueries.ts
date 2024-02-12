@@ -1,4 +1,4 @@
-import Stripe from 'stripe';
+import type Stripe from 'stripe';
 import { knexController } from '../../database/database';
 
 export const createStripePaymentIntent = async (
