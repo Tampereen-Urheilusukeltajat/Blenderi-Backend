@@ -37,6 +37,7 @@ const handler = async (
 };
 
 export default async (fastify: FastifyInstance): Promise<void> => {
+  // Webhook signature check requires raw body instead the one parsed by Fastify
   fastify.addContentTypeParser(
     'application/json',
     { parseAs: 'buffer' },
