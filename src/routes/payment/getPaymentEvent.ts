@@ -1,7 +1,11 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import {
+  type FastifyInstance,
+  type FastifyReply,
+  type FastifyRequest,
+} from 'fastify';
 import { getPaymentEvent } from '../../lib/queries/paymentQueries';
 import {
-  PaymentEventIdParamsPayload,
+  type PaymentEventIdParamsPayload,
   extendedPaymentEvent,
   paymentEventIdParamsPayload,
 } from '../../types/payment.types';
