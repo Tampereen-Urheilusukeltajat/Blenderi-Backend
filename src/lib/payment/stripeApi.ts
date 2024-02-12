@@ -2,17 +2,20 @@ import { type UserResponse } from '../../types/user.types';
 import {
   calculateFillEventTotalPrice,
   getFillEventsForPaymentEvent,
+  updatePaymentEventStatus,
 } from '../queries/paymentQueries';
 import Stripe from 'stripe';
 import { createStripePaymentIntent } from '../queries/stripeQueries';
 import { log } from '../utils/log';
+import { PaymentStatus } from '../../types/payment.types';
 
 const STRIPE_API_KEY = process.env.STRIPE_API_KEY;
-if (!STRIPE_API_KEY) throw new Error('Stripe api key missing');
+if (!STRIPE_API_KEY) throw new Error('Missing env variable "STRIPE_API_KEY"');
 
 const stripeApi = new Stripe(STRIPE_API_KEY, { typescript: true });
 
 const cancelPaymentIntent = async (
+  paymentEventId: string,
   paymentIntentId: string,
   cancellationReason: Stripe.PaymentIntentCancelParams.CancellationReason
 ): Promise<void> => {
@@ -22,6 +25,8 @@ const cancelPaymentIntent = async (
   await stripeApi.paymentIntents.cancel(paymentIntentId, {
     cancellation_reason: cancellationReason,
   });
+  await updatePaymentEventStatus(paymentEventId, PaymentStatus.failed);
+
   log.info(`Cancellation of ${paymentIntentId} was a success.`);
 };
 
@@ -43,6 +48,9 @@ export const createPaymentIntent = async (
     currency: 'eur',
     receipt_email: user.email,
     automatic_payment_methods: { enabled: true },
+    metadata: {
+      payment_event_id: paymentEventId,
+    },
   });
 
   // If inserting payment intent info to database fails, cancel the payment intent
@@ -56,7 +64,7 @@ export const createPaymentIntent = async (
       PaymentIntentId: ${paymentIntent.id}
       `
     );
-    await cancelPaymentIntent(paymentIntent.id, 'abandoned');
+    await cancelPaymentIntent(paymentEventId, paymentIntent.id, 'abandoned');
     throw new Error('Creating database entry for stripe payment failed');
   }
 
