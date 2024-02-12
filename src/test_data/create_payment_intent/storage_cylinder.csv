@@ -1,0 +1,13 @@
+id;gas_id;volume;max_pressure;name;
+1;2;50;200;Helium 1;
+2;2;50;200;Helium 2;
+3;2;50;200;Helium 3;
+4;2;50;200;Helium 4;
+5;3;50;200;Happi 1;
+6;3;50;200;Happi 2;
+7;3;50;200;Happi 3;
+8;3;50;200;Happi 4;
+9;4;50;200;Argon 1;
+10;4;50;200;Argon 2;
+11;5;50;200;Dilupankki;
+12;1;50;200;Paineilma;

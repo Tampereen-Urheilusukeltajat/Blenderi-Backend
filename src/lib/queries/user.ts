@@ -1,8 +1,8 @@
-import { Knex } from 'knex';
+import { type Knex } from 'knex';
 import snakecaseKeys from 'snakecase-keys';
 import { knexController } from '../../database/database';
-import { User, UserResponse } from '../../types/user.types';
-import { DBResponse } from '../../types/general.types';
+import { type User, type UserResponse } from '../../types/user.types';
+import { type DBResponse } from '../../types/general.types';
 
 type UserLoginResponse = Pick<
   User,
