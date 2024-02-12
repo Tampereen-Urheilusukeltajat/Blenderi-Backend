@@ -47,7 +47,11 @@ const handler = async (
     return errorHandler(reply, 400, 'Minimium charge amount is 0,50 €');
   }
 
-  const paymentEventId = await createPaymentEvent(userId, unpaidFillEvents);
+  const paymentEventId = await createPaymentEvent(
+    userId,
+    unpaidFillEvents,
+    totalCost
+  );
 
   // Create Stripe payment intent automatically since it is the only payment
   // option at this moment.

@@ -81,15 +81,16 @@ export const calculateFillEventTotalPrice = async (
  */
 export const createPaymentEvent = async (
   userId: string,
-  fillEventIds: number[]
+  fillEventIds: number[],
+  totalCost: number
 ): Promise<string> => {
   const trx = await knexController.transaction();
 
   const res = await trx.raw<Array<Array<{ id: string }>>>(
     `
-    INSERT INTO payment_event (user_id) VALUES (?) RETURNING id
+    INSERT INTO payment_event (user_id, total_amount_eur_cents) VALUES (?,?) RETURNING id
   `,
-    [userId]
+    [userId, totalCost]
   );
 
   const [[{ id: insertedPaymentEventId }]] = res;
@@ -171,7 +172,8 @@ export const getPaymentEvents = async (
       user_id AS userId,
       status,
       created_at AS createdAt,
-      updated_at AS updatedAt
+      updated_at AS updatedAt,
+      total_amount_eur_cents AS totalAmountEurCents
     FROM payment_event
     WHERE user_id = ?
   `,
@@ -209,6 +211,7 @@ export const getPaymentEvent = async (
       pe.status,
       pe.created_at AS createdAt,
       pe.updated_at AS updatedAt,
+      pe.total_amount_eur_cents AS totalAmountEurCents,
       spi.payment_intent_id AS stripePaymentIntentId,
       spi.payment_method AS stripePaymentMethod,
       spi.amount_eur_cents AS stripeAmountEurCents,

@@ -15,6 +15,7 @@ const paymentEventFields = {
   status: paymentStatus,
   createdAt: Type.String({ format: 'date-time' }),
   updatedAt: Type.String({ format: 'date-time' }),
+  totalAmountEurCents: Type.Integer({ minimum: 0 }),
 };
 
 export const paymentEvent = Type.Object({
