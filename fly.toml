@@ -27,3 +27,8 @@ primary_region = "ams"
 
 [deploy]
   strategy = "canary"
+
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"
