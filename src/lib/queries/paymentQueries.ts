@@ -2,7 +2,7 @@ import { knexController } from '../../database/database';
 import {
   type ExtendedPaymentEvent,
   type PaymentEvent,
-  PaymentStatus,
+  type PaymentStatus,
 } from '../../types/payment.types';
 import { type DBResponse } from '../../types/general.types';
 import { getPaymentIntent } from '../payment/stripeApi';
@@ -28,13 +28,32 @@ export const getUnpaidFillEventIdsForUser = async (
     LEFT JOIN payment_event pe ON pe.id = fepe.payment_event_id
     WHERE
       -- Filter out air fills since they don't have storage cylinders
+      -- (and air is free)
       fegf.storage_cylinder_id IS NOT NULL AND 
-        fe.user_id = ? AND (
+      fe.user_id = ? AND 
+      (
+        -- Filter out fill events which have been paid already. Aka if
+        -- fill event already has completed payment event linked to it,
+        -- ignore the row
+        NOT EXISTS (
+          SELECT
+            fepe2.fill_event_id
+          FROM fill_event_payment_event fepe2
+          JOIN payment_event pe2 ON 
+            pe2.id = fepe2.payment_event_id AND
+            pe2.status = "COMPLETED"
+          WHERE
+            fepe2.fill_event_id = fe.id
+        ) 
+        -- If there are no payment events linked or the status is FAILED,
+        -- fill event is considered unpaid and we should return the row
+        AND (
           fepe.fill_event_id IS NULL OR
-          pe.status = ?
+          pe.status = "FAILED"
         )
+      )
   `,
-    [userId, PaymentStatus.failed]
+    [userId]
   );
 
   if (!fillEventIds || fillEventIds.length === 0) return [];

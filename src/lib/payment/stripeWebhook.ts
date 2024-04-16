@@ -33,7 +33,7 @@ const processPaymentIntentWebhookEvent = async (
     case 'payment_intent.processing':
       await updatePaymentEventStatus(paymentEventId, PaymentStatus.inProgress);
       break;
-    case 'payment_intent.payment_failed':
+    case 'payment_intent.canceled':
       await updatePaymentEventStatus(paymentEventId, PaymentStatus.failed);
       break;
   }
