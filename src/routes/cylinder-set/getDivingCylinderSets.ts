@@ -1,9 +1,16 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import {
+  type FastifyInstance,
+  type FastifyReply,
+  type FastifyRequest,
+} from 'fastify';
 import { Type } from '@sinclair/typebox';
 
 import { getUsersDivingCylinderSets } from '../../lib/queries/divingCylinderSet';
 import { errorHandler } from '../../lib/utils/errorHandler';
-import { UserIdQueryString, userIdQueryString } from '../../types/user.types';
+import {
+  type UserIdQueryString,
+  userIdQueryString,
+} from '../../types/user.types';
 import { divingCylinderSet } from '../../types/divingCylinderSet.types';
 
 const schema = {

@@ -1,4 +1,4 @@
-import { Type, Static } from '@sinclair/typebox';
+import { Type, type Static } from '@sinclair/typebox';
 import { storageCylinderUsage } from './storageCylinder.types';
 
 export const fillEvent = Type.Object({
@@ -47,16 +47,21 @@ export const fillEventGasFill = Type.Object({
 export type FillEventGasFill = Static<typeof fillEventGasFill>;
 
 export const getFillEventsResponse = Type.Object({
-  id: Type.String(),
+  id: Type.Integer(),
   userId: Type.String({ format: 'uuid' }),
   cylinderSetId: Type.String({ format: 'uuid' }),
   cylinderSetName: Type.String(),
   gasMixture: Type.String(),
   description: Type.Optional(Type.String({ maxLength: 1024 })),
-  price: Type.Integer({ minimum: 0 }),
+  price: Type.Number({ minimum: 0 }),
   createdAt: Type.String({ format: 'date' }),
   compressorId: Type.Optional(Type.String({ format: 'uuid' })),
   compressorName: Type.Optional(Type.String()),
 });
 
 export type GetFillEventsResponse = Static<typeof getFillEventsResponse>;
+
+export const getUnpaidFillEventsResponse = Type.Object({
+  fillEvents: Type.Array(getFillEventsResponse),
+  totalPriceInEurCents: Type.Number({ minimum: 0 }),
+});
