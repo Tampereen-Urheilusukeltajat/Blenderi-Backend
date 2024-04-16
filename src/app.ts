@@ -9,11 +9,17 @@ import { connect } from './lib/auth/redis';
 import { log } from './lib/utils/log';
 import { buildServer } from './server';
 
-const APPLICATION_HOST: string = process.env.APPLICATION_HOST as string;
+const APPLICATION_HOST = process.env.APPLICATION_HOST;
 const APPLICATION_PORT = Number(process.env.APPLICATION_PORT);
-const ROUTE_PREFIX: string = process.env.ROUTE_PREFIX as string;
+const ROUTE_PREFIX = process.env.ROUTE_PREFIX;
 
-module.exports = (async () => {
+if (!APPLICATION_HOST || !APPLICATION_PORT || !ROUTE_PREFIX) {
+  throw new Error(
+    'Missing required env variables: APPLICATION_HOST. APPLICATION_PORT, ROUTE_PREFIX'
+  );
+}
+
+void (async () => {
   log.info('Running migrations');
   try {
     await knexController.migrate.latest();
