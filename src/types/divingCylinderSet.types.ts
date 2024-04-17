@@ -1,4 +1,4 @@
-import { Type, Static } from '@sinclair/typebox';
+import { Type, type Static } from '@sinclair/typebox';
 
 export const createDivingCylinderBody = Type.Object({
   volume: Type.Number({ exclusiveMinimum: 0, maximum: 100 }),

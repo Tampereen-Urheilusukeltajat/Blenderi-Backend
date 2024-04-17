@@ -1,10 +1,10 @@
-import { FastifyInstance, FastifyReply } from 'fastify';
+import { type FastifyInstance, type FastifyReply } from 'fastify';
 import { log } from '../../lib/utils/log';
 import { errorHandler } from '../../lib/utils/errorHandler';
 import { invalidate, EXAMPLE_JWT } from '../../lib/auth/jwtUtils';
 import {
   logoutRequestBody,
-  LogoutRequest,
+  type LogoutRequest,
   logoutResponseBody,
 } from '../../types/auth.types';
 
@@ -27,7 +27,7 @@ schema.response['200'].properties.id.example =
 
 const handler = async function (
   request: LogoutRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ): Promise<void> {
   let refreshTokenDecoded;
   try {

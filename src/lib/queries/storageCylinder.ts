@@ -1,14 +1,14 @@
-import { Knex } from 'knex';
+import { type Knex } from 'knex';
 import { knexController } from '../../database/database';
 import {
-  CreateStorageCylinderBody,
-  StorageCylinder,
+  type CreateStorageCylinderBody,
+  type StorageCylinder,
 } from '../../types/storageCylinder.types';
 import { log } from '../utils/log';
 
 export const getStorageCylinder = async (
   trx: Knex.Transaction,
-  id: number
+  id: number,
 ): Promise<StorageCylinder> => {
   const storageCylinder = await trx<StorageCylinder>('storage_cylinder')
     .where('id', id)
@@ -17,7 +17,7 @@ export const getStorageCylinder = async (
       'gas_id AS gasId',
       'volume',
       'name',
-      'max_pressure AS maxPressure'
+      'max_pressure AS maxPressure',
     );
 
   if (storageCylinder === undefined) {
@@ -30,7 +30,7 @@ export const getStorageCylinder = async (
 
 export const createStorageCylinder = async (
   payload: CreateStorageCylinderBody,
-  trx?: Knex.Transaction
+  trx?: Knex.Transaction,
 ): Promise<StorageCylinder> => {
   const db = trx ?? (await knexController.transaction());
   const sql =
@@ -54,7 +54,7 @@ export const createStorageCylinder = async (
 };
 
 export const getStorageCylinders = async (
-  trx?: Knex.Transaction
+  trx?: Knex.Transaction,
 ): Promise<StorageCylinder[]> => {
   const db = trx ?? knexController;
 
@@ -63,6 +63,6 @@ export const getStorageCylinders = async (
     'gas_id AS gasId',
     'volume',
     'name',
-    'max_pressure AS maxPressure'
+    'max_pressure AS maxPressure',
   );
 };

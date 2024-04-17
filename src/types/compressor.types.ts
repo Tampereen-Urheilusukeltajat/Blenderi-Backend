@@ -1,5 +1,5 @@
-import { Type, Static } from '@sinclair/typebox';
-import { FastifyRequest } from 'fastify';
+import { Type, type Static } from '@sinclair/typebox';
+import { type FastifyRequest } from 'fastify';
 
 export const compressor = Type.Object({
   id: Type.String({ format: 'uuid' }),

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import {
   describe,
   test,
@@ -6,7 +7,7 @@ import {
   afterAll,
   beforeEach,
 } from '@jest/globals';
-import { FastifyInstance } from 'fastify';
+import { type FastifyInstance } from 'fastify';
 import { knexController } from '../../../database/database';
 import { buildServer } from '../../../server';
 import {

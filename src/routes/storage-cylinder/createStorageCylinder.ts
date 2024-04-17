@@ -1,9 +1,13 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import {
+  type FastifyInstance,
+  type FastifyReply,
+  type FastifyRequest,
+} from 'fastify';
 import { errorHandler } from '../../lib/utils/errorHandler';
 import { getGasById } from '../../lib/queries/gas';
 import { createStorageCylinder } from '../../lib/queries/storageCylinder';
 import {
-  CreateStorageCylinderBody,
+  type CreateStorageCylinderBody,
   createStorageCylinderBody,
   storageCylinder,
 } from '../../types/storageCylinder.types';
@@ -25,7 +29,7 @@ const handler = async (
   request: FastifyRequest<{
     Body: CreateStorageCylinderBody;
   }>,
-  reply: FastifyReply
+  reply: FastifyReply,
 ): Promise<void> => {
   const gasExists = await getGasById(request.body.gasId);
   if (!gasExists) return errorHandler(reply, 400, 'Gas does not exist');

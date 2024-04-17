@@ -1,6 +1,6 @@
 import { describe, test, expect } from '@jest/globals';
-import { FastifyInstance } from 'fastify';
-import { HeartbeatResponse } from '../../../routes/utils/heartbeat';
+import { type FastifyInstance } from 'fastify';
+import { type HeartbeatResponse } from '../../../routes/utils/heartbeat';
 import { buildServer } from '../../../server';
 
 describe('heartbeat', () => {

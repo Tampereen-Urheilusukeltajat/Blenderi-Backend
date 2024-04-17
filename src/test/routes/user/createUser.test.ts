@@ -6,7 +6,7 @@ import {
   afterAll,
   jest,
 } from '@jest/globals';
-import { FastifyInstance } from 'fastify';
+import { type FastifyInstance } from 'fastify';
 import {
   createTestDatabase,
   dropTestDatabase,

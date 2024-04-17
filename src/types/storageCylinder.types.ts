@@ -1,4 +1,4 @@
-import { Type, Static } from '@sinclair/typebox';
+import { Type, type Static } from '@sinclair/typebox';
 
 export const storageCylinderUsage = Type.Object({
   storageCylinderId: Type.Integer({ minimum: 0 }),

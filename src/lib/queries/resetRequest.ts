@@ -3,7 +3,7 @@ import { log } from '../utils/log';
 import { redisClient } from '../auth/redis';
 import { hashPassword } from '../auth/auth';
 import { sendEmail } from '../utils/sendEmail';
-import { PasswordResetRequestBody } from '../../types/auth.types';
+import { type PasswordResetRequestBody } from '../../types/auth.types';
 import { randomUUID } from 'crypto';
 
 export const PASSWORD_RESET_TOKEN_EXPIRE_TIME = 600; // ten minutes
@@ -16,7 +16,7 @@ if (APPLICATION_URI === undefined) {
 }
 
 export const handlePasswordResetRequest = async (
-  body: PasswordResetRequestBody
+  body: PasswordResetRequestBody,
 ): Promise<void> => {
   const userInfo: { id: string; email: string } | undefined =
     await knexController('user')

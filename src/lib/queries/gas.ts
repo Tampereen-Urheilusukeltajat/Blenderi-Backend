@@ -1,6 +1,10 @@
-import { Knex } from 'knex';
+import { type Knex } from 'knex';
 import { knexController } from '../../database/database';
-import { CreateGasPriceBody, Gas, GasWithPricing } from '../../types/gas.types';
+import {
+  type CreateGasPriceBody,
+  type Gas,
+  type GasWithPricing,
+} from '../../types/gas.types';
 import { convertDateToMariaDBDateTime } from '../utils/dateTime';
 
 const GAS_WITH_PRICING_COLUMNS = [
@@ -14,7 +18,7 @@ const GAS_WITH_PRICING_COLUMNS = [
 
 export const getGasById = async (
   gasId: string,
-  trx?: Knex.Transaction
+  trx?: Knex.Transaction,
 ): Promise<Gas | undefined> => {
   const db = trx ?? knexController;
 
@@ -23,7 +27,7 @@ export const getGasById = async (
 
 export const getGasWithPricingWithPriceId = async (
   gasPriceId: string,
-  trx?: Knex.Transaction
+  trx?: Knex.Transaction,
 ): Promise<GasWithPricing | undefined> => {
   const db = trx ?? knexController;
 
@@ -61,7 +65,7 @@ export const getGasWithPricingWithPriceId = async (
 export const getGasWithPricingWithActiveFrom = async (
   activeFrom: string,
   gasId: string,
-  trx?: Knex.Transaction
+  trx?: Knex.Transaction,
 ): Promise<GasWithPricing | undefined> => {
   const db = trx ?? knexController;
 
@@ -93,7 +97,7 @@ export const getGasWithPricingWithActiveFrom = async (
 
 export const createGasPrice = async (
   { activeFrom, gasId, priceEurCents }: CreateGasPriceBody,
-  trx?: Knex.Transaction
+  trx?: Knex.Transaction,
 ): Promise<GasWithPricing> => {
   const db = trx ?? (await knexController.transaction());
 
@@ -101,7 +105,7 @@ export const createGasPrice = async (
   const activePrice = await getGasWithPricingWithActiveFrom(
     activeFrom,
     gasId,
-    db
+    db,
   );
 
   if (activePrice) {
@@ -114,7 +118,7 @@ export const createGasPrice = async (
       {
         activeTo: convertDateToMariaDBDateTime(new Date(activeFrom)),
         id: activePrice.gasPriceId,
-      }
+      },
     );
   }
 
@@ -130,13 +134,13 @@ export const createGasPrice = async (
 
   const res = await db.raw<Array<{ insertId: string }>>(
     insertSql,
-    insertParams
+    insertParams,
   );
   const [{ insertId: insertedGasPriceId }] = res;
 
   const insertedGasWithPricing = await getGasWithPricingWithPriceId(
     insertedGasPriceId,
-    db
+    db,
   );
   if (!insertedGasWithPricing) throw new Error('Gas price creation failed');
 
@@ -146,7 +150,7 @@ export const createGasPrice = async (
 };
 
 export const getGasesWithPricing = async (
-  trx?: Knex.Transaction
+  trx?: Knex.Transaction,
 ): Promise<GasWithPricing[]> => {
   const db = trx ?? knexController;
 

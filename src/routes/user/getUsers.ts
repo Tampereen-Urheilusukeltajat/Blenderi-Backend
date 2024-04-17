@@ -1,6 +1,10 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { Type, Static } from '@sinclair/typebox';
-import { UserResponse, userResponse } from '../../types/user.types';
+import {
+  type FastifyInstance,
+  type FastifyReply,
+  type FastifyRequest,
+} from 'fastify';
+import { Type, type Static } from '@sinclair/typebox';
+import { type UserResponse, userResponse } from '../../types/user.types';
 import { selectActiveUsers, selectUsers } from '../../lib/queries/user';
 
 const includeArchived = Type.Object({
@@ -22,7 +26,7 @@ const schema = {
 
 const handler = async (
   req: FastifyRequest<{ Querystring: IncludeArchived }>,
-  reply: FastifyReply
+  reply: FastifyReply,
 ): Promise<void> => {
   const { includeArchived } = req.query;
   const users: UserResponse[] = includeArchived

@@ -1,18 +1,18 @@
-import { Knex } from 'knex';
+import { type Knex } from 'knex';
 import { knexController } from '../../database/database';
 import {
-  DivingCylinder,
-  DivingCylinderSet,
-  DivingCylinderSetBasicInfo,
-  DivingCylinderWithSetId,
+  type DivingCylinder,
+  type DivingCylinderSet,
+  type DivingCylinderSetBasicInfo,
+  type DivingCylinderWithSetId,
 } from '../../types/divingCylinderSet.types';
-import { DBResponse } from '../../types/general.types';
+import { type DBResponse } from '../../types/general.types';
 import { log } from '../utils/log';
 
 export const divingCylinderSetExists = async (
   divingCylinderSetId: string,
   userId: string,
-  trx?: Knex.Transaction
+  trx?: Knex.Transaction,
 ): Promise<boolean> => {
   const db = trx ?? knexController;
 
@@ -28,7 +28,7 @@ export const divingCylinderSetExists = async (
     {
       divingCylinderSetId,
       userId,
-    }
+    },
   );
 
   if (exists.length) return true;
@@ -38,7 +38,7 @@ export const divingCylinderSetExists = async (
 
 export const archiveDivingCylinderSet = async (
   divingCylinderSetId: string,
-  trx?: Knex.Transaction
+  trx?: Knex.Transaction,
 ): Promise<void> => {
   const db = trx ?? knexController;
 
@@ -51,13 +51,13 @@ export const archiveDivingCylinderSet = async (
   `,
     {
       divingCylinderSetId,
-    }
+    },
   );
 };
 
 export const getUsersDivingCylinderSets = async (
   userId: string,
-  trx?: Knex.Transaction
+  trx?: Knex.Transaction,
 ): Promise<DivingCylinderSet[]> => {
   const db = trx ?? knexController;
 
@@ -76,7 +76,7 @@ export const getUsersDivingCylinderSets = async (
   `,
     {
       userId,
-    }
+    },
   );
 
   if (divingCylinderSets.length === 0) return [];
@@ -97,7 +97,7 @@ export const getUsersDivingCylinderSets = async (
     WHERE
       dcts.cylinder_set IN (${divingCylinderSets.map(() => '?').join(',')})
   `,
-    [...divingCylinderSets.map((dcs) => dcs.id)]
+    [...divingCylinderSets.map((dcs) => dcs.id)],
   );
 
   return divingCylinderSets.map((dcts) => ({
@@ -114,14 +114,14 @@ export const getUsersDivingCylinderSets = async (
 const selectSingleCylinderSet = async (
   trx: Knex.Transaction,
   set: DivingCylinderSet,
-  id?: string
+  id?: string,
 ): Promise<void> => {
   set.cylinders = await trx('diving_cylinder')
     .innerJoin(
       'diving_cylinder_to_set',
       'diving_cylinder.id',
       '=',
-      'diving_cylinder_to_set.cylinder'
+      'diving_cylinder_to_set.cylinder',
     )
     .select<DivingCylinder[]>(
       'id',
@@ -129,7 +129,7 @@ const selectSingleCylinderSet = async (
       'pressure',
       'material',
       'serial_number as serialNumber',
-      'inspection'
+      'inspection',
     )
     .where('diving_cylinder_to_set.cylinder_set', id ?? '');
 };
@@ -139,7 +139,7 @@ const selectSingleCylinderSet = async (
  */
 export const selectCylinderSet = async (
   trx: Knex.Transaction,
-  id: string
+  id: string,
 ): Promise<DivingCylinderSet | undefined> => {
   const set: DivingCylinderSet | undefined = await trx('diving_cylinder_set')
     .select<DivingCylinderSet>('id', 'owner', 'name')

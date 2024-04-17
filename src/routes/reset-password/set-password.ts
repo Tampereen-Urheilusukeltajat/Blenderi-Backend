@@ -1,7 +1,11 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import {
+  type FastifyInstance,
+  type FastifyReply,
+  type FastifyRequest,
+} from 'fastify';
 import {
   passwordResetResponseBody,
-  SetPasswordBody,
+  type SetPasswordBody,
   setPasswordBody,
 } from '../../types/auth.types';
 import { redisClient } from '../../lib/auth/redis';
@@ -20,7 +24,7 @@ const schema = {
 
 const handler = async (
   request: FastifyRequest<{ Body: SetPasswordBody }>,
-  reply: FastifyReply
+  reply: FastifyReply,
 ): Promise<void> => {
   const rateLimiterKey = `rate-limiter:${request.body.userId}`;
 

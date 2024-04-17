@@ -1,9 +1,13 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import {
+  type FastifyInstance,
+  type FastifyReply,
+  type FastifyRequest,
+} from 'fastify';
 import { knexController } from '../../database/database';
 import { archiveDivingCylinderSet } from '../../lib/queries/divingCylinderSet';
 import {
   userIdParamsPayload,
-  UserIdParamsPayload,
+  type UserIdParamsPayload,
   deleteUserReply,
 } from '../../types/user.types';
 import { errorHandler } from '../../lib/utils/errorHandler';
@@ -24,7 +28,7 @@ const schema = {
 
 const handler = async (
   req: FastifyRequest<{ Params: UserIdParamsPayload }>,
-  reply: FastifyReply
+  reply: FastifyReply,
 ): Promise<void> => {
   const { userId } = req.params;
   const { id, isAdmin } = req.user;
@@ -50,19 +54,18 @@ const handler = async (
     .where({ owner: userId })
     .select('id');
 
-  const promises: Array<Promise<void>> = [];
-  cylinderIds.map(async (dataPacket) => {
-    promises.push(archiveDivingCylinderSet(dataPacket.id, transaction));
-  });
+  await Promise.all(
+    cylinderIds.map(async ({ id }: { id: string }) =>
+      archiveDivingCylinderSet(id, transaction),
+    ),
+  );
 
-  await Promise.all(promises);
-
-  const user = await transaction('user')
+  const userRes = await transaction('user')
     .where({ id: userId })
     .select('id as userId', 'deleted_at as deletedAt');
 
   await transaction.commit();
-  return reply.code(200).send(...user);
+  return reply.code(200).send(userRes[0]);
 };
 
 export default async (fastify: FastifyInstance): Promise<void> => {

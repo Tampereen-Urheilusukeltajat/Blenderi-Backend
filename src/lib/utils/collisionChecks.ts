@@ -1,5 +1,5 @@
 import { knexController } from '../../database/database';
-import { User } from '../../types/user.types';
+import { type User } from '../../types/user.types';
 
 /* 
 Return true if given phone number already in database.
@@ -7,14 +7,14 @@ False if not or it's linked to given id.
 */
 export const phoneAlreadyExists = async (
   newPhone: string,
-  userID?: string
+  userID?: string,
 ): Promise<boolean> => {
   const count: number = await knexController('user')
     .count('phone_number')
     .where('phone_number', newPhone)
     .first()
     .then((row: { 'count(`phone_number`)': number }) =>
-      Number(row['count(`phone_number`)'])
+      Number(row['count(`phone_number`)']),
     );
 
   if (userID !== undefined) {
@@ -36,7 +36,7 @@ False if not or it's linked to given id.
 */
 export const emailAlreadyExists = async (
   newEmail: string,
-  userID?: string
+  userID?: string,
 ): Promise<boolean> => {
   const count: number = await knexController<User>('user')
     .count('email')

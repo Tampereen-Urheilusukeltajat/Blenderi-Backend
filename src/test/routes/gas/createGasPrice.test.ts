@@ -6,7 +6,7 @@ import {
   afterAll,
   beforeEach,
 } from '@jest/globals';
-import { FastifyInstance } from 'fastify';
+import { type FastifyInstance } from 'fastify';
 import {
   createTestDatabase,
   dropTestDatabase,
@@ -14,7 +14,10 @@ import {
   stopRedisConnection,
 } from '../../../lib/utils/testUtils';
 import { knexController } from '../../../database/database';
-import { CreateGasPriceBody, GasWithPricing } from '../../../types/gas.types';
+import {
+  type CreateGasPriceBody,
+  type GasWithPricing,
+} from '../../../types/gas.types';
 import { buildServer } from '../../../server';
 
 const VALID_PAYLOAD: CreateGasPriceBody = {
@@ -101,7 +104,7 @@ describe('Create gas price', () => {
 
       const [{ ...dbGP }] = await knexController('gas_price').where(
         'id',
-        body.gasPriceId
+        body.gasPriceId,
       );
       delete dbGP.created_at;
       delete dbGP.updated_at;
@@ -118,11 +121,11 @@ describe('Create gas price', () => {
 
     test('responds 201 with undefined active_to parameter and manipulates existing gas price active time range', async () => {
       const [{ ...dbBeforeUpdatePreviousGP }] = await knexController(
-        'gas_price'
+        'gas_price',
       ).where('id', '1');
 
       expect(dbBeforeUpdatePreviousGP.active_to).toMatchInlineSnapshot(
-        `"2022-00-06 00:00:00"`
+        `"2022-00-06 00:00:00"`,
       );
 
       const res = await server.inject({
@@ -148,7 +151,7 @@ describe('Create gas price', () => {
 
       const [{ ...dbGP }] = await knexController('gas_price').where(
         'id',
-        body.gasPriceId
+        body.gasPriceId,
       );
       delete dbGP.created_at;
       delete dbGP.updated_at;
@@ -165,7 +168,7 @@ describe('Create gas price', () => {
       // Make sure it modified the existing gas price and set active_to correctly
       const [{ ...dbPreviousGP }] = await knexController('gas_price').where(
         'id',
-        '1'
+        '1',
       );
 
       delete dbPreviousGP.created_at;
@@ -204,7 +207,7 @@ describe('Create gas price', () => {
 
       expect(res.statusCode).toEqual(400);
       expect(JSON.parse(res.payload).message).toEqual(
-        "body must have required property 'priceEurCents'"
+        "body must have required property 'priceEurCents'",
       );
     });
 

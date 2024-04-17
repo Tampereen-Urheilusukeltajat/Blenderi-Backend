@@ -1,7 +1,11 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import {
+  type FastifyInstance,
+  type FastifyReply,
+  type FastifyRequest,
+} from 'fastify';
 import { Type } from '@sinclair/typebox';
 import {
-  GetFillEventsResponse,
+  type GetFillEventsResponse,
   getFillEventsResponse,
 } from '../../types/fillEvent.types';
 import { getFillEvents } from '../../lib/queries/fillEvent';
@@ -18,7 +22,7 @@ const schema = {
 
 const handler = async (
   req: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ): Promise<void> => {
   const fills: GetFillEventsResponse[] = await getFillEvents(req.user.id);
   return reply.send(fills);

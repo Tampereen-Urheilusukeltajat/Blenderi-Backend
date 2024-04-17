@@ -1,7 +1,7 @@
 import { redisClient } from './redis';
 import { log } from '../utils/log';
-import { FastifyReply } from 'fastify';
-import { AuthTokens } from '../../types/auth.types';
+import { type FastifyReply } from 'fastify';
+import { type AuthTokens } from '../../types/auth.types';
 import { randomUUID } from 'crypto';
 
 // Expire times in seconds
@@ -14,7 +14,7 @@ export const EXAMPLE_JWT =
 export const initializeRefreshTokenRotationSession = async (
   userId: string,
   refreshTokenId: string,
-  refreshToken: string
+  refreshToken: string,
 ): Promise<void> => {
   await redisClient.set(`${userId}:${refreshTokenId}`, refreshToken, {
     EX: REFRESH_TOKEN_EXPIRE_TIME,
@@ -24,10 +24,10 @@ export const initializeRefreshTokenRotationSession = async (
 export const tokenIsUsable = async (
   oldToken: string,
   userId: string,
-  oldTokenId: string
+  oldTokenId: string,
 ): Promise<boolean> => {
   const oldTokenFromCache: string | null = await redisClient.get(
-    `${userId}:${oldTokenId}`
+    `${userId}:${oldTokenId}`,
   );
 
   if (oldTokenFromCache === null) {
@@ -44,7 +44,7 @@ export const rotate = async (
   newTokenId: string,
   userId: string,
   refreshToken: string,
-  refreshTokenExpireTime: number
+  refreshTokenExpireTime: number,
 ): Promise<void> => {
   await redisClient.del(`${userId}:${oldTokenId}`);
   await redisClient.set(`${userId}:${newTokenId}`, refreshToken, {
@@ -54,7 +54,7 @@ export const rotate = async (
 
 export const invalidate = async (
   tokenId: string,
-  userId: string
+  userId: string,
 ): Promise<void> => {
   await redisClient.del(`${userId}:${tokenId}`);
 };
@@ -67,7 +67,7 @@ export const generateTokens = async (
   reply: FastifyReply,
   userId: string,
   isAdmin: boolean,
-  isBlender: boolean
+  isBlender: boolean,
 ): Promise<AuthTokens & { refreshTokenId: string }> => {
   const tokenPayload = {
     id: userId,
@@ -84,7 +84,7 @@ export const generateTokens = async (
 
   const refreshToken = await reply.jwtSign(
     { ...tokenPayload, isRefreshToken: true },
-    { expiresIn: REFRESH_TOKEN_EXPIRE_TIME, jti: refreshTokenId }
+    { expiresIn: REFRESH_TOKEN_EXPIRE_TIME, jti: refreshTokenId },
   );
 
   return {

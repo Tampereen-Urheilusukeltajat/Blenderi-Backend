@@ -1,4 +1,8 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import {
+  type FastifyInstance,
+  type FastifyReply,
+  type FastifyRequest,
+} from 'fastify';
 import { getStorageCylinders } from '../../lib/queries/storageCylinder';
 import { storageCylinder } from '../../types/storageCylinder.types';
 import { Type } from '@sinclair/typebox';
@@ -16,7 +20,7 @@ const schema = {
 
 const handler = async (
   _request: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ): Promise<void> => {
   const storageCylinders = await getStorageCylinders();
 

@@ -4,7 +4,7 @@ import { redisClient } from '../auth/redis';
 import { hashPassword, passwordIsValid } from '../auth/auth';
 import { updateUser } from './user';
 import { sendEmail } from '../utils/sendEmail';
-import { SetPasswordBody } from '../../types/auth.types';
+import { type SetPasswordBody } from '../../types/auth.types';
 
 const APPLICATION_URI: string | undefined = process.env.APPLICATION_URI;
 
@@ -13,7 +13,7 @@ if (APPLICATION_URI === undefined) {
 }
 
 export const handlePasswordSetRequest = async (
-  body: SetPasswordBody
+  body: SetPasswordBody,
 ): Promise<void> => {
   const userInfo = await knexController<{ id: string; email: string }>('user')
     .where('id', body.userId)
@@ -31,7 +31,7 @@ export const handlePasswordSetRequest = async (
   const resetTokens = await redisClient.SMEMBERS(key);
 
   const resetTokenValidationResult = await Promise.all(
-    resetTokens.map(async (item) => passwordIsValid(body.token, item))
+    resetTokens.map(async (item) => passwordIsValid(body.token, item)),
   );
   const resetTokenIsValid = resetTokenValidationResult.some((x) => x);
 

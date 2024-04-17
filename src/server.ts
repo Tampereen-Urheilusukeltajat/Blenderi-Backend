@@ -1,18 +1,18 @@
 import fastify, {
-  FastifyInstance,
-  FastifyRequest,
-  FastifyReply,
+  type FastifyInstance,
+  type FastifyRequest,
+  type FastifyReply,
 } from 'fastify';
 import { fastifySwagger } from '@fastify/swagger';
 import { fastifyHelmet } from '@fastify/helmet';
 import fastifyCors from '@fastify/cors';
 import jwt from '@fastify/jwt';
 import { fastifyAutoload } from '@fastify/autoload';
-import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
+import { type TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 import { log } from './lib/utils/log';
 import path from 'path';
 import { errorHandler } from './lib/utils/errorHandler';
-import { AuthPayload, AuthUser } from './types/auth.types';
+import { type AuthPayload, type AuthUser } from './types/auth.types';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 if (JWT_SECRET === undefined) {
@@ -113,7 +113,7 @@ export const buildServer = async (opts: {
         } catch (err) {
           return errorHandler(reply, 401);
         }
-      }
+      },
     )
     .register(fastifyAutoload, {
       dir: path.join(__dirname, 'routes'),

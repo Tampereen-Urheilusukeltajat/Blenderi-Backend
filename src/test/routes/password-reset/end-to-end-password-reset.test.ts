@@ -41,13 +41,13 @@ describe('Password can be changed', () => {
       const indexOfTokenString = requestMessage.indexOf('?token=') + 7;
       const token = requestMessage.substring(
         indexOfTokenString,
-        indexOfTokenString + 36
+        indexOfTokenString + 36,
       );
 
       const indexOfUserIdString = requestMessage.indexOf('&id=') + 4;
       const userId = requestMessage.substring(
         indexOfUserIdString,
-        indexOfUserIdString + 36
+        indexOfUserIdString + 36,
       );
 
       // Try to reset with invalid token and login with it
@@ -110,7 +110,7 @@ describe('Password can be changed', () => {
       // @ts-expect-error: getMessage is injected to mock function
       const setMessage: string = await sgMail.getMessage();
       expect(setMessage).toContain(
-        'Sait tämän viestin, koska olet vaihtanut salasanasi Tampereen Urheilusukeltajien Täyttöpaikka-palveluun.'
+        'Sait tämän viestin, koska olet vaihtanut salasanasi Tampereen Urheilusukeltajien Täyttöpaikka-palveluun.',
       );
 
       const oldPasswordLoginResponse = await server.inject({
@@ -139,6 +139,6 @@ describe('Password can be changed', () => {
       await knexController.destroy();
       await stopRedisConnection();
     },
-    longTestTimeOut
+    longTestTimeOut,
   );
 });

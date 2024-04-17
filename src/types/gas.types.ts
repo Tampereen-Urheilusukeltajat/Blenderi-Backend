@@ -1,4 +1,4 @@
-import { Type, Static } from '@sinclair/typebox';
+import { Type, type Static } from '@sinclair/typebox';
 
 export const createGas = Type.Object({
   name: Type.String({ maxLength: 128 }),

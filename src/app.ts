@@ -15,7 +15,7 @@ const ROUTE_PREFIX = process.env.ROUTE_PREFIX;
 
 if (!APPLICATION_HOST || !APPLICATION_PORT || !ROUTE_PREFIX) {
   throw new Error(
-    'Missing required env variables: APPLICATION_HOST. APPLICATION_PORT, ROUTE_PREFIX'
+    'Missing required env variables: APPLICATION_HOST. APPLICATION_PORT, ROUTE_PREFIX',
   );
 }
 

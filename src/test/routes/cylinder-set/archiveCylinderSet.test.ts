@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import {
   describe,
   test,
@@ -6,7 +7,7 @@ import {
   afterAll,
   beforeEach,
 } from '@jest/globals';
-import { FastifyInstance } from 'fastify';
+import { type FastifyInstance } from 'fastify';
 import {
   createTestDatabase,
   dropTestDatabase,
@@ -15,7 +16,7 @@ import {
 } from '../../../lib/utils/testUtils';
 import { knexController } from '../../../database/database';
 import { buildServer } from '../../../server';
-import { DivingCylinderSet } from '../../../types/divingCylinderSet.types';
+import { type DivingCylinderSet } from '../../../types/divingCylinderSet.types';
 
 describe('delete cylinder set', () => {
   const getTestInstance = async (): Promise<FastifyInstance> =>

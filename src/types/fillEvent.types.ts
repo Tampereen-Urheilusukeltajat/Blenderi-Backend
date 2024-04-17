@@ -1,4 +1,4 @@
-import { Type, Static } from '@sinclair/typebox';
+import { Type, type Static } from '@sinclair/typebox';
 import { storageCylinderUsage } from './storageCylinder.types';
 
 export const fillEvent = Type.Object({

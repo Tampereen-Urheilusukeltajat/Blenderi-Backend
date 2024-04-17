@@ -1,7 +1,11 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import {
+  type FastifyInstance,
+  type FastifyReply,
+  type FastifyRequest,
+} from 'fastify';
 import {
   passwordResetRequestBody,
-  PasswordResetRequestBody,
+  type PasswordResetRequestBody,
   passwordResetResponseBody,
 } from '../../types/auth.types';
 import { handlePasswordResetRequest } from '../../lib/queries/resetRequest';
@@ -20,7 +24,7 @@ schema.body.properties.email.example = 'john.doe@example.com';
 
 const handler = async (
   request: FastifyRequest<{ Body: PasswordResetRequestBody }>,
-  reply: FastifyReply
+  reply: FastifyReply,
 ): Promise<void> => {
   await reply
     .code(202)

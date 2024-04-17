@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import {
   describe,
   test,
@@ -6,7 +7,7 @@ import {
   afterAll,
   beforeEach,
 } from '@jest/globals';
-import { FastifyInstance } from 'fastify';
+import { type FastifyInstance } from 'fastify';
 import { knexController } from '../../../database/database';
 import { buildServer } from '../../../server';
 import {
@@ -64,6 +65,7 @@ describe('Delete user', () => {
       });
       const resBody = JSON.parse(res.body);
       expect(res.statusCode).toEqual(200);
+      expect(resBody.userId).toMatch(delUserId);
       expect(resBody.deletedAt).not.toBeNull();
     });
 
@@ -75,7 +77,7 @@ describe('Delete user', () => {
           'forename',
           'surname',
           'phone_number',
-          'deleted_at as deletedAt'
+          'deleted_at as deletedAt',
         );
       expect(res.email).toBeNull();
       expect(res.forename).toBeNull();

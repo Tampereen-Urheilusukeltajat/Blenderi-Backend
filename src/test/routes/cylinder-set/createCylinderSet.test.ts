@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import {
   describe,
   test,
@@ -6,7 +7,7 @@ import {
   afterAll,
   beforeEach,
 } from '@jest/globals';
-import { FastifyInstance } from 'fastify';
+import { type FastifyInstance } from 'fastify';
 import {
   createTestDatabase,
   dropTestDatabase,
@@ -79,7 +80,7 @@ describe('create cylinder set', () => {
     delete responseBody.cylinders[0].id;
 
     expect(responseBody.cylinders[0].inspection).toContain(
-      payload.cylinders[0].inspection
+      payload.cylinders[0].inspection,
     );
     delete responseBody.cylinders[0].inspection;
 
@@ -168,7 +169,7 @@ describe('create cylinder set', () => {
 
     expect(res.statusCode).toEqual(400);
     expect(JSON.parse(res.body).message).toEqual(
-      'Inspection date from the future'
+      'Inspection date from the future',
     );
   });
 

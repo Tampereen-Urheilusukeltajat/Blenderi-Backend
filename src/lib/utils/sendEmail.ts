@@ -1,5 +1,5 @@
 import sgMail from '@sendgrid/mail';
-import { emailMsg } from '../../types/email.types';
+import { type emailMsg } from '../../types/email.types';
 
 const API_KEY: string | undefined = process.env.SENDGRID_API_KEY;
 const FROM_EMAIL: string | undefined = process.env.SENDGRID_FROM_EMAIL;
@@ -27,7 +27,7 @@ export const sendEmail = async (msg: emailMsg): Promise<void> => {
     // TODO: handle 401 from SendGrid
     if (response[0].statusCode !== 202) {
       throw new Error(
-        `SendGrid returned statusCode ${String(response[0].statusCode)}.`
+        `SendGrid returned statusCode ${String(response[0].statusCode)}.`,
       );
     }
   } catch (error) {

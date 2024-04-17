@@ -1,13 +1,17 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import {
+  type FastifyInstance,
+  type FastifyReply,
+  type FastifyRequest,
+} from 'fastify';
 import { knexController } from '../../database/database';
 import { hashPassword, passwordIsValid } from '../../lib/auth/auth';
 import { errorHandler } from '../../lib/utils/errorHandler';
 import { log } from '../../lib/utils/log';
 import {
   updateUserBody,
-  UpdateUserBody,
-  UserIdParamsPayload,
-  HashObj,
+  type UpdateUserBody,
+  type UserIdParamsPayload,
+  type HashObj,
   userResponse,
   userIdParamsPayload,
 } from '../../types/user.types';
@@ -38,7 +42,7 @@ const handler = async (
     Body: UpdateUserBody;
     Params: UserIdParamsPayload;
   }>,
-  reply: FastifyReply
+  reply: FastifyReply,
 ): Promise<void> => {
   const { userId } = req.params;
   const {
@@ -65,7 +69,12 @@ const handler = async (
     if (currentPassword === undefined)
       return errorHandler(reply, 400, 'Current password is required');
 
-    if (!(await passwordIsValid(currentPassword, response[0].password_hash)))
+    if (
+      !(await passwordIsValid(
+        currentPassword,
+        response[0].password_hash as string,
+      ))
+    )
       return errorHandler(reply, 400, 'Invalid current password');
   }
 

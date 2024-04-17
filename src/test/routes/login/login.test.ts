@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import {
   jest,
   describe,
@@ -7,7 +8,7 @@ import {
   afterAll,
   beforeEach,
 } from '@jest/globals';
-import { FastifyInstance } from 'fastify';
+import { type FastifyInstance } from 'fastify';
 import { knexController } from '../../../database/database';
 import { buildServer } from '../../../server';
 import {
@@ -68,7 +69,7 @@ describe('Login', () => {
       expect(res.statusCode).toEqual(200);
       const resBody = JSON.parse(res.body);
       const tokenPayload = JSON.parse(
-        Buffer.from(resBody.accessToken.split('.')[1], 'base64').toString()
+        Buffer.from(resBody.accessToken.split('.')[1], 'base64').toString(),
       );
 
       expect(tokenPayload).toHaveProperty('iat');

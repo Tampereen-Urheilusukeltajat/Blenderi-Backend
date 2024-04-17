@@ -1,7 +1,11 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import {
+  type FastifyInstance,
+  type FastifyReply,
+  type FastifyRequest,
+} from 'fastify';
 import {
   createFillEventBody,
-  CreateFillEventBody,
+  type CreateFillEventBody,
   fillEventResponse,
 } from '../../types/fillEvent.types';
 import { createFillEvent } from '../../lib/queries/fillEvent';
@@ -23,7 +27,7 @@ schema.body.properties.gasMixture.example = 'EAN21';
 
 const handler = async (
   request: FastifyRequest<{ Body: CreateFillEventBody }>,
-  reply: FastifyReply
+  reply: FastifyReply,
 ): Promise<void> => {
   return createFillEvent(request.user, request.body, reply);
 };

@@ -1,4 +1,4 @@
-import { FastifyReply } from 'fastify';
+import { type FastifyReply } from 'fastify';
 
 const HTTP_ERROR_RESPONSE_STATUS_MESSAGES = {
   307: 'Temporal Redirect',
@@ -23,7 +23,7 @@ const HTTP_ERROR_RESPONSE_STATUS_MESSAGES = {
 export const errorHandler = async (
   reply: FastifyReply,
   code?: number,
-  msg?: string
+  msg?: string,
 ): Promise<FastifyReply> => {
   if (
     code === undefined ||

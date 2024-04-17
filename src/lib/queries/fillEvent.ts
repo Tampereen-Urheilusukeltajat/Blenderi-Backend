@@ -1,22 +1,22 @@
 import { knexController } from '../../database/database';
 import {
-  CreateFillEventBody,
-  FillEventGasFill,
-  GetFillEventsResponse,
+  type CreateFillEventBody,
+  type FillEventGasFill,
+  type GetFillEventsResponse,
 } from '../../types/fillEvent.types';
-import { AuthUser } from '../../types/auth.types';
+import { type AuthUser } from '../../types/auth.types';
 import { log } from '../utils/log';
-import { Knex } from 'knex';
+import { type Knex } from 'knex';
 import { getStorageCylinder } from './storageCylinder';
-import { Gas, GasPrice } from '../../types/gas.types';
+import { type Gas, type GasPrice } from '../../types/gas.types';
 import { selectCylinderSet } from './divingCylinderSet';
 import { getUserWithId } from './user';
 import { errorHandler } from '../utils/errorHandler';
-import { FastifyReply } from 'fastify';
+import { type FastifyReply } from 'fastify';
 
 const getActivePriceId = async (
   trx: Knex.Transaction,
-  gasId: string
+  gasId: string,
 ): Promise<number> => {
   const prices: GasPrice[] = await trx<GasPrice>('gas_price')
     .where('gas_id', gasId)
@@ -49,16 +49,16 @@ const getAirGasId = async (trx: Knex.Transaction): Promise<string> => {
 };
 
 export const getFillEvents = async (
-  userId: string
+  userId: string,
 ): Promise<GetFillEventsResponse[]> => {
   const trx = await knexController.transaction();
 
-  const fillQuery = await trx('fill_event')
+  const fillQuery = (await trx('fill_event')
     .where('user_id', userId)
     .innerJoin(
       'diving_cylinder_set',
       'fill_event.cylinder_set_id',
-      'diving_cylinder_set.id'
+      'diving_cylinder_set.id',
     )
     .leftJoin('compressor', 'fill_event.compressor_id', 'compressor.id')
     .select(
@@ -70,18 +70,19 @@ export const getFillEvents = async (
       'fill_event.description',
       'fill_event.created_at as createdAt',
       'compressor.id as compressorId',
-      'compressor.name as compressorName'
-    );
+      'compressor.name as compressorName',
+    )) as Array<Omit<GetFillEventsResponse, 'price'>>;
 
   const result = await Promise.all(
     fillQuery.map(async (fillEvent): Promise<GetFillEventsResponse> => {
-      const price = await calcTotalCost(trx, fillEvent.id);
+      const price = await calcTotalCost(trx, Number(fillEvent.id));
 
       return {
         ...fillEvent,
+
         price,
       };
-    })
+    }),
   );
 
   await trx.commit();
@@ -91,7 +92,7 @@ export const getFillEvents = async (
 export const createFillEvent = async (
   authUser: AuthUser,
   body: CreateFillEventBody,
-  reply: FastifyReply
+  reply: FastifyReply,
 ): Promise<FastifyReply> => {
   const {
     cylinderSetId,
@@ -134,7 +135,7 @@ export const createFillEvent = async (
 
   // Use knex.raw to enable use of RETURNING clause to avoid race conditions
   const res = await trx.raw(sql, params);
-  const fillEventId = JSON.parse(JSON.stringify(res))[0][0].id;
+  const fillEventId = JSON.parse(JSON.stringify(res))[0][0].id as number;
 
   try {
     if (filledAir) {
@@ -154,7 +155,7 @@ export const createFillEvent = async (
         }
         const storageCylinder = await getStorageCylinder(
           trx,
-          scu.storageCylinderId
+          scu.storageCylinderId,
         );
         const priceId = await getActivePriceId(trx, storageCylinder.gasId);
         await trx('fill_event_gas_fill').insert({
@@ -165,7 +166,7 @@ export const createFillEvent = async (
             Math.ceil(scu.startPressure - scu.endPressure) *
             storageCylinder.volume,
         });
-      })
+      }),
     );
   } catch (e) {
     await trx.rollback();
@@ -202,18 +203,20 @@ export const createFillEvent = async (
 
 export const calcTotalCost = async (
   trx: Knex.Transaction,
-  id: number
+  id: number,
 ): Promise<number> => {
   const fillings: FillEventGasFill[] = await trx<FillEventGasFill>(
-    'fill_event_gas_fill'
+    'fill_event_gas_fill',
   )
     .where('fill_event_id', id)
     .select(
       'storage_cylinder_id as storageCylinderId',
       'gas_price_id as gasPriceId',
-      'volume_litres as volumeLitres'
+      'volume_litres as volumeLitres',
     );
-  const fillArr = fillings.map((fill) => JSON.parse(JSON.stringify(fill)));
+  const fillArr = fillings.map((fill) =>
+    JSON.parse(JSON.stringify(fill)),
+  ) as FillEventGasFill[];
 
   const pricesPerGas: number[] = await Promise.all(
     fillArr.map(async (fill): Promise<number> => {
@@ -226,7 +229,7 @@ export const calcTotalCost = async (
         .first('price_eur_cents as priceEurCents');
       const price = JSON.parse(JSON.stringify(gasPrice));
       return fill.volumeLitres * price.priceEurCents;
-    })
+    }),
   );
 
   return pricesPerGas.reduce((acc, curValue) => acc + curValue, 0);

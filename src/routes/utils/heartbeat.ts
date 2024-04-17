@@ -1,5 +1,9 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { Type, Static } from '@sinclair/typebox';
+import {
+  type FastifyInstance,
+  type FastifyReply,
+  type FastifyRequest,
+} from 'fastify';
+import { Type, type Static } from '@sinclair/typebox';
 
 const heartBeatResponse = Type.Object({
   status: Type.String(),
@@ -19,7 +23,7 @@ const schema = {
 
 const handler = async (
   req: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ): Promise<void> => {
   await reply.send({
     status: 'OK',
