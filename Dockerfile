@@ -1,33 +1,13 @@
-# syntax = docker/dockerfile:1
+FROM node:20-alpine as build
 
-# Adjust NODE_VERSION as desired
-FROM node:20-alpine as base
+ENV NODE_ENV production
 
-LABEL fly_launch_runtime="Node.js"
+WORKDIR /server
+COPY package*.json .
 
-# Node.js app lives here
-WORKDIR /app
+RUN npm ci
 
-# Set production environment
-ENV NODE_ENV=production
-
-
-# Throw-away build stage to reduce size of final image
-FROM base as build
-
-# Install node modules
-COPY --link package-lock.json package.json ./
-RUN npm ci --omit=dev --ignore-scripts
-
-# Copy application code
-COPY --link . .
-
-
-# Final stage for app image
-FROM base
-
-# Copy built application
-COPY --from=build /app /app
+COPY . .
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
