@@ -1,4 +1,4 @@
-import { FastifyInstance, FastifyReply } from 'fastify';
+import { type FastifyInstance, type FastifyReply } from 'fastify';
 import { errorHandler } from '../../lib/utils/errorHandler';
 import { log } from '../../lib/utils/log';
 import {
@@ -10,8 +10,9 @@ import {
 } from '../../lib/auth/jwtUtils';
 import {
   refreshRequestBody,
-  RefreshRequest,
+  type RefreshRequest,
   authResponse,
+  type AuthUser,
 } from '../../types/auth.types';
 
 const schema = {
@@ -33,11 +34,13 @@ schema.response['200'].properties.refreshToken.example = EXAMPLE_JWT;
 
 const handler = async function (
   request: RefreshRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ): Promise<void> {
-  let oldRefreshTokenDecoded;
+  let oldRefreshTokenDecoded: AuthUser;
   try {
-    oldRefreshTokenDecoded = this.jwt.verify(request.body.refreshToken);
+    oldRefreshTokenDecoded = this.jwt.verify(
+      request.body.refreshToken,
+    ) as AuthUser;
   } catch (error) {
     if (error?.code === 'FAST_JWT_INVALID_SIGNATURE') {
       log.info('Received invalid refresh token.');
@@ -54,7 +57,7 @@ const handler = async function (
   const isTokenUsable = await tokenIsUsable(
     request.body.refreshToken,
     userId,
-    oldRefreshTokenId
+    oldRefreshTokenId,
   );
 
   if (!isTokenUsable) {
@@ -65,7 +68,7 @@ const handler = async function (
     reply,
     userId,
     oldRefreshTokenDecoded.isAdmin,
-    oldRefreshTokenDecoded.isBlender
+    oldRefreshTokenDecoded.isBlender,
   );
 
   await rotate(
@@ -73,7 +76,7 @@ const handler = async function (
     refreshTokenId,
     userId,
     refreshToken,
-    REFRESH_TOKEN_EXPIRE_TIME
+    REFRESH_TOKEN_EXPIRE_TIME,
   );
 
   return reply.code(200).send({ accessToken, refreshToken });

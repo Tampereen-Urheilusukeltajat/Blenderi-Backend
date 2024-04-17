@@ -1,8 +1,8 @@
-import { FastifyInstance, FastifyReply } from 'fastify';
+import { type FastifyInstance, type FastifyReply } from 'fastify';
 import {
   compressor,
   createCompressorRequestBody,
-  CreateCompressorRequest,
+  type CreateCompressorRequest,
 } from '../../types/compressor.types';
 import { errorHandler } from '../../lib/utils/errorHandler';
 import { getUserWithId } from '../../lib/queries/user';
@@ -24,7 +24,7 @@ const schema = {
 
 const handler = async (
   request: CreateCompressorRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ): Promise<void> => {
   const user = await getUserWithId(request.user.id, true);
 

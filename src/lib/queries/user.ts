@@ -1,8 +1,8 @@
-import { Knex } from 'knex';
+import { type Knex } from 'knex';
 import snakecaseKeys from 'snakecase-keys';
 import { knexController } from '../../database/database';
-import { User, UserResponse } from '../../types/user.types';
-import { DBResponse } from '../../types/general.types';
+import { type User, type UserResponse } from '../../types/user.types';
+import { type DBResponse } from '../../types/general.types';
 
 type UserLoginResponse = Pick<
   User,
@@ -20,7 +20,7 @@ const getUsers = async (
   db: Knex | Knex.Transaction,
   onlyActiveUsers: boolean,
   userId?: string,
-  email?: string
+  email?: string,
 ): Promise<DBResponse<UserResponse[]>> => {
   const sql = `
     SELECT
@@ -62,7 +62,7 @@ export const selectUsers = async (): Promise<UserResponse[]> => {
 export const getUserWithId = async (
   userId: string,
   onlyActive = true,
-  trx?: Knex.Transaction
+  trx?: Knex.Transaction,
 ): Promise<UserResponse | undefined> => {
   const db = trx ?? knexController;
   const res = await getUsers(db, onlyActive, userId);
@@ -73,7 +73,7 @@ export const getUserWithId = async (
 export const getUserWithEmail = async (
   email: string,
   onlyActive = true,
-  trx?: Knex.Transaction
+  trx?: Knex.Transaction,
 ): Promise<UserResponse | undefined> => {
   const db = trx ?? knexController;
   const res = await getUsers(db, onlyActive, undefined, email);
@@ -87,7 +87,7 @@ export const getUserWithEmail = async (
  * @returns
  */
 export const getUserDetailsForLogin = async (
-  email: string
+  email: string,
 ): Promise<UserLoginResponse | undefined> => {
   const res = await knexController.raw<UserLoginResponse[]>(
     `
@@ -110,7 +110,7 @@ export const getUserDetailsForLogin = async (
     `,
     {
       email,
-    }
+    },
   );
 
   return { ...res[0][0] };
@@ -119,7 +119,7 @@ export const getUserDetailsForLogin = async (
 export const updateUser = async (
   userId: string,
   payload: Partial<User>,
-  trx?: Knex.Transaction
+  trx?: Knex.Transaction,
 ): Promise<UserResponse> => {
   const db = trx ?? (await knexController.transaction());
 
@@ -137,7 +137,7 @@ export const updateUser = async (
 
 export const updateLastLogin = async (
   userId: string,
-  trx?: Knex.Transaction
+  trx?: Knex.Transaction,
 ): Promise<void> => {
   const db = trx ?? knexController;
 

@@ -1,5 +1,5 @@
-import { Type, Static } from '@sinclair/typebox';
-import { FastifyRequest } from 'fastify';
+import { Type, type Static } from '@sinclair/typebox';
+import { type FastifyRequest } from 'fastify';
 
 export const email = Type.String({
   minLength: 3,
@@ -38,7 +38,7 @@ export const updateUserBody = Type.Partial(
     currentPassword: Type.String(),
     archive: Type.Boolean(),
   }),
-  { minProperties: 1 }
+  { minProperties: 1 },
 );
 
 export type UpdateUserBody = Static<typeof updateUserBody>;

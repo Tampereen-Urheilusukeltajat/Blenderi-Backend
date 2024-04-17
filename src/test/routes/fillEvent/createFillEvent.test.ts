@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import {
   describe,
   test,
@@ -7,7 +8,7 @@ import {
   afterAll,
   afterEach,
 } from '@jest/globals';
-import { FastifyInstance } from 'fastify';
+import { type FastifyInstance } from 'fastify';
 import {
   createTestDatabase,
   dropTestDatabase,
@@ -176,7 +177,7 @@ describe('create fill event', () => {
     afterEach(async () => {
       const fillEvents = await knexController('fill_event').select();
       const fillEventGasFills = await knexController(
-        'fill_event_gas_fill'
+        'fill_event_gas_fill',
       ).select();
       expect(fillEvents).toHaveLength(0);
       expect(fillEventGasFills).toHaveLength(0);

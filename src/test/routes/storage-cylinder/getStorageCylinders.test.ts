@@ -6,7 +6,7 @@ import {
   afterAll,
   beforeEach,
 } from '@jest/globals';
-import { FastifyInstance } from 'fastify';
+import { type FastifyInstance } from 'fastify';
 import {
   createTestDatabase,
   dropTestDatabase,
@@ -15,7 +15,7 @@ import {
 } from '../../../lib/utils/testUtils';
 import { knexController } from '../../../database/database';
 import { buildServer } from '../../../server';
-import { StorageCylinder } from '../../../types/storageCylinder.types';
+import { type StorageCylinder } from '../../../types/storageCylinder.types';
 
 describe('Get storage cylinders', () => {
   const getTestInstance = async (): Promise<FastifyInstance> =>

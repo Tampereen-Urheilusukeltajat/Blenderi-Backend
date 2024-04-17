@@ -1,7 +1,11 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import {
+  type FastifyInstance,
+  type FastifyReply,
+  type FastifyRequest,
+} from 'fastify';
 import { Type } from '@sinclair/typebox';
 import {
-  DivingCylinderSetIdParamsPayload,
+  type DivingCylinderSetIdParamsPayload,
   divingCylinderSetIdParamsPayload,
 } from '../../types/divingCylinderSet.types';
 import {
@@ -32,14 +36,14 @@ const handler = async (
   request: FastifyRequest<{
     Params: DivingCylinderSetIdParamsPayload;
   }>,
-  reply: FastifyReply
+  reply: FastifyReply,
 ): Promise<void> => {
   const { divingCylinderSetId } = request.params;
   const { user } = request;
 
   const dcSetExists = await divingCylinderSetExists(
     divingCylinderSetId,
-    user.id
+    user.id,
   );
   if (!dcSetExists) return errorHandler(reply, 404);
 

@@ -1,13 +1,17 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import {
+  type FastifyInstance,
+  type FastifyReply,
+  type FastifyRequest,
+} from 'fastify';
 import { randomUUID } from 'crypto';
 import { knexController } from '../../database/database';
 import { errorHandler } from '../../lib/utils/errorHandler';
 import { selectCylinderSet } from '../../lib/queries/divingCylinderSet';
 import {
-  CreateDivingCylinderSet,
+  type CreateDivingCylinderSet,
   createDivingCylinderSet,
-  DivingCylinder,
-  DivingCylinderSet,
+  type DivingCylinder,
+  type DivingCylinderSet,
   divingCylinderSet,
 } from '../../types/divingCylinderSet.types';
 
@@ -28,7 +32,7 @@ const handler = async (
   request: FastifyRequest<{
     Body: CreateDivingCylinderSet;
   }>,
-  reply: FastifyReply
+  reply: FastifyReply,
 ): Promise<void> => {
   // TODO: Authorization
 
@@ -74,7 +78,7 @@ const handler = async (
 
       const resultBody: DivingCylinderSet | undefined = await selectCylinderSet(
         trx,
-        setId
+        setId,
       );
       if (resultBody === undefined) {
         throw new Error('Database insertion failed: new cylinder set');

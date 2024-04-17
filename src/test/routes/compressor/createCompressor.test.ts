@@ -6,7 +6,7 @@ import {
   afterAll,
   beforeEach,
 } from '@jest/globals';
-import { FastifyInstance } from 'fastify';
+import { type FastifyInstance } from 'fastify';
 import {
   createTestDatabase,
   dropTestDatabase,
@@ -16,8 +16,8 @@ import {
 import { knexController } from '../../../database/database';
 import { buildServer } from '../../../server';
 import {
-  CreateCompressorRequestBody,
-  Compressor,
+  type CreateCompressorRequestBody,
+  type Compressor,
 } from '../../../types/compressor.types';
 
 const VALID_PAYLOAD: CreateCompressorRequestBody = {
@@ -98,7 +98,7 @@ describe('Create compressor', () => {
 
       expect(res.statusCode).toEqual(400);
       expect(JSON.parse(res.payload).message).toEqual(
-        "body must have required property 'description'"
+        "body must have required property 'description'",
       );
     });
 
@@ -116,7 +116,7 @@ describe('Create compressor', () => {
 
       expect(res.statusCode).toEqual(400);
       expect(JSON.parse(res.payload).message).toEqual(
-        'body/name must NOT have more than 32 characters'
+        'body/name must NOT have more than 32 characters',
       );
     });
   });

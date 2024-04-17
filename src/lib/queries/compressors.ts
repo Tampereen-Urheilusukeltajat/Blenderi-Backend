@@ -1,11 +1,11 @@
 import { knexController } from '../../database/database';
 import {
-  Compressor,
-  CreateCompressorRequest,
+  type Compressor,
+  type CreateCompressorRequest,
 } from '../../types/compressor.types';
 
 export const createCompressor = async (
-  payload: CreateCompressorRequest
+  payload: CreateCompressorRequest,
 ): Promise<Compressor> => {
   const sql =
     'INSERT INTO compressor (name, description, is_enabled, air_only) VALUES (?,?,?,?) RETURNING id';
@@ -19,7 +19,7 @@ export const createCompressor = async (
   // Type source: Akzu404
   const res = await knexController.raw<Array<Array<{ id: string }>>>(
     sql,
-    params
+    params,
   );
   const [[{ id: insertedCompressorId }]] = res;
 
@@ -36,6 +36,6 @@ export const getCompressors = async (): Promise<Compressor[]> => {
     'name',
     'description',
     'is_enabled AS isEnabled',
-    'air_only AS airOnly'
+    'air_only AS airOnly',
   );
 };

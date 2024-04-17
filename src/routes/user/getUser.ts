@@ -1,9 +1,13 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import {
+  type FastifyInstance,
+  type FastifyReply,
+  type FastifyRequest,
+} from 'fastify';
 import { errorHandler } from '../../lib/utils/errorHandler';
 import {
   userResponse,
   userIdParamsPayload,
-  UserIdParamsPayload,
+  type UserIdParamsPayload,
 } from '../../types/user.types';
 import { getUserWithId } from '../../lib/queries/user';
 import { isEmptyObject } from '../../lib/utils/empty';
@@ -25,7 +29,7 @@ const handler = async (
   req: FastifyRequest<{
     Params: UserIdParamsPayload;
   }>,
-  reply: FastifyReply
+  reply: FastifyReply,
 ): Promise<void> => {
   const userId = req.params.userId;
   const user = await getUserWithId(userId);

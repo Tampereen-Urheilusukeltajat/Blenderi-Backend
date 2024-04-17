@@ -1,15 +1,19 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import {
+  type FastifyInstance,
+  type FastifyReply,
+  type FastifyRequest,
+} from 'fastify';
 import { knexController } from '../../database/database';
 import { errorHandler } from '../../lib/utils/errorHandler';
 import { selectCylinderSet } from '../../lib/queries/divingCylinderSet';
 import {
-  DivingCylinderSet,
+  type DivingCylinderSet,
   divingCylinderSet,
   divingCylinderSetIdParamsPayload,
-  DivingCylinderSetIdParamsPayload,
-  UpdateDivingCylinderBody,
+  type DivingCylinderSetIdParamsPayload,
+  type UpdateDivingCylinderBody,
   updateDivingCylinderSet,
-  UpdateDivingCylinderSet,
+  type UpdateDivingCylinderSet,
 } from '../../types/divingCylinderSet.types';
 
 const schema = {
@@ -33,7 +37,7 @@ const handler = async (
     Body: UpdateDivingCylinderSet;
     Params: DivingCylinderSetIdParamsPayload;
   }>,
-  reply: FastifyReply
+  reply: FastifyReply,
 ): Promise<void> => {
   // TODO: Authorization
 
@@ -90,7 +94,7 @@ const handler = async (
 
       const resultBody: DivingCylinderSet | undefined = await selectCylinderSet(
         trx,
-        setId
+        setId,
       );
       if (resultBody === undefined) {
         throw new Error('Database update failed: update cylinder set');
@@ -103,7 +107,7 @@ const handler = async (
         return errorHandler(
           reply,
           409,
-          'Tried to create duplicate diving cylinder set'
+          'Tried to create duplicate diving cylinder set',
         );
       }
 

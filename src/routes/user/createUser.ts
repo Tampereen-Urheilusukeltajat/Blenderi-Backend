@@ -1,9 +1,9 @@
-import { FastifyInstance, FastifyReply } from 'fastify';
+import { type FastifyInstance, type FastifyReply } from 'fastify';
 import { knexController } from '../../database/database';
 import {
   userResponse,
   createUserRequestBody,
-  CreateUserRequest,
+  type CreateUserRequest,
 } from '../../types/user.types';
 import { hashPassword } from '../../lib/auth/auth';
 import { log } from '../../lib/utils/log';
@@ -31,11 +31,11 @@ const schema = {
 
 const handler = async (
   request: CreateUserRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ): Promise<void> => {
   const turnstileValidationSuccess = await validateTurnstileToken(
     request.body.turnstileToken,
-    request.ip
+    request.ip,
   );
 
   if (!turnstileValidationSuccess) {

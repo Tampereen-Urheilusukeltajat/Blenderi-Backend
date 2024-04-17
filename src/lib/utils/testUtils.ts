@@ -38,11 +38,11 @@ const TABLE_READ_ORDER = [
 
 const deriveReadOrder = (tableNames: string[]): string[] => {
   const unknownTableNames = tableNames.filter(
-    (tableName) => !TABLE_READ_ORDER.includes(tableName)
+    (tableName) => !TABLE_READ_ORDER.includes(tableName),
   );
   if (unknownTableNames.length > 0) {
     throw new Error(
-      'Unknown table names met! Please add them to TABLE_READ_ORDER!'
+      'Unknown table names met! Please add them to TABLE_READ_ORDER!',
     );
   }
 
@@ -56,7 +56,7 @@ const deriveReadOrder = (tableNames: string[]): string[] => {
  * @returns Promise<void>
  */
 const readTestDataFolderToDatabase = async (
-  testDataFolderName: string
+  testDataFolderName: string,
 ): Promise<void> => {
   const tableNames = (
     await readdir(`./src/test_data/${testDataFolderName}`)
@@ -71,7 +71,7 @@ const readTestDataFolderToDatabase = async (
     const content = (
       await readFile(
         `./src/test_data/${testDataFolderName}/${tableName}.csv`,
-        'utf8'
+        'utf8',
       )
     ).split('\n');
 
@@ -112,7 +112,7 @@ const runMigrations = async (): Promise<void> => {
  * and inserts values to the database
  */
 export const createTestDatabase = async (
-  testDataFolder?: string
+  testDataFolder?: string,
 ): Promise<void> => {
   const adminKnex = knex({
     client: 'mysql',
@@ -132,7 +132,7 @@ export const createTestDatabase = async (
       testDatabase: TEST_DATABASE,
       testUser: TEST_USER,
       testUserPassword: TEST_USER_PASSWORD,
-    }
+    },
   );
   await adminKnex.destroy();
 

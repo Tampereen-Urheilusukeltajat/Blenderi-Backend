@@ -1,5 +1,5 @@
-import { Type, Static } from '@sinclair/typebox';
-import { FastifyRequest } from 'fastify';
+import { Type, type Static } from '@sinclair/typebox';
+import { type FastifyRequest } from 'fastify';
 import { password, email } from './user.types';
 
 export const authResponse = Type.Object({
@@ -56,6 +56,7 @@ export type AuthPayload = {
 export type AuthUser = AuthPayload & {
   iat: number;
   exp: number;
+  jti: string;
 };
 
 export const logoutRequestBody = Type.Object({

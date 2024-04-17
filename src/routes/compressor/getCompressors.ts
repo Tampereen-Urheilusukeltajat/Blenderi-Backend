@@ -1,4 +1,8 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import {
+  type FastifyInstance,
+  type FastifyReply,
+  type FastifyRequest,
+} from 'fastify';
 import { compressor } from '../../types/compressor.types';
 import { Type } from '@sinclair/typebox';
 import { getCompressors } from '../../lib/queries/compressors';
@@ -16,7 +20,7 @@ const schema = {
 
 const handler = async (
   _request: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ): Promise<void> => {
   const compressors = await getCompressors();
   return reply.code(200).send(compressors);

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import {
   jest,
   describe,
@@ -6,7 +7,7 @@ import {
   beforeAll,
   afterAll,
 } from '@jest/globals';
-import { FastifyInstance } from 'fastify';
+import { type FastifyInstance } from 'fastify';
 import { knexController } from '../../../database/database';
 import { buildServer } from '../../../server';
 import {
@@ -143,7 +144,7 @@ describe('update user', () => {
 
       expect(response[0].password_hash).not.toEqual(password);
       expect(
-        bcrypt.compareSync(password, response[0].password_hash)
+        bcrypt.compareSync(password, response[0].password_hash),
       ).toBeTruthy();
     });
   });

@@ -6,7 +6,7 @@ import {
   afterAll,
   beforeEach,
 } from '@jest/globals';
-import { FastifyInstance } from 'fastify';
+import { type FastifyInstance } from 'fastify';
 import {
   createTestDatabase,
   dropTestDatabase,
@@ -16,8 +16,8 @@ import {
 import { knexController } from '../../../database/database';
 import { buildServer } from '../../../server';
 import {
-  CreateStorageCylinderBody,
-  StorageCylinder,
+  type CreateStorageCylinderBody,
+  type StorageCylinder,
 } from '../../../types/storageCylinder.types';
 
 const VALID_PAYLOAD: CreateStorageCylinderBody = {
@@ -97,7 +97,7 @@ describe('Create storage cylinder', () => {
 
       const [{ ...dbSC }] = await knexController('storage_cylinder').where(
         'id',
-        body.id
+        body.id,
       );
       delete dbSC.created_at;
       delete dbSC.updated_at;
@@ -134,7 +134,7 @@ describe('Create storage cylinder', () => {
 
       expect(res.statusCode).toEqual(400);
       expect(JSON.parse(res.payload).message).toEqual(
-        "body must have required property 'maxPressure'"
+        "body must have required property 'maxPressure'",
       );
     });
 

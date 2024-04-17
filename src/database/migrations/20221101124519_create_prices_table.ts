@@ -1,4 +1,4 @@
-import { Knex } from 'knex';
+import { type Knex } from 'knex';
 /* 
   Used currency is euros (€) and the price is saved in euro cents per litre of gas (100 cents = 1 €).
 */

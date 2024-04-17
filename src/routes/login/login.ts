@@ -1,4 +1,4 @@
-import { FastifyInstance, FastifyReply } from 'fastify';
+import { type FastifyInstance, type FastifyReply } from 'fastify';
 import { passwordIsValid } from '../../lib/auth/auth';
 import { errorHandler } from '../../lib/utils/errorHandler';
 import {
@@ -8,7 +8,7 @@ import {
 } from '../../lib/auth/jwtUtils';
 import {
   loginRequestBody,
-  LoginRequest,
+  type LoginRequest,
   authResponse,
 } from '../../types/auth.types';
 import {
@@ -35,7 +35,7 @@ schema.response['200'].properties.refreshToken.example = EXAMPLE_JWT;
 
 const handler = async (
   request: LoginRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ): Promise<void> => {
   const userInfo = await getUserDetailsForLogin(request.body.email);
 
@@ -46,7 +46,7 @@ const handler = async (
 
   const isValidPassword = await passwordIsValid(
     request.body.password,
-    userInfo.passwordHash
+    userInfo.passwordHash,
   );
 
   if (!isValidPassword) {
@@ -58,13 +58,13 @@ const handler = async (
     reply,
     userInfo.id,
     !!userInfo.isAdmin,
-    !!userInfo.isBlender
+    !!userInfo.isBlender,
   );
 
   await initializeRefreshTokenRotationSession(
     userInfo.id,
     refreshTokenId,
-    refreshToken
+    refreshToken,
   );
 
   await updateLastLogin(userInfo.id);
