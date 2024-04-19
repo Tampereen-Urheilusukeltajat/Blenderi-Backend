@@ -1,12 +1,43 @@
-# Blenderi-Backend
+# Tayttopaikka server
+
+Node.js server application which serves the Tayttopaikka UI.
+
+## Tech
+
+This project uses Node.js and Fastify. MariaDB is used as the database and Redis handles the user auth tokens. For email related things, Sendgrid is used.
 
 ## Local development with Linux (Ubuntu based distros)
+
+### Database
 
 Start the database and refresh token session store
 
 ```
+podman-compose up --build
+```
+
+or
+
+```
 sudo docker-compose up
 ```
+
+Before you run the application, you must populate some tables in the database.
+Tables `compressor` and `storage_cylinder` require at least one valid row before
+the frontend works propelly. You can use e.g. [DBeaver](https://dbeaver.io/)
+for the database manipulation.
+
+If you want to see the "Happihäkki"-view, manipulate `access_role_list` table.
+The roles are given by matching the phone number to the user which is bit icky.
+The idea behind the table was to have a simple and quick way to give
+the club members access to Happihäkki since we already have their phone numbers
+for opening the door. But this leads to possible exploits if you know someone
+who has access but hasn't registered to the service yet.
+At least admin privileges will be changed to use something else in the future.
+
+Anyways, to access the view, give yourself `blender` or `admin` privileges and you will see the view. Other roles are not currently used.
+
+### Application
 
 Backend uses [Dotenv](https://github.com/motdotla/dotenv) to manage environmental variables. Copy the env variables from `.env.example` to `.env` and make required adjustments (if needed)
 
@@ -54,3 +85,11 @@ fly proxy <PORT_NUMBER_OF_YOUR_CHOICE> -a tayttopaikka-db
 
 Then take your favourite database tool and connect to `127.0.0.1:<PORT_NUMBER_OF_YOUR_CHOICE>` with
 the production credentials.
+
+## Contributing
+
+Fork the application and do your thing. Make sure that you run the `enforce-style` script and fix possible errors before opening a PR. Also write
+relevant tests for the feature or bug and make sure the existing tests pass
+by running the `test` script.
+
+Contact @Akzuu or @ilesoft if you need assistance.
