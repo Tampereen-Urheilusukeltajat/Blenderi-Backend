@@ -95,6 +95,8 @@ and `fly.toml` for the container configuration.
 The application is deployed as a container, which has been defined in
 `Dockerfile`
 
+The `fly.toml` for the MariaDB instance can be found from `infra/mariadb` folder. Redis is handled by Upstash. See the [documentation](https://fly.io/docs/reference/redis/) for extra info
+
 ## Contributing
 
 Fork the application and do your thing. Make sure that you run the `enforce-style` script and fix possible errors before opening a PR. Also write
