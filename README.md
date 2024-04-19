@@ -86,6 +86,15 @@ fly proxy <PORT_NUMBER_OF_YOUR_CHOICE> -a tayttopaikka-db
 Then take your favourite database tool and connect to `127.0.0.1:<PORT_NUMBER_OF_YOUR_CHOICE>` with
 the production credentials.
 
+## Deployment
+
+When something is pushed to the `main` branch, it is automatically deployed
+to production servers. See `fly-deploy.yml` for the deployment pipeline
+and `fly.toml` for the container configuration.
+
+The application is deployed as a container, which has been defined in
+`Dockerfile`
+
 ## Contributing
 
 Fork the application and do your thing. Make sure that you run the `enforce-style` script and fix possible errors before opening a PR. Also write
