@@ -86,6 +86,8 @@ fly proxy <PORT_NUMBER_OF_YOUR_CHOICE> -a tayttopaikka-db
 Then take your favourite database tool and connect to `127.0.0.1:<PORT_NUMBER_OF_YOUR_CHOICE>` with
 the production credentials.
 
+**Please use common sense when connecting to the production database**
+
 ## Deployment
 
 When something is pushed to the `main` branch, it is automatically deployed
@@ -95,7 +97,9 @@ and `fly.toml` for the container configuration.
 The application is deployed as a container, which has been defined in
 `Dockerfile`
 
-The `fly.toml` for the MariaDB instance can be found from `infra/mariadb` folder. Redis is handled by Upstash. See the [documentation](https://fly.io/docs/reference/redis/) for extra info
+The `fly.toml` for the MariaDB instance can be found from `infra/mariadb` folder. It is not deployed automatically. You need to run `fly deploy` if changes to the configuration are made. **Please make a database backup before doing any changes to the MariaDB instance.**
+
+Redis is handled by Upstash. See the [documentation](https://fly.io/docs/reference/redis/) for extra info
 
 ## Contributing
 
