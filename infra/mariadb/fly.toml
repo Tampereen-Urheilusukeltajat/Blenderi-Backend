@@ -1,0 +1,32 @@
+# fly.toml app configuration file generated for tayttopaikka-db on 2023-08-13T12:32:08+03:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = "tayttopaikka-db"
+primary_region = "ams"
+kill_signal = "SIGINT"
+kill_timeout = "5s"
+
+[build]
+  image = "mariadb:10.9.3"
+
+[env]
+  MYSQL_DATABASE = "tayttopaikka"
+  MYSQL_USER = "blenderi"
+
+[processes]
+  app = "--datadir /data/mysql --performance-schema=OFF --sql_mode=\"IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION\""
+
+[[mounts]]
+  source = "mysqldata"
+  destination = "/data"
+
+
+[[services]]
+  internal_port = 3306
+  protocol = "tcp"
+
+[[services.ports]]
+  handlers = ["pg_tls"]
+  port = 33900
