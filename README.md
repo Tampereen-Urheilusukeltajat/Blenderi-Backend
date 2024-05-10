@@ -1,10 +1,10 @@
 # Tayttopaikka server
 
-Node.js server application which serves the Tayttopaikka UI.
+Node.js server application which serves the Täyttopaikka UI.
 
 ## Tech
 
-This project uses Node.js and Fastify. MariaDB is used as the database and Redis handles the user auth tokens. For email related things, Sendgrid is used.
+This project uses Node.js and Fastify. MariaDB is used as the database and Redis stores refresh tokens. For email related things, Sendgrid is used.
 
 ## Local development with Linux (Ubuntu based distros)
 
