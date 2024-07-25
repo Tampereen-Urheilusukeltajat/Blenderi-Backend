@@ -4,7 +4,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 import { knexController } from './database/database';
-import { connect } from './lib/auth/redis';
+import { redisClient } from './lib/auth/redis';
 
 import { log } from './lib/utils/log';
 import { buildServer } from './server';
@@ -30,7 +30,7 @@ void (async () => {
 
   log.info('Connecting to redis');
   try {
-    await connect();
+    await redisClient.connect();
   } catch (error) {
     log.error('Error connecting redis!', error);
     process.exit(1);
