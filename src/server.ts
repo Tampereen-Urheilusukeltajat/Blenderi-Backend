@@ -3,7 +3,6 @@ import fastify, {
   type FastifyRequest,
   type FastifyReply,
 } from 'fastify';
-import { fastifySwagger } from '@fastify/swagger';
 import { fastifyHelmet } from '@fastify/helmet';
 import fastifyCors from '@fastify/cors';
 import jwt from '@fastify/jwt';
@@ -13,6 +12,8 @@ import { log } from './lib/utils/log';
 import path from 'path';
 import { errorHandler } from './lib/utils/errorHandler';
 import { type AuthPayload, type AuthUser } from './types/auth.types';
+import { fastifySwagger } from '@fastify/swagger';
+import fastifySwaggerUi from '@fastify/swagger-ui';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 if (JWT_SECRET === undefined) {
@@ -57,7 +58,6 @@ export const buildServer = async (opts: {
       },
     })
     .register(fastifySwagger, {
-      routePrefix: `${opts.routePrefix}/documentation`,
       swagger: {
         info: {
           title: 'Blenderi REST API',
@@ -79,7 +79,10 @@ export const buildServer = async (opts: {
         consumes: ['application/json'],
         produces: ['application/json'],
       },
-      exposeRoute: true,
+    })
+    .register(fastifySwaggerUi, {
+      routePrefix: `${opts.routePrefix}/documentation`,
+      uiConfig: {},
     })
     .register(fastifyHelmet, {
       contentSecurityPolicy: {
