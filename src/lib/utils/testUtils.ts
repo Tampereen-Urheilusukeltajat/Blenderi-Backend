@@ -12,7 +12,7 @@ import {
 } from '../../../knexfile';
 import { readdir, readFile } from 'fs/promises';
 import { knexController } from '../../database/database';
-import { connect, disconnect } from '../auth/redis';
+import { redisClient } from '../auth/redis';
 import { log } from './log';
 
 const MYSQL_ROOT_PASSWORD = process.env.MYSQL_ROOT_PASSWORD;
@@ -163,7 +163,7 @@ export const dropTestDatabase = async (): Promise<void> => {
 
 export const startRedisConnection = async (): Promise<void> => {
   try {
-    await connect();
+    await redisClient.connect();
   } catch (error) {
     log.error('Error connecting redis!', error);
     process.exit(1);
@@ -171,5 +171,5 @@ export const startRedisConnection = async (): Promise<void> => {
 };
 
 export const stopRedisConnection = async (): Promise<void> => {
-  await disconnect();
+  await redisClient.disconnect();
 };

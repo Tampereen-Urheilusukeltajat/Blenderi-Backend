@@ -22,7 +22,3 @@ redisClient.on('error', (error) =>
 redisClient.on('reconnecting', () => {
   log.warn('Redis client is reconnecting');
 });
-
-export const connect = async (): Promise<void> => redisClient.connect();
-
-export const disconnect = async (): Promise<void> => redisClient.quit();
