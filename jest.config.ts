@@ -183,4 +183,7 @@ export default {
 
   // Whether to use watchman for file crawling
   // watchman: true,
+
+  // Prettier version 3 not supported by Jest https://jestjs.io/docs/configuration/#prettierpath-string
+  prettierPath: require.resolve('prettier-2'),
 };
