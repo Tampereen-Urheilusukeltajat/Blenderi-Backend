@@ -1,7 +1,7 @@
 import { knexController } from '../../database/database';
 import { type DBResponse } from '../../types/general.types';
 import { type InvoiceRow } from '../../types/invoices.types';
-import { type PaymentStatus } from '../../types/payment.types';
+import { PaymentStatus } from '../../types/payment.types';
 
 /**
  * Get unpaid fill events for user. Fill event is unpaid if
@@ -114,14 +114,15 @@ export const createPaymentEvent = async (
   userId: string,
   fillEventIds: number[],
   totalCost: number,
+  status: PaymentStatus = PaymentStatus.created,
 ): Promise<string> => {
   const trx = await knexController.transaction();
 
   const res = await trx.raw<Array<Array<{ id: string }>>>(
     `
-    INSERT INTO payment_event (user_id, total_amount_eur_cents) VALUES (?,?) RETURNING id
+    INSERT INTO payment_event (user_id, total_amount_eur_cents, status) VALUES (?,?,?) RETURNING id
   `,
-    [userId, totalCost],
+    [userId, totalCost, status],
   );
 
   const [[{ id: insertedPaymentEventId }]] = res;
