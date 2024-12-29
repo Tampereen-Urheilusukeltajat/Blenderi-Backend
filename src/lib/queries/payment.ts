@@ -67,7 +67,7 @@ export const getUnpaidFillEvents = async (
 
   return fillEvents.map((v) => ({
     id: v.fill_event_id,
-    date: new Date(v.fill_event_date),
+    date: v.fill_event_date,
     description: v.fill_event_description,
     gasMixture: v.fill_event_gas_mixture,
   }));

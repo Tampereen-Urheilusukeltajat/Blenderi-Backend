@@ -5,7 +5,7 @@ import {
 } from 'fastify';
 import { getAllInvoices } from '../../lib/queries/invoice';
 import { invoice } from '../../types/invoices.types';
-import { Type } from '@fastify/type-provider-typebox';
+import { Type } from '@sinclair/typebox';
 
 const schema = {
   description: 'Get all Invoices',

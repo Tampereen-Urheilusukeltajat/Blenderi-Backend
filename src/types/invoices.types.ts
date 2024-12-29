@@ -3,7 +3,7 @@ import { minifiedUserResponse } from './user.types';
 
 const invoiceRow = Type.Object({
   id: Type.Number(),
-  date: Type.Date(),
+  date: Type.String(),
   description: Type.String(),
   gasMixture: Type.String(),
 });
