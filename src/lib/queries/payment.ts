@@ -1,6 +1,7 @@
 import { knexController } from '../../database/database';
 import { type DBResponse } from '../../types/general.types';
 import { type InvoiceRow } from '../../types/invoices.types';
+import { type PaymentStatus } from '../../types/payment.types';
 
 /**
  * Get unpaid fill events for user. Fill event is unpaid if
@@ -100,4 +101,64 @@ export const calculateFillEventTotalPrice = async (
   }
 
   return totalPrice[0].totalPrice;
+};
+
+/**
+ * Start payment process by creating a payment event and linking the relevant
+ * fill events to the event
+ * @param userId
+ * @param fillEventIds
+ * @returns
+ */
+export const createPaymentEvent = async (
+  userId: string,
+  fillEventIds: number[],
+  totalCost: number,
+): Promise<string> => {
+  const trx = await knexController.transaction();
+
+  const res = await trx.raw<Array<Array<{ id: string }>>>(
+    `
+    INSERT INTO payment_event (user_id, total_amount_eur_cents) VALUES (?,?) RETURNING id
+  `,
+    [userId, totalCost],
+  );
+
+  const [[{ id: insertedPaymentEventId }]] = res;
+
+  await trx.raw(
+    `
+    INSERT INTO fill_event_payment_event (payment_event_id, fill_event_id)
+    VALUES ${fillEventIds.map(() => '(?, ?)').join(',')}
+  `,
+    [
+      ...fillEventIds.flatMap((fillEventId) => [
+        insertedPaymentEventId,
+        fillEventId,
+      ]),
+    ],
+  );
+
+  await trx.commit();
+
+  return insertedPaymentEventId;
+};
+
+/**
+ * Update the payment status
+ * @param paymentEventId
+ * @param newStatus
+ */
+export const updatePaymentEventStatus = async (
+  paymentEventId: string,
+  newStatus: PaymentStatus,
+): Promise<void> => {
+  await knexController.raw(
+    `
+    UPDATE payment_event
+    SET status = ?
+    WHERE id = ?
+  `,
+    [newStatus, paymentEventId],
+  );
 };
