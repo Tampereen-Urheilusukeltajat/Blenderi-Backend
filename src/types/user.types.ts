@@ -98,3 +98,12 @@ export const userIdQueryString = Type.Object({
 });
 
 export type UserIdQueryString = Static<typeof userIdQueryString>;
+
+export const minifiedUserResponse = Type.Object({
+  id: Type.String({ format: 'uuid' }),
+  email,
+  forename: Type.String(),
+  surname: Type.String(),
+});
+
+export type MinifiedUserResponse = Static<typeof minifiedUserResponse>;
