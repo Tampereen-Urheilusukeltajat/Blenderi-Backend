@@ -28,7 +28,7 @@ export const getUnpaidFillEvents = async (
       fe.id AS fill_event_id,
       fe.created_at AS fill_event_date,
       fe.description AS fill_event_description,
-      fe.gas_mixture AS fill_event_gas_mixture,
+      fe.gas_mixture AS fill_event_gas_mixture
     FROM fill_event fe
     JOIN fill_event_gas_fill fegf ON fegf.fill_event_id = fe.id
     LEFT JOIN fill_event_payment_event fepe ON fepe.fill_event_id = fe.id
