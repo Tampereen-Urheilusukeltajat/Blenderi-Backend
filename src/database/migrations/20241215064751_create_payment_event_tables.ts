@@ -7,8 +7,9 @@ export async function up(knex: Knex): Promise<void> {
       user_id CHAR(36) REFERENCES user (id),
       status ENUM('CREATED', 'IN_PROGRESS', 'FAILED', 'COMPLETED') NOT NULL DEFAULT 'CREATED',
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-    )
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      total_amount_eur_cents INT UNSIGNED NOT NULL DEFAULT 0
+    );
     `);
 
   await knex.raw(`
@@ -19,6 +20,21 @@ export async function up(knex: Knex): Promise<void> {
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     );
+    `);
+
+  await knex.raw(`
+      ALTER TABLE fill_event_gas_fill
+      ADD FOREIGN KEY (fill_event_id) REFERENCES fill_event(id)
+    `);
+
+  await knex.raw(`
+      ALTER TABLE fill_event_gas_fill
+      ADD FOREIGN KEY (gas_price_id) REFERENCES gas_price(id)
+    `);
+
+  await knex.raw(`
+      ALTER TABLE fill_event_gas_fill
+      ADD FOREIGN KEY (storage_cylinder_id) REFERENCES storage_cylinder(id)
     `);
 }
 
