@@ -47,7 +47,7 @@
   },
   "scripts": {
     "start-dev": "nodemon",
-    "test": "jest",
+    "test": "jest --maxWorkers 1",
     "enforce-style": "npx eslint src --max-warnings 0 && npx prettier -c .",
     "start": "ts-node --transpile-only ./src/app.ts"
   },
