@@ -34,6 +34,8 @@ const TABLE_READ_ORDER = [
   'gas_price',
   'storage_cylinder',
   'fill_event_gas_fill',
+  'payment_event',
+  'fill_event_payment_event',
 ];
 
 const deriveReadOrder = (tableNames: string[]): string[] => {
@@ -74,6 +76,11 @@ const readTestDataFolderToDatabase = async (
         'utf8',
       )
     ).split('\n');
+
+    // Delete default gas_price entries so that we can insert test data
+    if (tableName === 'gas_price') {
+      await knexController('gas_price').del();
+    }
 
     // Ignore empty or files without columns.
     // There will always be at least one entry to the array
