@@ -6,6 +6,7 @@ const invoiceRow = Type.Object({
   date: Type.String(),
   description: Type.String(),
   gasMixture: Type.String(),
+  price: Type.Number(),
 });
 
 export type InvoiceRow = Static<typeof invoiceRow>;

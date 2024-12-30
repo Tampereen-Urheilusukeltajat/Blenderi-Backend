@@ -20,17 +20,31 @@ export const getUnpaidFillEvents = async (
         fill_event_date: string;
         fill_event_description: string;
         fill_event_gas_mixture: string;
+        price: number;
       }>
     >
   >(
     `
+    WITH fill_event_price AS (
+      SELECT
+        fe.id AS fill_event_id,
+        SUM(fegf.volume_litres * gp.price_eur_cents) AS price
+      FROM fill_event fe
+      JOIN fill_event_gas_fill fegf ON fegf.fill_event_id = fe.id
+      JOIN gas_price gp ON gp.id = fegf.gas_price_id
+      WHERE
+        fegf.storage_cylinder_id IS NOT NULL
+      GROUP BY fe.id
+    )
     SELECT DISTINCT
       fe.id AS fill_event_id,
       fe.created_at AS fill_event_date,
       fe.description AS fill_event_description,
-      fe.gas_mixture AS fill_event_gas_mixture
+      fe.gas_mixture AS fill_event_gas_mixture,
+      fep.price
     FROM fill_event fe
     JOIN fill_event_gas_fill fegf ON fegf.fill_event_id = fe.id
+    JOIN fill_event_price fep ON fep.fill_event_id = fe.id
     LEFT JOIN fill_event_payment_event fepe ON fepe.fill_event_id = fe.id
     LEFT JOIN payment_event pe ON pe.id = fepe.payment_event_id
     WHERE
@@ -70,6 +84,7 @@ export const getUnpaidFillEvents = async (
     date: v.fill_event_date,
     description: v.fill_event_description,
     gasMixture: v.fill_event_gas_mixture,
+    price: v.price,
   }));
 };
 
