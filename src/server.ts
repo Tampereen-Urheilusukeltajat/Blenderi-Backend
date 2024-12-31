@@ -14,6 +14,7 @@ import { errorHandler } from './lib/utils/errorHandler';
 import { type AuthPayload, type AuthUser } from './types/auth.types';
 import { fastifySwagger } from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
+import { getUserWithId } from './lib/queries/user';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 if (JWT_SECRET === undefined) {
@@ -118,6 +119,14 @@ export const buildServer = async (opts: {
         }
       },
     )
+    .decorate('admin', async (request: FastifyRequest, reply: FastifyReply) => {
+      const user = await getUserWithId(request.user.id, true);
+
+      if (user === undefined) return errorHandler(reply, 500);
+      if (!user.isAdmin) {
+        return errorHandler(reply, 403, 'User is not an admin');
+      }
+    })
     .register(fastifyAutoload, {
       dir: path.join(__dirname, 'routes'),
       dirNameRoutePrefix: (_folderParent, folderName) =>

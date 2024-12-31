@@ -9,7 +9,7 @@ import { getUserWithId } from '../../lib/queries/user';
 import { createCompressor } from '../../lib/queries/compressors';
 
 const schema = {
-  description: 'Creates a user',
+  description: 'Creates a compressor',
   tags: ['Compressor'],
   body: createCompressorRequestBody,
   response: {
