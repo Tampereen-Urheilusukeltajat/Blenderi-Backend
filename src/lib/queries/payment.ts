@@ -2,7 +2,7 @@ import { type Knex } from 'knex';
 import { knexController } from '../../database/database';
 import { type DBResponse } from '../../types/general.types';
 import { type InvoiceRow } from '../../types/invoices.types';
-import { PaymentStatus } from '../../types/payment.types';
+import { type PaymentEvent, PaymentStatus } from '../../types/payment.types';
 
 /**
  * Get unpaid fill events for user. Fill event is unpaid if
@@ -179,4 +179,31 @@ export const updatePaymentEventStatus = async (
   `,
     [newStatus, paymentEventId],
   );
+};
+
+/**
+ * Get payment events by ids
+ * @param paymentEventId
+ */
+export const getPaymentEventsWithIds = async (
+  paymentEventIds: string[],
+): Promise<PaymentEvent[]> => {
+  const [paymentEvents] = await knexController.raw<DBResponse<PaymentEvent[]>>(
+    `
+    SELECT
+      id,
+      user_id AS userId, 
+      status,
+      created_at AS createdAt,
+      updated_at AS updatedAt,
+      total_amount_eur_cents AS totalAmountEurCents
+    FROM payment_event
+    WHERE id IN (${paymentEventIds.map(() => '?').join(',')})
+  `,
+    paymentEventIds,
+  );
+
+  if (!paymentEvents || paymentEvents.length === 0) return [];
+
+  return paymentEvents;
 };
