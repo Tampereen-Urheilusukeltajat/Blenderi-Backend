@@ -52,6 +52,7 @@ export const getUnpaidFillEvents = async (
       -- Filter out air fills since they don't have storage cylinders
       -- (and air is free)
       fegf.storage_cylinder_id IS NOT NULL AND 
+      fep.price > 0 AND
       fe.user_id = ? AND 
       (
         -- Filter out fill events which have been paid already. Aka if
