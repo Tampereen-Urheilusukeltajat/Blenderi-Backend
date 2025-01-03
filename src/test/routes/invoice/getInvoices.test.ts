@@ -16,7 +16,7 @@ import {
 import { knexController } from '../../../database/database';
 import { buildServer } from '../../../server';
 
-describe('Get compressors', () => {
+describe('Get invoices', () => {
   const getTestInstance = async (): Promise<FastifyInstance> =>
     buildServer({
       routePrefix: 'api',
