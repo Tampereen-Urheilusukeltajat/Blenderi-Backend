@@ -15,6 +15,7 @@ import {
 } from '../../../lib/utils/testUtils';
 import { knexController } from '../../../database/database';
 import { buildServer } from '../../../server';
+import { type Invoice } from '../../../types/invoices.types';
 
 describe('Get invoices', () => {
   const getTestInstance = async (): Promise<FastifyInstance> =>
@@ -58,7 +59,17 @@ describe('Get invoices', () => {
       });
 
       expect(res.statusCode).toEqual(200);
-      const body = JSON.parse(res.body);
+      const body = JSON.parse(res.body) as Invoice[];
+
+      const fillEventIds = body.flatMap((invoice) =>
+        invoice.invoiceRows.map((ir) => ir.id),
+      );
+
+      // Fill event with the id 2 shouldn't be returned since it's air fill
+      expect(fillEventIds).not.toContain(2);
+
+      // Fill event with the id 6 shouldn't be returned since the price is 0
+      expect(fillEventIds).not.toContain(6);
 
       expect(body).toMatchInlineSnapshot(`
         [
