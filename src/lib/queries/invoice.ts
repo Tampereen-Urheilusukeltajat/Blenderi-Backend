@@ -81,7 +81,7 @@ const createInvoiceTableRows = async (
 export const createInvoicePaymentEvents = async (
   invoices: Invoice[],
   createdByUserId: string,
-): Promise<void> => {
+): Promise<string[]> => {
   const trx = await knexController.transaction();
 
   const paymentEventIds = await Promise.all(
@@ -99,4 +99,6 @@ export const createInvoicePaymentEvents = async (
   await createInvoiceTableRows(paymentEventIds, createdByUserId, trx);
 
   await trx.commit();
+
+  return paymentEventIds;
 };
