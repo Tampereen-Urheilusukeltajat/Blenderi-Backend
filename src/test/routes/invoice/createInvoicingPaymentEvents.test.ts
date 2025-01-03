@@ -15,6 +15,7 @@ import {
 } from '../../../lib/utils/testUtils';
 import { knexController } from '../../../database/database';
 import { buildServer } from '../../../server';
+import { type PaymentEvent } from '../../../types/payment.types';
 
 describe('Create invoicing payment events', () => {
   const getTestInstance = async (): Promise<FastifyInstance> =>
@@ -67,7 +68,7 @@ describe('Create invoicing payment events', () => {
 
       expect(paymentEventsRes.statusCode).toEqual(201);
 
-      const body = JSON.parse(paymentEventsRes.body);
+      const body = JSON.parse(paymentEventsRes.body) as PaymentEvent[];
 
       expect(
         body.map((pe) => {
@@ -95,6 +96,19 @@ describe('Create invoicing payment events', () => {
           },
         ]
       `);
+
+      // Check database state
+      const invoiceRows = await knexController('invoice').select([
+        'payment_event_id',
+        'created_by',
+      ]);
+
+      invoiceRows.forEach((row) => {
+        expect(row.created_by).toEqual(body[0].userId);
+        expect(
+          body.map((pe) => pe.id).includes(row.payment_event_id as string),
+        ).toBeTruthy();
+      });
     });
   });
 
