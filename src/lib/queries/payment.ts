@@ -1,3 +1,4 @@
+import { type Knex } from 'knex';
 import { knexController } from '../../database/database';
 import { type DBResponse } from '../../types/general.types';
 import { type InvoiceRow } from '../../types/invoices.types';
@@ -123,16 +124,18 @@ export const calculateFillEventTotalPrice = async (
  * fill events to the event
  * @param userId
  * @param fillEventIds
+ * @param totalCost
+ * @param status
+ * @param trx
  * @returns
  */
 export const createPaymentEvent = async (
   userId: string,
   fillEventIds: number[],
   totalCost: number,
+  trx: Knex.Transaction,
   status: PaymentStatus = PaymentStatus.created,
 ): Promise<string> => {
-  const trx = await knexController.transaction();
-
   const res = await trx.raw<Array<Array<{ id: string }>>>(
     `
     INSERT INTO payment_event (user_id, total_amount_eur_cents, status) VALUES (?,?,?) RETURNING id
@@ -154,8 +157,6 @@ export const createPaymentEvent = async (
       ]),
     ],
   );
-
-  await trx.commit();
 
   return insertedPaymentEventId;
 };
