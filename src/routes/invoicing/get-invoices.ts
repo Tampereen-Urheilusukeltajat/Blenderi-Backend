@@ -8,7 +8,7 @@ import { invoice } from '../../types/invoices.types';
 import { Type } from '@sinclair/typebox';
 
 const schema = {
-  description: 'Get all Invoices',
+  description: 'Get all invoices',
   tags: ['Invoices'],
   query: {},
   response: {

@@ -1,7 +1,8 @@
+import { type Knex } from 'knex';
 import { knexController } from '../../database/database';
 import { type DBResponse } from '../../types/general.types';
 import { type InvoiceRow } from '../../types/invoices.types';
-import { PaymentStatus } from '../../types/payment.types';
+import { type PaymentEvent, PaymentStatus } from '../../types/payment.types';
 
 /**
  * Get unpaid fill events for user. Fill event is unpaid if
@@ -51,6 +52,7 @@ export const getUnpaidFillEvents = async (
       -- Filter out air fills since they don't have storage cylinders
       -- (and air is free)
       fegf.storage_cylinder_id IS NOT NULL AND 
+      fep.price > 0 AND
       fe.user_id = ? AND 
       (
         -- Filter out fill events which have been paid already. Aka if
@@ -123,16 +125,18 @@ export const calculateFillEventTotalPrice = async (
  * fill events to the event
  * @param userId
  * @param fillEventIds
+ * @param totalCost
+ * @param status
+ * @param trx
  * @returns
  */
 export const createPaymentEvent = async (
   userId: string,
   fillEventIds: number[],
   totalCost: number,
+  trx: Knex.Transaction,
   status: PaymentStatus = PaymentStatus.created,
 ): Promise<string> => {
-  const trx = await knexController.transaction();
-
   const res = await trx.raw<Array<Array<{ id: string }>>>(
     `
     INSERT INTO payment_event (user_id, total_amount_eur_cents, status) VALUES (?,?,?) RETURNING id
@@ -155,8 +159,6 @@ export const createPaymentEvent = async (
     ],
   );
 
-  await trx.commit();
-
   return insertedPaymentEventId;
 };
 
@@ -177,4 +179,31 @@ export const updatePaymentEventStatus = async (
   `,
     [newStatus, paymentEventId],
   );
+};
+
+/**
+ * Get payment events by ids
+ * @param paymentEventId
+ */
+export const getPaymentEventsWithIds = async (
+  paymentEventIds: string[],
+): Promise<PaymentEvent[]> => {
+  const [paymentEvents] = await knexController.raw<DBResponse<PaymentEvent[]>>(
+    `
+    SELECT
+      id,
+      user_id AS userId, 
+      status,
+      created_at AS createdAt,
+      updated_at AS updatedAt,
+      total_amount_eur_cents AS totalAmountEurCents
+    FROM payment_event
+    WHERE id IN (${paymentEventIds.map(() => '?').join(',')})
+  `,
+    paymentEventIds,
+  );
+
+  if (!paymentEvents || paymentEvents.length === 0) return [];
+
+  return paymentEvents;
 };

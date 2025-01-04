@@ -15,16 +15,16 @@ import {
 } from '../../../lib/utils/testUtils';
 import { knexController } from '../../../database/database';
 import { buildServer } from '../../../server';
-import { type Invoice } from '../../../types/invoices.types';
+import { type PaymentEvent } from '../../../types/payment.types';
 
-describe('Get invoices', () => {
+describe('Create invoicing payment events', () => {
   const getTestInstance = async (): Promise<FastifyInstance> =>
     buildServer({
       routePrefix: 'api',
     });
 
   beforeAll(async () => {
-    await createTestDatabase('get_invoices');
+    await createTestDatabase('create_invoicing_payment_events');
     await startRedisConnection();
   });
 
@@ -52,80 +52,71 @@ describe('Get invoices', () => {
 
   describe('Happy path', () => {
     test('responds with the invoices and with the 200 status', async () => {
-      const res = await server.inject({
+      const invoiceRes = await server.inject({
         headers,
         method: 'GET',
         url: 'api/invoicing',
       });
+      expect(invoiceRes.statusCode).toEqual(200);
 
-      expect(res.statusCode).toEqual(200);
-      const body = JSON.parse(res.body) as Invoice[];
+      const paymentEventsRes = await server.inject({
+        headers,
+        method: 'POST',
+        url: 'api/invoicing/payment-events',
+        payload: JSON.parse(invoiceRes.body),
+      });
 
-      const fillEventIds = body.flatMap((invoice) =>
-        invoice.invoiceRows.map((ir) => ir.id),
-      );
+      expect(paymentEventsRes.statusCode).toEqual(201);
 
-      // Fill event with the id 2 shouldn't be returned since it's air fill
-      expect(fillEventIds).not.toContain(2);
+      const body = JSON.parse(paymentEventsRes.body) as PaymentEvent[];
 
-      // Fill event with the id 6 shouldn't be returned since the price is 0
-      expect(fillEventIds).not.toContain(6);
+      expect(
+        body.map((pe) => {
+          expect(pe.id).toBeDefined();
+          expect(pe.createdAt).toBeDefined();
+          expect(pe.updatedAt).toBeDefined();
 
-      expect(body).toMatchInlineSnapshot(`
+          return {
+            status: pe.status,
+            totalAmountEurCents: pe.totalAmountEurCents,
+            userId: pe.userId,
+          };
+        }),
+      ).toMatchInlineSnapshot(`
         [
           {
-            "invoiceRows": [
-              {
-                "date": "2023-01-30T13:15:28.000Z",
-                "description": "",
-                "gasMixture": "Trimix 32/10",
-                "id": 3,
-                "price": 195000,
-              },
-              {
-                "date": "2023-01-30T13:15:28.000Z",
-                "description": "",
-                "gasMixture": "Trimix 12/10",
-                "id": 4,
-                "price": 500000,
-              },
-            ],
-            "invoiceTotal": 695000,
-            "user": {
-              "email": "admin@test.com",
-              "forename": "Tester",
-              "id": "1be5abcd-53d4-11ed-9342-0242ac120002",
-              "surname": "Blender",
-            },
+            "status": "COMPLETED",
+            "totalAmountEurCents": 695000,
+            "userId": "1be5abcd-53d4-11ed-9342-0242ac120002",
           },
           {
-            "invoiceRows": [
-              {
-                "date": "2023-01-30T13:15:28.000Z",
-                "description": "",
-                "gasMixture": "Trimix 12/10",
-                "id": 5,
-                "price": 500000,
-              },
-            ],
-            "invoiceTotal": 500000,
-            "user": {
-              "email": "user@test.com",
-              "forename": "testijäbä",
-              "id": "54e3e8b0-53d4-11ed-9342-0242ac120002",
-              "surname": "asd",
-            },
+            "status": "COMPLETED",
+            "totalAmountEurCents": 500000,
+            "userId": "54e3e8b0-53d4-11ed-9342-0242ac120002",
           },
         ]
       `);
+
+      // Check database state
+      const invoiceRows = await knexController('invoice').select([
+        'payment_event_id',
+        'created_by',
+      ]);
+
+      invoiceRows.forEach((row) => {
+        expect(row.created_by).toEqual(body[0].userId);
+        expect(
+          body.map((pe) => pe.id).includes(row.payment_event_id as string),
+        ).toBeTruthy();
+      });
     });
   });
 
   describe('Unhappy path', () => {
     test('responds 401 if authentication header was not provided', async () => {
       const res = await server.inject({
-        method: 'GET',
-        url: 'api/invoicing',
+        method: 'POST',
+        url: 'api/invoicing/payment-events',
       });
 
       expect(res.statusCode).toEqual(401);
@@ -145,8 +136,8 @@ describe('Get invoices', () => {
 
       const res = await server.inject({
         headers,
-        method: 'GET',
-        url: 'api/invoicing',
+        method: 'POST',
+        url: 'api/invoicing/payment-events',
       });
 
       expect(res.statusCode).toEqual(403);
