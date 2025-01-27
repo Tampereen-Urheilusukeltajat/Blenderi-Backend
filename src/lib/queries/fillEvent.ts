@@ -170,6 +170,10 @@ export const createFillEvent = async (
     );
   } catch (e) {
     await trx.rollback();
+    log.error(e.message);
+    log.debug(user.id);
+    log.debug(body);
+
     switch (e.message) {
       case 'Storage cylinder not found':
         return errorHandler(reply, 400, 'Invalid storage cylinder');
@@ -182,7 +186,6 @@ export const createFillEvent = async (
       case 'Negative fill pressure':
         return errorHandler(reply, 400, 'Cannot have negative fill pressure');
       default:
-        log.error(e.message);
         return errorHandler(reply, 500);
     }
   }
