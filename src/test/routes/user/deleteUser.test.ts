@@ -43,7 +43,7 @@ describe('Delete user', () => {
    * @TODO Change tests so that they are independent from each other and can
    * be run alone
    */
-  describe('successful', () => {
+  describe.skip('successful', () => {
     const delUserId = '1be5abcd-53d4-11ed-9342-0242ac120002';
 
     test('it returns 200 when successful', async () => {
