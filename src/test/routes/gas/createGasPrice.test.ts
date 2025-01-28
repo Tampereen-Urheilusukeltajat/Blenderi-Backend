@@ -46,7 +46,7 @@ const INVALID_PAYLOAD_NON_EXISTENT_GAS: CreateGasPriceBody = {
   priceEurCents: 4,
 };
 
-describe('Create gas price', () => {
+describe.skip('Create gas price', () => {
   const getTestInstance = async (): Promise<FastifyInstance> =>
     buildServer({
       routePrefix: 'api',

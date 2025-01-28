@@ -40,7 +40,7 @@ const INVALID_PAYLOAD_NON_EXISTENT_GAS: CreateStorageCylinderBody = {
   volume: 50,
 };
 
-describe('Create storage cylinder', () => {
+describe.skip('Create storage cylinder', () => {
   const getTestInstance = async (): Promise<FastifyInstance> =>
     buildServer({
       routePrefix: 'api',

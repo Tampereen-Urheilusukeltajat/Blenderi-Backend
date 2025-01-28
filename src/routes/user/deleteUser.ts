@@ -72,7 +72,7 @@ export default async (fastify: FastifyInstance): Promise<void> => {
   fastify.route({
     method: 'DELETE',
     url: '/:userId',
-    preValidation: [fastify['authenticate']],
+    preValidation: [fastify['authenticate'], fastify['admin']],
     handler,
     schema,
   });

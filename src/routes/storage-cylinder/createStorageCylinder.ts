@@ -42,8 +42,7 @@ export default async (fastify: FastifyInstance): Promise<void> => {
   fastify.route({
     method: 'POST',
     url: '/',
-    // TODO Only admin users can create storage cylinders
-    preValidation: [fastify['authenticate']],
+    preValidation: [fastify['authenticate'], fastify['admin']],
     handler,
     schema,
   });

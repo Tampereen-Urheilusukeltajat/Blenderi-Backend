@@ -41,8 +41,7 @@ export default async (fastify: FastifyInstance): Promise<void> => {
   fastify.route({
     method: 'POST',
     url: '/price',
-    // TODO Only admin users can create gas prices
-    preValidation: [fastify['authenticate']],
+    preValidation: [fastify['authenticate'], fastify['admin']],
     handler,
     schema,
   });
