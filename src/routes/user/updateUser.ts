@@ -55,6 +55,11 @@ const handler = async (
     surname,
   } = req.body;
 
+  // User can only change their own properties
+  if (userId !== req.user.id) {
+    return errorHandler(reply, 403);
+  }
+
   // If no user found with given id or user deleted.
   const response = await knexController('user')
     .select('id', 'password_hash')
@@ -119,6 +124,7 @@ export default async (fastify: FastifyInstance): Promise<void> => {
   fastify.route({
     method: 'PATCH',
     url: '/:userId',
+    preValidation: [fastify['authenticate']],
     handler,
     schema: editUserSchema,
   });
