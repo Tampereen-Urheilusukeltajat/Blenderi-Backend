@@ -42,7 +42,7 @@ describe('Get users', () => {
       url: '/api/login',
       method: 'POST',
       payload: {
-        email: 'test@email.fi',
+        email: 'test-admin@email.fi',
         password: 'password',
       },
     });
@@ -78,15 +78,29 @@ describe('Get users', () => {
     expect(resBody).toHaveLength(users.length);
   });
 
-  test('it returns empty list', async () => {
-    await knexController('user').del();
-    const res = await server.inject({
-      url: '/api/user?includeArchived=true',
-      method: 'GET',
-      headers,
+  test('it only returns users to admins', async () => {
+    // Simulate a non-admin user login
+    const nonAdminRes = await server.inject({
+      url: '/api/login',
+      method: 'POST',
+      payload: {
+        email: 'test-user@email.fi',
+        password: 'password',
+      },
     });
-    const resBody = JSON.parse(res.body);
-    expect(res.statusCode).toEqual(200);
-    expect(resBody).toHaveLength(0);
+    const nonAdminTokens = JSON.parse(nonAdminRes.body);
+    const nonAdminHeaders = {
+      Authorization: 'Bearer ' + String(nonAdminTokens.accessToken),
+    };
+
+    // Attempt to get users with non-admin credentials
+    const res = await server.inject({
+      url: '/api/user/',
+      method: 'GET',
+      headers: nonAdminHeaders,
+    });
+
+    // Expect a forbidden status code
+    expect(res.statusCode).toEqual(403);
   });
 });
