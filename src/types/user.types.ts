@@ -15,18 +15,23 @@ export const user = Type.Object({
   phoneNumber: Type.String(),
   forename: Type.String(),
   surname: Type.String(),
-  isMember: Type.Boolean(),
-  isAdmin: Type.Boolean(),
-  isBlender: Type.Boolean(),
-  isAdvancedBlender: Type.Boolean(),
-  isInstructor: Type.Boolean(),
   salt: Type.String(),
   passwordHash: Type.String(),
   archivedAt: Type.String(),
   deletedAt: Type.String(),
 });
 
-export type User = Static<typeof user>;
+export const userRoles = Type.Object({
+  isMember: Type.Boolean(),
+  isAdmin: Type.Boolean(),
+  isBlender: Type.Boolean(),
+  isAdvancedBlender: Type.Boolean(),
+  isInstructor: Type.Boolean(),
+});
+
+type UserBase = Static<typeof user>;
+export type UserRoles = Static<typeof userRoles>;
+export type User = UserBase & UserRoles;
 
 export const updateUserBody = Type.Partial(
   Type.Object({
@@ -42,6 +47,11 @@ export const updateUserBody = Type.Partial(
 );
 
 export type UpdateUserBody = Static<typeof updateUserBody>;
+
+export const updateUserRolesBody = Type.Partial(userRoles, {
+  minProperties: 1,
+});
+export type UpdateUserRolesBody = Static<typeof updateUserRolesBody>;
 
 export const userResponse = Type.Object({
   id: Type.String({ format: 'uuid' }),
