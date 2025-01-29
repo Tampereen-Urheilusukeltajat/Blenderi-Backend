@@ -1,7 +1,11 @@
 import { type Knex } from 'knex';
 import snakecaseKeys from 'snakecase-keys';
 import { knexController } from '../../database/database';
-import { type User, type UserResponse } from '../../types/user.types';
+import {
+  type UserRoles,
+  type User,
+  type UserResponse,
+} from '../../types/user.types';
 import { type DBResponse } from '../../types/general.types';
 
 type UserLoginResponse = Pick<
@@ -65,9 +69,9 @@ export const getUserWithId = async (
   trx?: Knex.Transaction,
 ): Promise<UserResponse | undefined> => {
   const db = trx ?? knexController;
-  const res = await getUsers(db, onlyActive, userId);
+  const usersRes = await getUsers(db, onlyActive, userId);
 
-  return { ...res[0][0] };
+  return usersRes[0].find((user) => user.id === userId);
 };
 
 export const getUserWithEmail = async (
@@ -146,4 +150,25 @@ export const updateLastLogin = async (
     .update({ last_login: new Date(Date.now()) });
 
   if (alteredRows !== 1) throw new Error('Updating last login failed');
+};
+
+export const updateUsersRoles = async (
+  userId: string,
+  phoneNumber: string,
+  payload: Partial<UserRoles>,
+  trx?: Knex.Transaction,
+): Promise<UserResponse> => {
+  const db = trx ?? (await knexController.transaction());
+
+  await db('access_role_list').where('phone_number', '=', phoneNumber).update({
+    is_admin: payload.isAdmin,
+    is_blender: payload.isBlender,
+  });
+
+  const editedUser = await getUserWithId(userId, false, db);
+
+  if (!editedUser) throw new Error('Updated user not found');
+
+  await db.commit();
+  return editedUser;
 };
