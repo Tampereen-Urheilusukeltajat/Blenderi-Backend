@@ -43,8 +43,8 @@ describe('Delete user', () => {
    * @TODO Change tests so that they are independent from each other and can
    * be run alone
    */
-  describe.skip('successful', () => {
-    const delUserId = '1be5abcd-53d4-11ed-9342-0242ac120002';
+  describe('successful', () => {
+    const delUserId = '54e3e8b0-53d4-11ed-9342-0242ac120002';
 
     test('it returns 200 when successful', async () => {
       const login = await server.inject({
@@ -115,7 +115,7 @@ describe('Delete user', () => {
         url: '/api/login',
         method: 'POST',
         payload: {
-          email: 'user@taursu.fi',
+          email: 'admin@admin.com',
           password: 'salasana',
         },
       });
@@ -128,6 +128,26 @@ describe('Delete user', () => {
         headers,
       });
       expect(res.statusCode).toEqual(404);
+    });
+
+    test('it returns 403 when user is not an admin', async () => {
+      const login = await server.inject({
+        url: '/api/login',
+        method: 'POST',
+        payload: {
+          email: 'user@taursu.fi',
+          password: 'salasana',
+        },
+      });
+      const tokens = JSON.parse(login.body);
+      const headers = { Authorization: 'Bearer ' + String(tokens.accessToken) };
+
+      const res = await server.inject({
+        url: 'api/user/a58fff36-4f75-11ed-96af-77941df8882',
+        method: 'DELETE',
+        headers,
+      });
+      expect(res.statusCode).toEqual(403);
     });
   });
 });
