@@ -46,7 +46,7 @@ const INVALID_PAYLOAD_NON_EXISTENT_GAS: CreateGasPriceBody = {
   priceEurCents: 4,
 };
 
-describe.skip('Create gas price', () => {
+describe('Create gas price', () => {
   const getTestInstance = async (): Promise<FastifyInstance> =>
     buildServer({
       routePrefix: 'api',
@@ -71,7 +71,7 @@ describe.skip('Create gas price', () => {
       url: '/api/login',
       method: 'POST',
       payload: {
-        email: 'test@email.fi',
+        email: 'test-admin@email.fi',
         password: 'password',
       },
     });
@@ -188,6 +188,28 @@ describe.skip('Create gas price', () => {
 
   describe('Unhappy path', () => {
     test('responds 401 if authentication header was not provided', async () => {
+      const res = await server.inject({
+        method: 'POST',
+        payload: VALID_PAYLOAD,
+        url: 'api/gas/price',
+      });
+
+      expect(res.statusCode).toEqual(401);
+    });
+
+    test('responds 403 if user is not admin', async () => {
+      const loginRes = await server.inject({
+        url: '/api/login',
+        method: 'POST',
+        payload: {
+          email: 'test@email.fi',
+          password: 'password',
+        },
+      });
+
+      const tokens = JSON.parse(loginRes.body);
+      headers = { Authorization: 'Bearer ' + String(tokens.accessToken) };
+
       const res = await server.inject({
         method: 'POST',
         payload: VALID_PAYLOAD,

@@ -40,7 +40,7 @@ const INVALID_PAYLOAD_NON_EXISTENT_GAS: CreateStorageCylinderBody = {
   volume: 50,
 };
 
-describe.skip('Create storage cylinder', () => {
+describe('Create storage cylinder', () => {
   const getTestInstance = async (): Promise<FastifyInstance> =>
     buildServer({
       routePrefix: 'api',
@@ -65,7 +65,7 @@ describe.skip('Create storage cylinder', () => {
       url: '/api/login',
       method: 'POST',
       payload: {
-        email: 'test@email.fi',
+        email: 'admin@XD.fi',
         password: 'password',
       },
     });
@@ -139,6 +139,29 @@ describe.skip('Create storage cylinder', () => {
     });
 
     test('responds 400 if it is not able to find gas with the given gasId', async () => {
+      const res = await server.inject({
+        headers,
+        method: 'POST',
+        payload: INVALID_PAYLOAD_NON_EXISTENT_GAS,
+        url: 'api/storage-cylinder',
+      });
+
+      expect(res.statusCode).toEqual(400);
+      expect(JSON.parse(res.payload).message).toEqual('Gas does not exist');
+    });
+
+    test('responds 403 if user is not an admin', async () => {
+      const logRes = await server.inject({
+        url: '/api/login',
+        method: 'POST',
+        payload: {
+          email: 'admin@XD.fi',
+          password: 'password',
+        },
+      });
+      const tokens = JSON.parse(logRes.body);
+      headers = { Authorization: 'Bearer ' + String(tokens.accessToken) };
+
       const res = await server.inject({
         headers,
         method: 'POST',
