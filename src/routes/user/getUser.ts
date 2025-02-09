@@ -32,6 +32,11 @@ const handler = async (
   reply: FastifyReply,
 ): Promise<void> => {
   const userId = req.params.userId;
+
+  // Only admins can read other users
+  if (userId !== req.user.id && !req.user.isAdmin)
+    return errorHandler(reply, 403);
+
   const user = await getUserWithId(userId);
 
   if (!user || isEmptyObject(user)) {
