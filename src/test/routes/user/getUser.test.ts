@@ -62,6 +62,18 @@ describe('Get user', () => {
     });
   });
   describe('User cant be returned', () => {
+    test('it returns 404 if user is not found', async () => {
+      const res = await server.inject({
+        url: '/api/user/1be5abcd-53d4-11ed-9342-0242ac120069/',
+        method: 'GET',
+        headers,
+      });
+      expect(res.statusCode).toEqual(404);
+      const resBody = JSON.parse(res.body);
+      expect(resBody).toHaveProperty('error');
+      expect(resBody).toHaveProperty('message');
+    });
+
     test('it returns 404 if user is archived', async () => {
       const res = await server.inject({
         url: '/api/user/fbdfc65b-52ce-11ed-85ed-0242ac120002/',
