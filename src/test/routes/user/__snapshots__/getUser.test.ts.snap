@@ -5,7 +5,7 @@ exports[`Get user User is found it returns 200 and has right properties 1`] = `
   "email": "test@email.fi",
   "forename": "Tester",
   "id": "1be5abcd-53d4-11ed-9342-0242ac120002",
-  "isAdmin": false,
+  "isAdmin": true,
   "isAdvancedBlender": false,
   "isBlender": true,
   "isInstructor": false,
