@@ -5,7 +5,10 @@ import {
 } from 'fastify';
 import { knexController } from '../../database/database';
 import { errorHandler } from '../../lib/utils/errorHandler';
-import { selectCylinderSet } from '../../lib/queries/divingCylinderSet';
+import {
+  divingCylinderSetExists,
+  selectCylinderSet,
+} from '../../lib/queries/divingCylinderSet';
 import {
   type DivingCylinderSet,
   divingCylinderSet,
@@ -15,6 +18,7 @@ import {
   updateDivingCylinderSet,
   type UpdateDivingCylinderSet,
 } from '../../types/divingCylinderSet.types';
+import { log } from '../../lib/utils/log';
 
 const schema = {
   description: 'Updates a diving cylinder set',
@@ -39,7 +43,7 @@ const handler = async (
   }>,
   reply: FastifyReply,
 ): Promise<void> => {
-  // TODO: Authorization
+  const { id: userId } = request.user;
 
   const setId = request.params.divingCylinderSetId;
 
@@ -58,6 +62,12 @@ const handler = async (
     }
   }
 
+  // Check that the cylinder set exists and that it belongs to the user
+  const dcsExists = await divingCylinderSetExists(setId, userId);
+  if (!dcsExists) {
+    return errorHandler(reply, 404);
+  }
+
   await knexController
     .transaction(async (trx) => {
       const updateResult = await trx('diving_cylinder_set')
@@ -68,8 +78,10 @@ const handler = async (
         });
 
       if (!updateResult) {
-        await errorHandler(reply, 404, 'Cylinder set not found');
-        return;
+        log.error(
+          `Tried to update nonexisting diving cylinder set even though it should exist. Id: ${setId}`,
+        );
+        return errorHandler(reply, 500);
       }
 
       if (request.body.cylinders !== undefined) {

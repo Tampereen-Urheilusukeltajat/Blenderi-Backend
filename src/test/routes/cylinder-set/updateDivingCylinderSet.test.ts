@@ -161,5 +161,20 @@ describe('update cylinder set', () => {
 
       expect(responseBody).toEqual({ statusCode: 401, error: 'Unauthorized' });
     });
+
+    test('it responds with 404 if user tries to update someone elses diving cylinder set', async () => {
+      const payload = {
+        name: 'haha etpäs tienny että tää päivitty',
+      };
+
+      const res = await server.inject({
+        url: 'api/cylinder-set/b4e1035e-f36e-4056-9a1b-5925a3c5793e',
+        method: 'PATCH',
+        headers,
+        payload,
+      });
+
+      expect(res.statusCode).toEqual(404);
+    });
   });
 });
