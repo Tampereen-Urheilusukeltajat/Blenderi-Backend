@@ -114,7 +114,7 @@ export const createFillEvent = async (
   if (user === undefined) return errorHandler(reply, 500);
 
   if (
-    !(user.isBlender || user.isAdmin) &&
+    !(user.isBlender || !user.isAdvancedBlender || user.isAdmin) &&
     storageCylinderUsageArr.length !== 0
   ) {
     await trx.rollback();
