@@ -27,15 +27,13 @@ Tables `compressor` and `storage_cylinder` require at least one valid row before
 the frontend works propelly. You can use e.g. [DBeaver](https://dbeaver.io/)
 for the database manipulation.
 
-If you want to see the "Happihäkki"-view, manipulate `access_role_list` table.
-The roles are given by matching the phone number to the user which is bit icky.
-The idea behind the table was to have a simple and quick way to give
-the club members access to Happihäkki since we already have their phone numbers
-for opening the door. But this leads to possible exploits if you know someone
-who has access but hasn't registered to the service yet.
-At least admin privileges will be changed to use something else in the future.
+To access normal fillment page, set `is_user` to `1`.
 
-Anyways, to access the view, give yourself `blender` or `admin` privileges and you will see the view. Other roles are not currently used.
+To access Happihäkki view, set `is_blender` to `1`.
+
+To access admin pages, set `is_admin` to `1`.
+
+Other roles are not currently used.
 
 ### Application
 

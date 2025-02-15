@@ -23,7 +23,6 @@ const MYSQL_ROOT_PASSWORD = process.env.MYSQL_ROOT_PASSWORD;
  * This array provides an order in which the tables are read to the database.
  */
 const TABLE_READ_ORDER = [
-  'access_role_list',
   'user',
   'diving_cylinder',
   'diving_cylinder_set',
