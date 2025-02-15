@@ -3,10 +3,10 @@ import type { Knex } from 'knex';
 export async function up(knex: Knex): Promise<void> {
   await knex.raw(`
       ALTER TABLE user
-        ADD COLUMN IF NOT EXISTS is_admin BIT NOT NULL DEFAULT 0,
-        ADD COLUMN IF NOT EXISTS is_blender BIT NOT NULL DEFAULT 0,
-        ADD COLUMN IF NOT EXISTS is_instructor BIT NOT NULL DEFAULT 0,
-        ADD COLUMN IF NOT EXISTS is_advanced_blender BIT NOT NULL DEFAULT 0;
+        ADD COLUMN IF NOT EXISTS is_admin BOOLEAN NOT NULL DEFAULT 0,
+        ADD COLUMN IF NOT EXISTS is_blender BOOLEAN NOT NULL DEFAULT 0,
+        ADD COLUMN IF NOT EXISTS is_instructor BOOLEAN NOT NULL DEFAULT 0,
+        ADD COLUMN IF NOT EXISTS is_advanced_blender BOOLEAN NOT NULL DEFAULT 0;
     `);
 
   await knex.raw(`
