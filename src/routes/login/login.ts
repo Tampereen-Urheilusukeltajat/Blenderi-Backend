@@ -60,6 +60,8 @@ const handler = async (
     !!userInfo.isAdmin,
     !!userInfo.isBlender,
     !!userInfo.isUser,
+    !!userInfo.isAdvancedBlender,
+    !!userInfo.isInstructor,
     `${userInfo.forename} ${userInfo.surname}`,
   );
 

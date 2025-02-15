@@ -69,6 +69,8 @@ export const generateTokens = async (
   isAdmin: boolean,
   isBlender: boolean,
   isUser: boolean,
+  isAdvancedBlender: boolean,
+  isInstructor: boolean,
   fullName: string,
 ): Promise<AuthTokens & { refreshTokenId: string }> => {
   const tokenPayload: AuthPayload = {
@@ -76,6 +78,8 @@ export const generateTokens = async (
     isAdmin,
     isBlender,
     isUser,
+    isAdvancedBlender,
+    isInstructor,
     isRefreshToken: false,
     fullName,
   };

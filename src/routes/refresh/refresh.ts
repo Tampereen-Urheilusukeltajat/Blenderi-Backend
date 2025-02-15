@@ -71,6 +71,8 @@ const handler = async function (
     oldRefreshTokenDecoded.isAdmin,
     oldRefreshTokenDecoded.isBlender,
     oldRefreshTokenDecoded.isUser,
+    oldRefreshTokenDecoded.isAdvancedBlender,
+    oldRefreshTokenDecoded.isInstructor,
     oldRefreshTokenDecoded.fullName,
   );
 

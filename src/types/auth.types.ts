@@ -51,6 +51,8 @@ export type AuthPayload = {
   isAdmin: boolean;
   isBlender: boolean;
   isUser: boolean;
+  isAdvancedBlender: boolean;
+  isInstructor: boolean;
   isRefreshToken: boolean;
   fullName: string;
 };
