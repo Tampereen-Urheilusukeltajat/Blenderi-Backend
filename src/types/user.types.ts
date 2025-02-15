@@ -22,7 +22,7 @@ export const user = Type.Object({
 });
 
 export const userRoles = Type.Object({
-  isMember: Type.Boolean(),
+  isUser: Type.Boolean(),
   isAdmin: Type.Boolean(),
   isBlender: Type.Boolean(),
   isAdvancedBlender: Type.Boolean(),
@@ -59,7 +59,7 @@ export const userResponse = Type.Object({
   phoneNumber: Type.String(),
   forename: Type.String(),
   surname: Type.String(),
-  isMember: Type.Boolean(),
+  isUser: Type.Boolean(),
   isAdmin: Type.Boolean(),
   isBlender: Type.Boolean(),
   isAdvancedBlender: Type.Boolean(),

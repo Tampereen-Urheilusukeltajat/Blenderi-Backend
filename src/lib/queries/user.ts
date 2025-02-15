@@ -18,6 +18,9 @@ type UserLoginResponse = Pick<
   | 'salt'
   | 'passwordHash'
   | 'archivedAt'
+  | 'isUser'
+  | 'forename'
+  | 'surname'
 >;
 
 const getUsers = async (
@@ -33,7 +36,7 @@ const getUsers = async (
       u.phone_number AS phoneNumber,
       u.forename,
       u.surname,
-      IF(arl.phone_number IS NULL, 0, 1) AS isMember,
+      u.is_user AS isUser,
       arl.is_admin AS isAdmin,
       arl.is_advanced_blender AS isAdvancedBlender,
       arl.is_blender AS isBlender,
@@ -100,7 +103,9 @@ export const getUserDetailsForLogin = async (
           u.salt,
           u.password_hash AS passwordHash,
           u.archived_at AS archivedAt,
-          IF(arl.phone_number IS NULL, 0, 1) AS isMember,
+          u.is_user AS isUser,
+          u.forename,
+          u.surname,
           arl.is_admin AS isAdmin,
           arl.is_advanced_blender AS isAdvancedBlender,
           arl.is_blender AS isBlender,

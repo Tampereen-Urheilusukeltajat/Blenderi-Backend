@@ -50,7 +50,9 @@ export type AuthPayload = {
   id: string;
   isAdmin: boolean;
   isBlender: boolean;
+  isUser: boolean;
   isRefreshToken: boolean;
+  fullName: string;
 };
 
 export type AuthUser = AuthPayload & {
