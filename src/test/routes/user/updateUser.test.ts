@@ -87,7 +87,7 @@ describe('update user', () => {
           "isAdvancedBlender": false,
           "isBlender": true,
           "isInstructor": false,
-          "isMember": true,
+          "isUser": true,
           "phoneNumber": "00010",
           "surname": "Change",
         }
@@ -130,7 +130,7 @@ describe('update user', () => {
           "isAdvancedBlender": false,
           "isBlender": true,
           "isInstructor": false,
-          "isMember": true,
+          "isUser": true,
           "phoneNumber": "00002",
           "surname": "Change",
         }

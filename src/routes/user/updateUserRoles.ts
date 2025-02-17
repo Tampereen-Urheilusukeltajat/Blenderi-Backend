@@ -44,11 +44,7 @@ const handler = async (
     return errorHandler(reply, 404);
   }
 
-  const updatedUser = await updateUsersRoles(
-    userId,
-    user.phoneNumber,
-    req.body,
-  );
+  const updatedUser = await updateUsersRoles(userId, req.body);
   return reply.send(updatedUser);
 };
 

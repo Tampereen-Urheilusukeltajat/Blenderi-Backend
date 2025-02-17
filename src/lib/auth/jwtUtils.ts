@@ -1,7 +1,7 @@
 import { redisClient } from './redis';
 import { log } from '../utils/log';
 import { type FastifyReply } from 'fastify';
-import { type AuthTokens } from '../../types/auth.types';
+import { type AuthPayload, type AuthTokens } from '../../types/auth.types';
 import { randomUUID } from 'crypto';
 
 // Expire times in seconds
@@ -68,12 +68,20 @@ export const generateTokens = async (
   userId: string,
   isAdmin: boolean,
   isBlender: boolean,
+  isUser: boolean,
+  isAdvancedBlender: boolean,
+  isInstructor: boolean,
+  fullName: string,
 ): Promise<AuthTokens & { refreshTokenId: string }> => {
-  const tokenPayload = {
+  const tokenPayload: AuthPayload = {
     id: userId,
     isAdmin,
     isBlender,
+    isUser,
+    isAdvancedBlender,
+    isInstructor,
     isRefreshToken: false,
+    fullName,
   };
 
   const accessToken = await reply.jwtSign(tokenPayload, {

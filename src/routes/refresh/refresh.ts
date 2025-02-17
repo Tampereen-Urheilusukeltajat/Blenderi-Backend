@@ -67,8 +67,13 @@ const handler = async function (
   const { accessToken, refreshToken, refreshTokenId } = await generateTokens(
     reply,
     userId,
+    // TODO: What a perfect opportunity to check if these are still valid...
     oldRefreshTokenDecoded.isAdmin,
     oldRefreshTokenDecoded.isBlender,
+    oldRefreshTokenDecoded.isUser,
+    oldRefreshTokenDecoded.isAdvancedBlender,
+    oldRefreshTokenDecoded.isInstructor,
+    oldRefreshTokenDecoded.fullName,
   );
 
   await rotate(

@@ -59,6 +59,10 @@ const handler = async (
     userInfo.id,
     !!userInfo.isAdmin,
     !!userInfo.isBlender,
+    !!userInfo.isUser,
+    !!userInfo.isAdvancedBlender,
+    !!userInfo.isInstructor,
+    `${userInfo.forename} ${userInfo.surname}`,
   );
 
   await initializeRefreshTokenRotationSession(

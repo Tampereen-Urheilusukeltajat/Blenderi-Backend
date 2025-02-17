@@ -18,6 +18,9 @@ type UserLoginResponse = Pick<
   | 'salt'
   | 'passwordHash'
   | 'archivedAt'
+  | 'isUser'
+  | 'forename'
+  | 'surname'
 >;
 
 const getUsers = async (
@@ -33,13 +36,12 @@ const getUsers = async (
       u.phone_number AS phoneNumber,
       u.forename,
       u.surname,
-      IF(arl.phone_number IS NULL, 0, 1) AS isMember,
-      arl.is_admin AS isAdmin,
-      arl.is_advanced_blender AS isAdvancedBlender,
-      arl.is_blender AS isBlender,
-      arl.is_instructor AS isInstructor
+      u.is_user AS isUser,
+      u.is_admin AS isAdmin,
+      u.is_advanced_blender AS isAdvancedBlender,
+      u.is_blender AS isBlender,
+      u.is_instructor AS isInstructor
     FROM user u
-    LEFT JOIN access_role_list arl ON u.phone_number = arl.phone_number
     WHERE 
       deleted_at IS NULL
       ${onlyActiveUsers ? 'AND archived_at IS NULL' : ''}
@@ -100,13 +102,14 @@ export const getUserDetailsForLogin = async (
           u.salt,
           u.password_hash AS passwordHash,
           u.archived_at AS archivedAt,
-          IF(arl.phone_number IS NULL, 0, 1) AS isMember,
-          arl.is_admin AS isAdmin,
-          arl.is_advanced_blender AS isAdvancedBlender,
-          arl.is_blender AS isBlender,
-          arl.is_instructor AS isInstructor
+          u.is_user AS isUser,
+          u.forename,
+          u.surname,
+          u.is_admin AS isAdmin,
+          u.is_advanced_blender AS isAdvancedBlender,
+          u.is_blender AS isBlender,
+          u.is_instructor AS isInstructor
         FROM user u
-        LEFT JOIN access_role_list arl ON u.phone_number = arl.phone_number
         WHERE 
           deleted_at IS NULL AND
           archived_at IS NULL AND
@@ -154,15 +157,17 @@ export const updateLastLogin = async (
 
 export const updateUsersRoles = async (
   userId: string,
-  phoneNumber: string,
   payload: Partial<UserRoles>,
   trx?: Knex.Transaction,
 ): Promise<UserResponse> => {
   const db = trx ?? (await knexController.transaction());
 
-  await db('access_role_list').where('phone_number', '=', phoneNumber).update({
+  await db('user').where('id', '=', userId).update({
     is_admin: payload.isAdmin,
     is_blender: payload.isBlender,
+    is_user: payload.isUser,
+    is_instructor: payload.isInstructor,
+    is_advanced_blender: payload.isAdvancedBlender,
   });
 
   const editedUser = await getUserWithId(userId, false, db);
