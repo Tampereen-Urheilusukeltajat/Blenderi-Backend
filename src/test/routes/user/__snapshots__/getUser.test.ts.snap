@@ -9,7 +9,7 @@ exports[`Get user User is found it returns 200 and has right properties 1`] = `
   "isAdvancedBlender": false,
   "isBlender": true,
   "isInstructor": false,
-  "isMember": true,
+  "isUser": true,
   "phoneNumber": "00001",
   "surname": "Blender",
 }

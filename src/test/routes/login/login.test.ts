@@ -80,10 +80,14 @@ describe('Login', () => {
 
       expect(tokenPayload).toMatchInlineSnapshot(`
         {
+          "fullName": "Tester Blender",
           "id": "1be5abcd-53d4-11ed-9342-0242ac120002",
           "isAdmin": false,
+          "isAdvancedBlender": false,
           "isBlender": true,
+          "isInstructor": false,
           "isRefreshToken": false,
+          "isUser": true,
         }
       `);
     });
