@@ -22,15 +22,15 @@ if (
   );
 }
 
-const client = createClient({
-  accessKey: SCW_ACCESS_KEY,
-  secretKey: SCW_SECRET_KEY,
-  defaultProjectId: SCW_DEFAULT_PROJECT_ID,
-  defaultOrganizationId: SCW_DEFAULT_ORGANIZATION_ID,
-  defaultRegion: 'fr-par',
-});
-
 export const sendEmail = async (msg: EmailMessage): Promise<void> => {
+  const client = createClient({
+    accessKey: SCW_ACCESS_KEY,
+    secretKey: SCW_SECRET_KEY,
+    defaultProjectId: SCW_DEFAULT_PROJECT_ID,
+    defaultOrganizationId: SCW_DEFAULT_ORGANIZATION_ID,
+    defaultRegion: 'fr-par',
+  });
+
   const emailService = new TransactionalEmail.v1alpha1.API(client);
 
   await emailService.createEmail({
