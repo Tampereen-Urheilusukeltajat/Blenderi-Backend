@@ -17,11 +17,14 @@ env:
   REDIS_PORT: 6379
   REDIS_USER: blenderi
   REDIS_PASSWORD: pass
-  SENDGRID_API_KEY: test-key
-  SENDGRID_FROM_EMAIL: no-reply@tayttopaikka.fi
+  TRANSACTIONAL_FROM_EMAIL: no-reply@tayttopaikka.fi
   APPLICATION_URI: https://localhost:3000
   JWT_SECRET: dontuseme
   TURNSTILE_SECRET: jaskajokunen
+  SCW_ACCESS_KEY: empty
+  SCW_SECRET_KEY: empty
+  SCW_DEFAULT_ORGANIZATION_ID: empty
+  SCW_DEFAULT_PROJECT_ID: empty
 
 jobs:
   test:
