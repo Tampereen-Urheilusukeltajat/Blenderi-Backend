@@ -1,40 +1,46 @@
-import sgMail from '@sendgrid/mail';
-import { type emailMsg } from '../../types/email.types';
+import { type EmailMessage } from '../../types/email.types';
+import { createClient, TransactionalEmail } from '@scaleway/sdk';
 
-const API_KEY: string | undefined = process.env.SENDGRID_API_KEY;
-const FROM_EMAIL: string | undefined = process.env.SENDGRID_FROM_EMAIL;
+const SCW_ACCESS_KEY: string | undefined = process.env.SCW_ACCESS_KEY;
+const SCW_SECRET_KEY: string | undefined = process.env.SCW_SECRET_KEY;
+const SCW_DEFAULT_ORGANIZATION_ID: string | undefined =
+  process.env.SCW_DEFAULT_ORGANIZATION_ID;
+const SCW_DEFAULT_PROJECT_ID: string | undefined =
+  process.env.SCW_DEFAULT_PROJECT_ID;
 
-if (API_KEY === undefined || FROM_EMAIL === undefined) {
-  throw new Error('sendEmail function has no API key or "from" address!');
+const FROM_EMAIL: string | undefined = process.env.TRANSACTIONAL_FROM_EMAIL;
+
+if (
+  SCW_ACCESS_KEY === undefined ||
+  SCW_SECRET_KEY === undefined ||
+  SCW_DEFAULT_ORGANIZATION_ID === undefined ||
+  SCW_DEFAULT_PROJECT_ID === undefined ||
+  FROM_EMAIL === undefined
+) {
+  throw new Error(
+    'sendEmail function has no required SCW secrets or "from" address!',
+  );
 }
 
-sgMail.setApiKey(API_KEY);
+const client = createClient({
+  accessKey: SCW_ACCESS_KEY,
+  secretKey: SCW_SECRET_KEY,
+  defaultProjectId: SCW_DEFAULT_PROJECT_ID,
+  defaultOrganizationId: SCW_DEFAULT_ORGANIZATION_ID,
+  defaultRegion: 'fr-par',
+});
 
-export const sendEmail = async (msg: emailMsg): Promise<void> => {
-  try {
-    const requestEmailBody = {
-      ...msg,
-      from: {
-        email: FROM_EMAIL,
-        name: 'Täyttöpaikka',
-      },
+export const sendEmail = async (msg: EmailMessage): Promise<void> => {
+  const emailService = new TransactionalEmail.v1alpha1.API(client);
 
-      mailSettings: {},
-    };
-
-    const response = await sgMail.send(requestEmailBody);
-
-    // TODO: handle 401 from SendGrid
-    if (response[0].statusCode !== 202) {
-      throw new Error(
-        `SendGrid returned statusCode ${String(response[0].statusCode)}.`,
-      );
-    }
-  } catch (error) {
-    let message: string;
-    if (error instanceof Error) message = error.message;
-    else message = String(error);
-
-    throw new Error(`Error when sending email. Error: ${message}`);
-  }
+  await emailService.createEmail({
+    subject: msg.subject,
+    to: [{ email: msg.to }],
+    text: msg.text,
+    html: '',
+    from: {
+      email: FROM_EMAIL,
+      name: 'Täyttöpaikka',
+    },
+  });
 };
