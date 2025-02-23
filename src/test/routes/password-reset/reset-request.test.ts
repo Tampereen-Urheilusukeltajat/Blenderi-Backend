@@ -5,6 +5,7 @@ import {
   beforeAll,
   afterAll,
   beforeEach,
+  jest,
 } from '@jest/globals';
 import { type FastifyInstance } from 'fastify';
 import { knexController } from '../../../database/database';
@@ -16,6 +17,9 @@ import {
   stopRedisConnection,
 } from '../../../lib/utils/testUtils';
 import { validateTurnstileToken } from '../../../lib/auth/turnstile';
+
+// Mock the fetch function
+jest.mock('../../../lib/auth/turnstile');
 
 describe('Password reset request', () => {
   const getTestInstance = async (): Promise<FastifyInstance> =>
