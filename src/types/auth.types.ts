@@ -18,7 +18,10 @@ export type LoginRequest = FastifyRequest<{
   Body: LoginRequestBody;
 }>;
 
-export const passwordResetRequestBody = Type.Object({ email });
+export const passwordResetRequestBody = Type.Object({
+  email,
+  turnstileToken: Type.String({ minLength: 1, maxLength: 2048 }),
+});
 
 export type PasswordResetRequestBody = Static<typeof passwordResetRequestBody>;
 
