@@ -23,6 +23,9 @@ if (
 }
 
 export const sendEmail = async (msg: EmailMessage): Promise<void> => {
+  // Someone, not naming who, managed to get banned for sending emails to user@example.com
+  if (process.env.NODE_ENV === 'test') return;
+
   const client = createClient({
     accessKey: SCW_ACCESS_KEY,
     secretKey: SCW_SECRET_KEY,

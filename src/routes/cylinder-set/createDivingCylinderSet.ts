@@ -6,7 +6,7 @@ import {
 import { randomUUID } from 'crypto';
 import { knexController } from '../../database/database';
 import { errorHandler } from '../../lib/utils/errorHandler';
-import { selectCylinderSet } from '../../lib/queries/divingCylinderSet';
+import { getDivingCylinderSetById } from '../../lib/queries/divingCylinderSet';
 import {
   type CreateDivingCylinderSet,
   createDivingCylinderSet,
@@ -34,16 +34,15 @@ const handler = async (
   }>,
   reply: FastifyReply,
 ): Promise<void> => {
-  // TODO: Authorization
+  const { body } = request;
 
   // validate cylinder data
-  for (const cylinder of request.body.cylinders) {
+  const thisYear = new Date().getUTCFullYear();
+  for (const cylinder of body.cylinders) {
     // inspection date
     const inspection = new Date(cylinder.inspection);
-    const thisYear = new Date().getUTCFullYear();
     if (inspection.getUTCFullYear() > thisYear) {
-      await errorHandler(reply, 400, 'Inspection date from the future');
-      return;
+      return errorHandler(reply, 400, 'Inspection date from the future');
     }
   }
 
@@ -53,11 +52,12 @@ const handler = async (
 
       await trx('diving_cylinder_set').insert({
         id: setId,
-        name: request.body.name,
-        owner: request.body.owner,
+        name: body.name,
+        owner: body.owner,
+        diving_club_owner_id: body.divingClubOwnerId,
       });
 
-      for (const cylinder of request.body.cylinders) {
+      for (const cylinder of body.cylinders) {
         const cylinderId = randomUUID();
         const inspection = new Date(cylinder.inspection);
 
@@ -76,10 +76,8 @@ const handler = async (
         });
       }
 
-      const resultBody: DivingCylinderSet | undefined = await selectCylinderSet(
-        trx,
-        setId,
-      );
+      const resultBody: DivingCylinderSet | undefined =
+        await getDivingCylinderSetById(setId, trx);
       if (resultBody === undefined) {
         throw new Error('Database insertion failed: new cylinder set');
       }

@@ -16,6 +16,7 @@ import {
 } from '../../../lib/utils/testUtils';
 import { knexController } from '../../../database/database';
 import { buildServer } from '../../../server';
+import { type CreateDivingCylinderSet } from '../../../types/divingCylinderSet.types';
 
 describe('create cylinder set', () => {
   const getTestInstance = async (): Promise<FastifyInstance> =>
@@ -85,7 +86,21 @@ describe('create cylinder set', () => {
     delete responseBody.cylinders[0].inspection;
 
     payload.cylinders[0].inspection = responseBody.cylinders[0].inspection;
-    expect(responseBody).toEqual(payload);
+    expect(responseBody).toMatchInlineSnapshot(`
+      {
+        "cylinders": [
+          {
+            "material": "steel",
+            "pressure": 200,
+            "serialNumber": "3540965436löj564",
+            "volume": 0.5,
+          },
+        ],
+        "divingClubOwnerId": "",
+        "name": "bottle",
+        "owner": "d57ff56c-7ed5-11ed-a20a-27a77b2da7d7",
+      }
+    `);
   });
 
   test('it responds with 201 and proper body if creation of multiple cylinder set was successful', async () => {
@@ -138,6 +153,61 @@ describe('create cylinder set', () => {
     }
 
     expect(responseBody.owner).toEqual(payload.owner);
+    expect(responseBody.name).toEqual(payload.name);
+    const tokens = JSON.parse(res.body);
+    headers = { Authorization: 'Bearer ' + String(tokens.accessToken) };
+  });
+
+  test('it allows creating cylinder set which owner is a diving club', async () => {
+    const payload: CreateDivingCylinderSet = {
+      divingClubOwnerId: '1be5abcd-53d4-11ed-9342-0242ac120002',
+      name: 'bottle0.1',
+      cylinders: [
+        {
+          volume: 15,
+          pressure: 200,
+          material: 'steel',
+          serialNumber: '3540965436löj564',
+          inspection: '2020-01-01',
+        },
+        {
+          volume: 15,
+          pressure: 200,
+          material: 'steel',
+          serialNumber: 'ihanerokoodi',
+          inspection: '2020-01-03',
+        },
+      ],
+    };
+
+    const res = await server.inject({
+      url: 'api/cylinder-set',
+      method: 'POST',
+      headers,
+      payload,
+    });
+
+    expect(res.statusCode).toEqual(201);
+    const responseBody = JSON.parse(res.body);
+
+    expect(responseBody).toHaveProperty('id');
+    expect(responseBody.cylinders[0]).toHaveProperty('id');
+    expect(responseBody.cylinders[1]).toHaveProperty('id');
+
+    expect(responseBody.cylinders[0]).toHaveProperty('inspection');
+    expect(responseBody.cylinders[1]).toHaveProperty('inspection');
+
+    for (const cylinder of responseBody.cylinders) {
+      const expected =
+        cylinder.serialNumber === '3540965436löj564'
+          ? payload.cylinders[0]
+          : payload.cylinders[1];
+      expect(cylinder.volume).toEqual(expected.volume);
+      expect(cylinder.pressure).toEqual(expected.pressure);
+      expect(cylinder.material).toEqual(expected.material);
+    }
+
+    expect(responseBody.divingClubOwnerId).toEqual(payload.divingClubOwnerId);
     expect(responseBody.name).toEqual(payload.name);
     const tokens = JSON.parse(res.body);
     headers = { Authorization: 'Bearer ' + String(tokens.accessToken) };

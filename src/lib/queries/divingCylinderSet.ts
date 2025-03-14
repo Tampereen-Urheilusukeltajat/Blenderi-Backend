@@ -68,7 +68,8 @@ export const getUsersDivingCylinderSets = async (
     SELECT
       id,
       owner,
-      name
+      name,
+      diving_club_owner_id AS divingClubOwnerId
     FROM diving_cylinder_set
     WHERE
       owner = :userId AND
@@ -108,6 +109,77 @@ export const getUsersDivingCylinderSets = async (
   }));
 };
 
+export const getDivingCylinderSetById = async (
+  divingCylinderSetId: string,
+  trx?: Knex.Transaction,
+): Promise<DivingCylinderSet> => {
+  const db = trx ?? knexController;
+
+  const [divingCylinderSets] = await db.raw<
+    DBResponse<DivingCylinderSetBasicInfo[]>
+  >(
+    `
+    SELECT
+      id,
+      owner,
+      name,
+      diving_club_owner_id AS divingClubOwnerId
+    FROM diving_cylinder_set
+    WHERE
+      id = :id
+  `,
+    {
+      id: divingCylinderSetId,
+    },
+  );
+
+  if (divingCylinderSets.length === 0)
+    throw new Error(
+      `Cylinder set not found with the id: ${divingCylinderSetId}`,
+    );
+  if (divingCylinderSets.length !== 1) {
+    throw new Error(
+      `Found more than one cylinder sets with the id ${divingCylinderSetId}`,
+    );
+  }
+
+  const divingCylinderSet = divingCylinderSets[0];
+
+  const [divingCylinders] = await db.raw<DBResponse<DivingCylinderWithSetId[]>>(
+    `
+    SELECT
+      dc.id,
+      dc.volume,
+      dc.pressure,
+      dc.material,
+      dc.serial_number AS serialNumber,
+      dc.inspection,
+      dcts.cylinder_set AS cylinderSetId
+    FROM diving_cylinder_to_set dcts
+    JOIN diving_cylinder dc ON 
+      dcts.cylinder = dc.id
+    WHERE
+      dcts.cylinder_set = :divingCylinderSetId
+  `,
+    { divingCylinderSetId },
+  );
+
+  return {
+    id: divingCylinderSet.id,
+    name: divingCylinderSet.name,
+    divingClubOwnerId: divingCylinderSet.divingClubOwnerId,
+    owner: divingCylinderSet.owner,
+    cylinders: divingCylinders.map((dc) => ({
+      id: dc.id,
+      inspection: dc.inspection,
+      material: dc.material,
+      pressure: dc.pressure,
+      serialNumber: dc.serialNumber,
+      volume: dc.volume,
+    })),
+  };
+};
+
 /**
  * @deprecated
  */
@@ -142,7 +214,7 @@ export const selectCylinderSet = async (
   id: string,
 ): Promise<DivingCylinderSet | undefined> => {
   const set: DivingCylinderSet | undefined = await trx('diving_cylinder_set')
-    .select<DivingCylinderSet>('id', 'owner', 'name')
+    .select<DivingCylinderSet>('id', 'owner', 'name', 'diving_club_owner_id')
     .where('id', id)
     .first();
 

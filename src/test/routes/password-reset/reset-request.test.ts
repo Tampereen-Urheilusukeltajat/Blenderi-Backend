@@ -17,9 +17,13 @@ import {
   stopRedisConnection,
 } from '../../../lib/utils/testUtils';
 import { validateTurnstileToken } from '../../../lib/auth/turnstile';
+import { sendEmail } from '../../../lib/utils/sendEmail';
 
 // Mock the fetch function
 jest.mock('../../../lib/auth/turnstile');
+
+// Mock password reset request
+jest.mock('../../../lib/utils/sendEmail');
 
 describe('Password reset request', () => {
   const getTestInstance = async (): Promise<FastifyInstance> =>
@@ -32,6 +36,9 @@ describe('Password reset request', () => {
     await startRedisConnection();
     // @ts-expect-error One word: perkele
     validateTurnstileToken.mockResolvedValue(true);
+
+    // @ts-expect-error One word: perkele
+    sendEmail.mockResolvedValue();
   });
 
   afterAll(async () => {
